@@ -1,4 +1,4 @@
-# Printalyzer Densitometer
+# Printalyzer UV/VIS Densitometer
 
 ![Printalyzer Densitometer Logo](docs/images/dens-logo.png)
 
@@ -6,21 +6,18 @@
 
 ## Introduction
 
-The Printalyzer Densitometer is a project whose goal is the creation of an
+The Printalyzer UV/VIS Densitometer is a project whose goal is the creation of an
 affordable reflection and transmission densitometer for photographic darkroom
 use.
 
-It was initially conceived as an accessory to complement the
-[Printalyzer Enlarging Timer & Exposure Meter](https://github.com/dektronics/printalyzer-timer)
-to ease the process of creating paper profiles. However, given the general
-utility of such a device, it has been spun off as a separate project in its
-own right.
+It differs from the original B&W densitometer product in that it adds a UV
+measurement channel for alternative processes needs.
 
-A good overview of the project can be found in these blog posts:
-* [The Printalyzer Densitometer Project](https://hecgeek.blogspot.com/2021/07/the-printalyzer-densitometer-project.html)
+This project will use the B&W [Printalyzer Densitometer](https://github.com/dektronics/printalyzer-densitometer) DPD-100 design as its basis, and will make all efforts to share the same mechanical design and components.
 
-This project, using hardware tagged as "Revision C" and labeled as DPD-100, is currently shipping as an official Dektronics [product](https://www.dektronics.com/printalyzer-densitometer). Links to the user manual and regulatory compliance documents can be found on the product website.
+Eventually, this may be merged into the main project, or kept separate. That much is still TBD.
 
+_**This project is currently very much in the R&D stage, and should not be considered complete or functional at this point. It may change substantially as initial prototypes are constructed and tested.**_
 
 ## Project Layout
 
