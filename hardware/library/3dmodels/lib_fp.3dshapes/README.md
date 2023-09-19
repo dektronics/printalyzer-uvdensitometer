@@ -121,3 +121,7 @@ this directory's `.gitignore` file.
 ### USB4105-15-A-120
 * Status: Included (Terms unspecified, downloaded from vendor page linked from Digi-Key product page)
 * Source: Manufacturer <https://gct.co/connector/digi-key/usb4105>
+
+### AMS\_TSL2585
+* Status: Included
+* Source: Created for project using Autodesk Fusion 360
