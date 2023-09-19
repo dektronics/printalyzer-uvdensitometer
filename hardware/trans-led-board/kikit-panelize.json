@@ -1,4 +1,4 @@
-// KiKit panelization for the Printalizer Densitometer Transmission LED Board
+// KiKit panelization for the Printalyzer UV/VIS Densitometer Transmission LED Board
 // This produces a 96x109mm sized panel containing 24 boards
 {
     "layout": {

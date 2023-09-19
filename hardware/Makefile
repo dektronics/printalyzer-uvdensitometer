@@ -58,7 +58,7 @@ build/web/index.html: build/web $(BOARDFILES) $(PANELFILES)
 		-b "Transmission LED Board" " " trans-led-board/trans-led-board.kicad_pcb \
 		-b "Main Board Panelized" " " build/main-board-panel.kicad_pcb \
 		-b "Transmission LED Board Panelized" " " build/trans-led-board-panel.kicad_pcb \
-		--repository 'https://github.com/dektronics/printalyzer-densitometer' \
+		--repository 'https://github.com/dektronics/printalyzer-uvdensitometer' \
 		build/web
 
 clean:

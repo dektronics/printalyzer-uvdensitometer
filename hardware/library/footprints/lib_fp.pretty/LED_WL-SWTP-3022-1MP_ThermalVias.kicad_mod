@@ -66,7 +66,7 @@
   (pad "MP" thru_hole circle (at 1.25 -1.8) (size 0.8 0.8) (drill 0.4) (layers *.Cu) (tstamp bfc66e04-f20a-45d3-a701-16a36b7d6a95))
   (pad "MP" thru_hole circle (at 0 1.8) (size 0.8 0.8) (drill 0.4) (layers *.Cu) (tstamp c3c9a5d1-f3fd-4e30-b065-62f000ab80e1))
   (pad "MP" thru_hole circle (at 0 -1.8) (size 0.8 0.8) (drill 0.4) (layers *.Cu) (tstamp d27a2a87-fb4e-461e-a8ba-35cb087a9f09))
-  (model "${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/WL-SWTP-3022.step"
+  (model "${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/WL-SWTP-3022.step"
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 -90))

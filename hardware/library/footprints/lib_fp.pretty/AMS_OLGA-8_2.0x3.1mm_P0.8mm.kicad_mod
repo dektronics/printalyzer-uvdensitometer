@@ -1,7 +1,7 @@
 (footprint "AMS_OLGA-8_2.0x3.1mm_P0.8mm" (version 20211014) (generator pcbnew)
   (layer "F.Cu")
   (tedit 6078D097)
-  (descr "https://ams.com/documents/20143/36005/AS7341_DS000504_3-00.pdf")
+  (descr "https://ams.com/documents/20143/6705498/AS7343_DS001046_2_00.pdf")
   (tags "OLGA-8")
   (solder_paste_ratio -0.05)
   (attr smd)
@@ -47,8 +47,8 @@
   (pad "6" smd rect (at 0.638 0.4) (size 0.575 0.488) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp e03705b5-3715-469a-8ffa-459fadce150f))
   (pad "7" smd rect (at 0.638 -0.4) (size 0.575 0.488) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 2c321ed6-3a53-47d0-85de-d9d79807e61b))
   (pad "8" smd rect (at 0.638 -1.2) (size 0.575 0.488) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 77fb263e-0fef-4be8-86c1-e9fa7cb8ef50))
-  (model "${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/AMS_AS7341.step"
-    (offset (xyz 0 0 0.01))
+  (model "${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/AMS_AS7343.step"
+    (offset (xyz 0 0.609 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )

@@ -59,7 +59,7 @@
           (xy -2 -1.1)
         ) (width 0) (fill yes))
     ) (tstamp b107aecf-4b47-47e5-8848-aac72fc4f24f))
-  (model "${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/WL-SWTP-3022.step"
+  (model "${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/WL-SWTP-3022.step"
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 -90))

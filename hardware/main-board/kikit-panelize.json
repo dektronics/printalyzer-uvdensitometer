@@ -1,4 +1,4 @@
-// KiKit panelization for the Printalizer Densitometer Main Board
+// KiKit panelization for the Printalyzer UV/VIS Densitometer Main Board
 // This produces a 212.5x134mm sized panel containing 6 boards
 {
     "layout": {

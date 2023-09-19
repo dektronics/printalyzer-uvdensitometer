@@ -34,7 +34,7 @@
   (pad "4" smd oval (at 0.75 0.65) (size 1.2 0.35) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 2a3c182c-a53c-4785-9f4f-2b39f593586d))
   (pad "5" smd oval (at 0.75 0) (size 1.2 0.35) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 3708f2b5-c74e-4505-9e0d-df701d03014f))
   (pad "6" smd oval (at 0.75 -0.65) (size 1.2 0.35) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp d7aaabee-87e6-4538-a814-001c2f1f75f4))
-  (model "${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/AMS_TSL2591.step"
+  (model "${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/AMS_TSL2591.step"
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))

@@ -39,7 +39,7 @@
          (xy -0.505 -1.185) (xy 0.105 -1.185) (xy 0.105 -1.55) (xy 0.505 -1.55) (xy 0.505 1.55)
          (xy 0.105 1.55) (xy 0.105 1.185) (xy -0.505 1.185)) (width 0))
     ))
-  (model ${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/SunLike_LED_S1S0.step
+  (model ${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/SunLike_LED_S1S0.step
     (offset (xyz 0 0 0.02))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))

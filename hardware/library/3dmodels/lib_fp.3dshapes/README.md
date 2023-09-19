@@ -40,6 +40,13 @@ this directory's `.gitignore` file.
 * Status: Included (Same license as project)
 * Source: Created for project using Autodesk Fusion 360
 
+### AMS_AS7343
+* Status: Included
+* Source: Created by using KiCad to extract the component model from the
+  sensor evalation board PCB layout files, which are distributed within
+  the vendor evaluation board data package:
+  [Evaluation Software](https://ams.com/o/download-server/document-download/download/8404661)
+
 ### AMS_TCS3472
 * Status: Included (Same license as project)
 * Source: Created for project using Autodesk Fusion 360

@@ -23,7 +23,7 @@
   )
   (pad 1 smd rect (at -1.5 0) (size 1 1.9) (layers F.Cu F.Paste F.Mask))
   (pad 2 smd rect (at 1.5 0) (size 1 1.9) (layers F.Cu F.Paste F.Mask))
-  (model ${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/0ZCJ0025FF2E.step
+  (model ${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/0ZCJ0025FF2E.step
     (offset (xyz 0 0 0.4))
     (scale (xyz 1 1 1))
     (rotate (xyz 90 0 0))

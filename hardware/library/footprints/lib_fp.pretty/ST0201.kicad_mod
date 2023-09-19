@@ -26,7 +26,7 @@
   (pad "" smd rect (at 0.325 0) (size 0.32 0.225) (layers F.Paste))
   (pad 1 smd rect (at -0.3125 0) (size 0.425 0.3) (layers F.Cu F.Mask))
   (pad 2 smd rect (at 0.3125 0) (size 0.425 0.3) (layers F.Cu F.Mask))
-  (model ${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/STM_ESDALC6V1-1U2.step
+  (model ${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/STM_ESDALC6V1-1U2.step
     (at (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))

@@ -60,7 +60,7 @@
     (solder_paste_margin_ratio 0.05) (tstamp 95579173-16d6-4a24-9898-29ea9b131e5f))
   (pad "S1" thru_hole oval (at -4.32 2.23 90) (size 1.8 1) (drill oval 1.4 0.6) (layers *.Cu *.Mask "F.Paste")
     (solder_paste_margin_ratio 0.05) (tstamp e60ffad4-e949-4431-9192-20d17a072493))
-  (model "${KIPRJMOD}/../modules/packages3d/lib_fp.3dshapes/USB4105-15-A-120.step"
+  (model "${KIPRJMOD}/../library/3dmodels/lib_fp.3dshapes/USB4105-15-A-120.step"
     (offset (xyz 0 -4.825 0))
     (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))
