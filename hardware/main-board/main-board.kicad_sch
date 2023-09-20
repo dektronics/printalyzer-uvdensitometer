@@ -10757,7 +10757,7 @@
     (property "Value" "Conn_01x04" (at 123.19 72.39 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
-    (property "Footprint" "Connector_JST:JST_SH_BM02B-SRSS-TB_1x04-1MP_P1.00mm_Vertical" (at 120.65 69.85 0)
+    (property "Footprint" "Connector_JST:JST_SH_BM04B-SRSS-TB_1x04-1MP_P1.00mm_Vertical" (at 120.65 69.85 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.jst-mfg.com/product/pdf/eng/ePH.pdf" (at 120.65 69.85 0)
