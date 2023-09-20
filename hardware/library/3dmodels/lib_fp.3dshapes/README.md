@@ -114,6 +114,10 @@ this directory's `.gitignore` file.
 * Status: Not included (Not redistributable)
 * Source: https://www.jst-mfg.com/product/detail_e.php?series=231
 
+### SM04B-SRSS-TB
+* Status: Not included (Not redistributable)
+* Source: https://www.jst-mfg.com/product/detail_e.php?series=231
+
 ### EVQP7-LC-01P
 * Status: Not included (Download requires registration, terms of use restrictive)
 * Source: Manufacturer <https://www3.panasonic.biz/ac/ae/search_num/index.jsp?c=detail&part_no=EVQP7L01P>
@@ -125,3 +129,7 @@ this directory's `.gitignore` file.
 ### AMS\_TSL2585
 * Status: Included
 * Source: Created for project using Autodesk Fusion 360
+
+### LED\_2835
+* Status: Included
+* Source: GrabCAD <https://grabcad.com/library/led-smd-2835-1>
