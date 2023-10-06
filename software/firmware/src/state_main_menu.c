@@ -907,7 +907,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
             if (keypad_is_key_combo_pressed(&keypad_event, KEYPAD_BUTTON_ACTION, KEYPAD_BUTTON_UP)) {
                 display_mode = !display_mode;
             } else if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_ACTION) && !keypad_event.repeated) {
-                if (gain < TSL2585_GAIN_MAX) {
+                if (gain < TSL2585_GAIN_MAX - 1) {
                     gain++;
                 } else {
                     gain = TSL2585_GAIN_0_5X;

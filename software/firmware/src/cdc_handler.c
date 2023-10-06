@@ -23,6 +23,7 @@
 #include "task_main.h"
 #include "task_sensor.h"
 #include "adc_handler.h"
+#include "mcp9808.h"
 #include "tsl2591.h"
 #include "densitometer.h"
 #include "app_descriptor.h"
@@ -437,15 +438,17 @@ bool cdc_process_command_system(const cdc_command_t *cmd)
     } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "ISEN") == 0) {
         /*
          * Output format:
-         * VDDA, Temperature
+         * VDDA, Temperature (MCU), Temperature (Sensor)
          */
-        adc_readings_t readings;
-        if (adc_read(&readings) == osOK) {
-            sprintf_(buf, "%dmV,%.1fC", readings.vdda_mv, readings.temp_c);
-            cdc_send_command_response(cmd, buf);
-        } else {
-            cdc_send_command_response(cmd, "ERR");
-        }
+        adc_readings_t readings = {0};
+        float sensor_temp_c = 0;
+
+        adc_read(&readings);
+        mcp9808_read_temperature(&hi2c1, &sensor_temp_c);
+
+        sprintf_(buf, "%dmV,%.1fC,%.1fC", readings.vdda_mv, readings.temp_c, sensor_temp_c);
+        cdc_send_command_response(cmd, buf);
+
         return true;
     } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "REMOTE") == 0) {
         bool enable;
