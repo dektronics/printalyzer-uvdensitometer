@@ -875,6 +875,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
     bool display_mode = false;
     bool config_changed = true;
     bool settings_changed = true;
+    char numbuf[16];
     char buf[128];
 
     do {
@@ -973,29 +974,33 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
 
         if (sensor_get_next_reading(&reading, 1000) == osOK) {
             bool is_detect = keypad_is_detect();
-            if (display_mode) {
-                const float basic_result = sensor_basic_result(&reading);
-                sprintf_(buf,
-                    "%.5f\n"
-                    "\n"
-                    "[%X][%d][%c][%c]",
-                    basic_result,
-                    reading.gain,
-                    tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
-                    light_ch,
-                    (is_detect ? '*' : ' '));
+
+            if (reading.result_status == SENSOR_RESULT_SATURATED_ANALOG) {
+                sprintf_(numbuf, "A_SAT");
+            } else if (reading.result_status == SENSOR_RESULT_SATURATED_DIGITAL) {
+                sprintf_(numbuf, "D_SAT");
+            } else if (reading.result_status == SENSOR_RESULT_INVALID) {
+                sprintf_(numbuf, "INVALID");
             } else {
-                const uint32_t scaled_result = sensor_scaled_result(&reading);
-                sprintf(buf,
-                    "%d\n"
-                    "\n"
-                    "[%X][%d][%c][%c]",
-                    scaled_result,
-                    reading.gain,
-                    tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
-                    light_ch,
-                    (is_detect ? '*' : ' '));
+                if (display_mode) {
+                    const float basic_result = sensor_basic_result(&reading);
+                    sprintf_(numbuf, "%.5f", basic_result);
+                } else {
+                    const uint32_t scaled_result = sensor_scaled_result(&reading);
+                    sprintf_(numbuf, "%ld", scaled_result);
+                }
             }
+
+            sprintf(buf,
+                "%s\n"
+                "\n"
+                "[%X][%d][%c][%c]",
+                numbuf,
+                reading.gain,
+                (int)tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
+                light_ch,
+                (is_detect ? '*' : ' '));
+
             display_static_list("Diagnostics", buf);
         }
 
