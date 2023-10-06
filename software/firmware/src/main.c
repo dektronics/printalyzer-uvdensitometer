@@ -612,6 +612,8 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
             light_int_handler(TIM_CHANNEL_1, TIM_IT_CC1);
         } else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
             light_int_handler(TIM_CHANNEL_2, TIM_IT_CC2);
+        } else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3) {
+            light_int_handler(TIM_CHANNEL_3, TIM_IT_CC3);
         }
     }
 }

@@ -462,7 +462,7 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
         pending_int_light_change = 0x80000000
             | pending_vis_reflection
             | (pending_vis_transmission << 8)
-            | (pending_vis_transmission << 16);
+            | (pending_uv_transmission << 16);
     } else {
         /* Apply the change immediately */
         light_set_vis_reflection(pending_vis_reflection);
