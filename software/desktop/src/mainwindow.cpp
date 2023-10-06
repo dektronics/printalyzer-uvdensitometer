@@ -211,6 +211,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->autoAddPushButton->setChecked(true);
     ui->addReadingPushButton->setEnabled(false);
 
+    configureForDeviceType();
+
     // Initialize all fields with blank values
     onSystemVersionResponse();
     onSystemBuildResponse();
@@ -378,6 +380,23 @@ void MainWindow::about()
                             QApplication::applicationVersion()));
 }
 
+void MainWindow::configureForDeviceType()
+{
+    DensInterface::DeviceType deviceType;
+    if (densInterface_->connected()) {
+        deviceType = densInterface_->deviceType();
+        lastDeviceType_ = deviceType;
+    } else {
+        deviceType = lastDeviceType_;
+    }
+
+    if (deviceType == DensInterface::DeviceUvVis) {
+        ui->sensorTempLabel->setVisible(true);
+    } else {
+        ui->sensorTempLabel->setVisible(false);
+    }
+}
+
 void MainWindow::refreshButtonState()
 {
     const bool connected = densInterface_->connected();
@@ -527,6 +546,8 @@ void MainWindow::onMenuEditAboutToShow()
 void MainWindow::onConnectionOpened()
 {
     qDebug() << "Connection opened";
+
+    configureForDeviceType();
 
     // Clear the calibration page since values could have changed
     ui->reflLightLineEdit->clear();
@@ -1240,7 +1261,12 @@ void MainWindow::onSystemUniqueId()
 void MainWindow::onSystemInternalSensors()
 {
     ui->mcuVddaLabel->setText(tr("Vdda: %1").arg(densInterface_->mcuVdda()));
-    ui->mcuTempLabel->setText(tr("Temperature: %1").arg(densInterface_->mcuTemp()));
+    if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
+        ui->mcuTempLabel->setText(tr("MCU Temperature: %1").arg(densInterface_->mcuTemp()));
+        ui->sensorTempLabel->setText(tr("Sensor Temperature: %1").arg(densInterface_->sensorTemp()));
+    } else {
+        ui->mcuTempLabel->setText(tr("Temperature: %1").arg(densInterface_->mcuTemp()));
+    }
 }
 
 void MainWindow::onDiagDisplayScreenshot(const QByteArray &data)

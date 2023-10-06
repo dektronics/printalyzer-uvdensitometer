@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>417</width>
-    <height>318</height>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Remote Control</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
+   <item row="0" column="0" rowspan="2">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QGroupBox" name="reflGroupBox">
@@ -89,6 +89,56 @@
         </item>
        </layout>
       </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="tranUvGroupBox">
+       <property name="title">
+        <string>UV Transmission Light</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="tranUvOffPushButton">
+          <property name="text">
+           <string>Off</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="tranUvOnPushButton">
+          <property name="text">
+           <string>On</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSpinBox" name="tranUvSpinBox">
+          <property name="maximum">
+           <number>128</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="tranUvSetPushButton">
+          <property name="text">
+           <string>Set</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>

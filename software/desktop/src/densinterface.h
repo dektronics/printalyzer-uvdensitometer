@@ -12,6 +12,12 @@ class DensInterface : public QObject
 {
     Q_OBJECT
 public:
+    enum DeviceType {
+        DeviceUnknown,
+        DeviceBaseline,
+        DeviceUvVis
+    };
+
     enum DensityType {
         DensityReflection,
         DensityTransmission,
@@ -52,6 +58,7 @@ public slots:
     void sendGetDiagDisplayScreenshot();
     void sendSetDiagLightRefl(int value);
     void sendSetDiagLightTran(int value);
+    void sendSetDiagLightTranUv(int value);
     void sendInvokeDiagSensorStart();
     void sendInvokeDiagSensorStop();
     void sendSetDiagSensorConfig(int gain, int integration);
@@ -76,6 +83,7 @@ public:
     bool deviceUnrecognized() const;
     bool remoteControlEnabled() const;
 
+    DeviceType deviceType() const;
     QString projectName() const;
     QString version() const;
 
@@ -97,6 +105,7 @@ public:
 
     QString mcuVdda() const;
     QString mcuTemp() const;
+    QString sensorTemp() const;
 
     DensCalLight calLight() const;
     DensCalGain calGain() const;
@@ -125,6 +134,7 @@ signals:
     void diagDisplayScreenshot(const QByteArray &data);
     void diagLightReflChanged();
     void diagLightTranChanged();
+    void diagLightTranUvChanged();
     void diagSensorInvoked();
     void diagSensorChanged();
     void diagSensorGetReading(int ch0, int ch1);
@@ -170,6 +180,7 @@ private:
     bool deviceUnrecognized_;
     bool remoteControlEnabled_;
 
+    DeviceType deviceType_;
     QString projectName_;
     QString version_;
     QDateTime buildDate_;
@@ -186,6 +197,7 @@ private:
     QString uniqueId_;
     QString mcuVdda_;
     QString mcuTemp_;
+    QString sensorTemp_;
     DensCalLight calLight_;
     DensCalGain calGain_;
     DensCalSlope calSlope_;

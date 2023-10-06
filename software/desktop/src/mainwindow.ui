@@ -415,6 +415,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="sensorTempLabel">
+             <property name="text">
+              <string>&lt;Sensor Temp&gt;</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>

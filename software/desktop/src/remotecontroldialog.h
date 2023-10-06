@@ -38,6 +38,11 @@ private slots:
     void onTranSetClicked();
     void onTranSpinBoxValueChanged(int value);
 
+    void onTranUvOffClicked();
+    void onTranUvOnClicked();
+    void onTranUvSetClicked();
+    void onTranUvSpinBoxValueChanged(int value);
+
     void onSensorStartClicked();
     void onSensorStopClicked();
     void onSensorGainIndexChanged(int index);

@@ -93,6 +93,7 @@ private slots:
 
 private:
     void openConnectionToPort(const QString &portName);
+    void configureForDeviceType();
     void refreshButtonState();
     void updateLineEditDirtyState(QLineEdit *lineEdit, int value);
     void updateLineEditDirtyState(QLineEdit *lineEdit, float value, int prec);
@@ -113,6 +114,7 @@ private:
     DensInterface::DensityType lastReadingType_ = DensInterface::DensityUnknown;
     float lastReadingDensity_ = qSNaN();
     float lastReadingOffset_ = qSNaN();
+    DensInterface::DeviceType lastDeviceType_ = DensInterface::DeviceBaseline;
 };
 
 #endif // MAINWINDOW_H

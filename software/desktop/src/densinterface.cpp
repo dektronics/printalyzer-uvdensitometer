@@ -13,6 +13,7 @@ DensInterface::DensInterface(QObject *parent)
     , connected_(false)
     , deviceUnrecognized_(false)
     , remoteControlEnabled_(false)
+    , deviceType_(DeviceType::DeviceUnknown)
     , buildChecksum_(0)
     , freeRtosHeapSize_(0)
     , freeRtosHeapWatermark_(0)
@@ -181,6 +182,20 @@ void DensInterface::sendSetDiagLightTran(int value)
     sendCommand(command);
 }
 
+void DensInterface::sendSetDiagLightTranUv(int value)
+{
+    if (deviceType_ != DeviceType::DeviceUvVis) { return; }
+
+    if (value < 0) { value = 0; }
+    else if (value > 128) { value = 128; }
+
+    QStringList args;
+    args.append(QString::number(value));
+
+    DensCommand command(DensCommand::TypeSet, DensCommand::CategoryDiagnostics, "LTU", args);
+    sendCommand(command);
+}
+
 void DensInterface::sendInvokeDiagSensorStart()
 {
     DensCommand command(DensCommand::TypeInvoke, DensCommand::CategoryDiagnostics, "S",
@@ -341,6 +356,7 @@ bool DensInterface::connected() const { return connected_; }
 bool DensInterface::deviceUnrecognized() const { return deviceUnrecognized_; }
 bool DensInterface::remoteControlEnabled() const { return remoteControlEnabled_; }
 
+DensInterface::DeviceType DensInterface::deviceType() const { return deviceType_; }
 QString DensInterface::projectName() const { return projectName_; }
 QString DensInterface::version() const { return version_; }
 QDateTime DensInterface::buildDate() const { return buildDate_; }
@@ -361,6 +377,7 @@ QString DensInterface::uniqueId() const { return uniqueId_; }
 
 QString DensInterface::mcuVdda() const { return mcuVdda_; }
 QString DensInterface::mcuTemp() const { return mcuTemp_; }
+QString DensInterface::sensorTemp() const { return sensorTemp_; }
 
 DensCalLight DensInterface::calLight() const { return calLight_; }
 DensCalGain DensInterface::calGain() const { return calGain_; }
@@ -400,6 +417,15 @@ void DensInterface::readData()
                 // Call the normal command parser
                 readCommandResponse(response);
 
+                // Assign the device type based on the project name
+                if (projectName_ == QLatin1String("Printalyzer Densitometer")) {
+                    deviceType_ = DeviceType::DeviceBaseline;
+                } else if (projectName_ == QLatin1String("Printalyzer UV/VIS Densitometer")) {
+                    deviceType_ = DeviceType::DeviceUvVis;
+                } else {
+                    deviceType_ = DeviceType::DeviceUnknown;
+                }
+
                 if (!projectName_.isEmpty() && !version_.isEmpty()) {
                     connecting_ = false;
                     connected_ = true;
@@ -412,6 +438,7 @@ void DensInterface::readData()
                     version_ = oldVersion;
                     qWarning() << "Unexpected version response:" << line;
                     deviceUnrecognized_ = true;
+                    deviceType_ = DeviceType::DeviceUnknown;
                     disconnectFromDevice();
                 }
             } else {
@@ -419,6 +446,7 @@ void DensInterface::readData()
                 // be treated as a connection failure
                 qWarning() << "Unexpected response:" << line;
                 deviceUnrecognized_ = true;
+                deviceType_ = DeviceType::DeviceUnknown;
                 disconnectFromDevice();
             }
             return;
@@ -611,6 +639,9 @@ void DensInterface::readSystemResponse(const DensCommand &response)
             if (args.length() > 1) {
                 mcuTemp_ = args.at(1);
             }
+            if (deviceType_ == DeviceUvVis && args.length() > 2) {
+                sensorTemp_ = args.at(2);
+            }
             emit systemInternalSensors();
         }
     } else if (response.type() == DensCommand::TypeInvoke) {
@@ -735,6 +766,11 @@ void DensInterface::readDiagnosticsResponse(const DensCommand &response)
                && response.args().size() == 1
                && response.args().at(0) == QLatin1String("OK")) {
         emit diagLightTranChanged();
+    } else if (response.type() == DensCommand::TypeSet
+             && response.action() == QLatin1String("LTU")
+             && response.args().size() == 1
+             && response.args().at(0) == QLatin1String("OK")) {
+        emit diagLightTranUvChanged();
     } else if (response.type() == DensCommand::TypeInvoke
                && response.action() == QLatin1String("S")
                && response.args().size() == 1
