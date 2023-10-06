@@ -263,7 +263,9 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
     double drop_factor = 0.0;
 
     /* Parameter validation */
-    if (light_source != SENSOR_LIGHT_REFLECTION && light_source != SENSOR_LIGHT_TRANSMISSION) {
+    if (light_source != SENSOR_LIGHT_VIS_REFLECTION
+        && light_source != SENSOR_LIGHT_VIS_TRANSMISSION
+        && light_source != SENSOR_LIGHT_UV_TRANSMISSION) {
         return osErrorParameter;
     }
 
@@ -384,7 +386,9 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
     float ch0_avg = NAN;
     float ch1_avg = NAN;
 
-    if (light_source != SENSOR_LIGHT_REFLECTION && light_source != SENSOR_LIGHT_TRANSMISSION) {
+    if (light_source != SENSOR_LIGHT_VIS_REFLECTION
+        && light_source != SENSOR_LIGHT_VIS_TRANSMISSION
+        && light_source != SENSOR_LIGHT_UV_TRANSMISSION) {
         return osErrorParameter;
     }
 
@@ -499,8 +503,8 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
     bool saturated = false;
 
     if (light_source != SENSOR_LIGHT_OFF
-        && light_source != SENSOR_LIGHT_REFLECTION
-        && light_source != SENSOR_LIGHT_TRANSMISSION) {
+        && light_source != SENSOR_LIGHT_VIS_REFLECTION
+        && light_source != SENSOR_LIGHT_VIS_TRANSMISSION) {
         return osErrorParameter;
     }
     if (gain < TSL2591_GAIN_LOW || gain > TSL2591_GAIN_MAXIMUM) {
@@ -677,7 +681,7 @@ osStatus_t sensor_gain_calibration_loop(
         if (ret != osOK) { break; }
 
         /* Set the LED to target brightness on the next cycle */
-        sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, /*next_cycle*/true, led_brightness);
+        sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, led_brightness);
 
         /* Wait for the next cycle which will turn the LED on */
         ret = sensor_get_next_reading(&discard_reading, 2000);
@@ -708,7 +712,7 @@ osStatus_t sensor_gain_calibration_loop(
         if (ret != osOK) { break; }
 
         /* Set the LED to target brightness on the next cycle */
-        sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, /*next_cycle*/true, led_brightness);
+        sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, led_brightness);
 
         /* Wait for the next cycle which will turn the LED on */
         ret = sensor_get_next_reading(&discard_reading, 2000);
@@ -835,7 +839,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
             log_d("Testing brightness: %d", i);
 
             /* Set the LED to target brightness on the next cycle */
-            sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, /*next_cycle*/true, i);
+            sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, i);
 
             /* Wait for the next cycle which will turn the LED on */
             ret = sensor_get_next_reading(&discard_reading, 2000);
@@ -984,9 +988,9 @@ uint8_t sensor_get_read_brightness(sensor_light_t light_source)
     }
 
     switch (light_source) {
-    case SENSOR_LIGHT_REFLECTION:
+    case SENSOR_LIGHT_VIS_REFLECTION:
         return cal_light.reflection;
-    case SENSOR_LIGHT_TRANSMISSION:
+    case SENSOR_LIGHT_VIS_TRANSMISSION:
         return cal_light.transmission;
     case SENSOR_LIGHT_OFF:
         return 0;

@@ -564,7 +564,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
 #ifdef TEST_LIGHT_CAL
     else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "LR") == 0 && cdc_remote_active) {
         /* This command is only enabled for development and testing purposes */
-        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_REFLECTION, NULL, NULL);
+        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_VIS_REFLECTION, NULL, NULL);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {
@@ -573,7 +573,16 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         return true;
     } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "LT") == 0 && cdc_remote_active) {
         /* This command is only enabled for development and testing purposes */
-        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_TRANSMISSION, NULL, NULL);
+        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_VIS_TRANSMISSION, NULL, NULL);
+        if (result == osOK) {
+            cdc_send_command_response(cmd, "OK");
+        } else {
+            cdc_send_command_response(cmd, "ERR");
+        }
+        return true;
+    } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "LTU") == 0 && cdc_remote_active) {
+        /* This command is only enabled for development and testing purposes */
+        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_UV_TRANSMISSION, NULL, NULL);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {
@@ -778,8 +787,9 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
      * Diagnostics Commands
      * "GD DISP" -> Get display screenshot (multi-line response)
      *
-     * "SD LR,nnn" -> Set reflection light duty cycle (nnn/127) [remote]
-     * "SD LT,nnn" -> Set transmission light duty cycle (nnn/127) [remote]
+     * "SD LR,nnn" -> Set VIS reflection light duty cycle (nnn/127) [remote]
+     * "SD LT,nnn" -> Set VIS transmission light duty cycle (nnn/127) [remote]
+     * "SD LTU,nnn" -> Set UV transmission light duty cycle (nnn/127) [remote]
      *
      * "ID S,START"   -> Invoke sensor start [remote]
      * "ID S,STOP"    -> Invoke sensor stop [remote]
@@ -805,7 +815,7 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
         uint8_t value = atoi(cmd->args);
         if (value > 128) { value = 128; }
 
-        osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_REFLECTION, false, value);
+        osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, value);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {
@@ -817,7 +827,19 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
         uint8_t value = atoi(cmd->args);
         if (value > 128) { value = 128; }
 
-        osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, false, value);
+        osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, value);
+        if (result == osOK) {
+            cdc_send_command_response(cmd, "OK");
+        } else {
+            cdc_send_command_response(cmd, "ERR");
+        }
+
+        return true;
+    } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "LTU") == 0 && cdc_remote_active) {
+        uint8_t value = atoi(cmd->args);
+        if (value > 128) { value = 128; }
+
+        osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_UV_TRANSMISSION, false, value);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {
@@ -863,7 +885,7 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
         }
         return true;
     } else if (strcmp(cmd->action, "READ") == 0 && cdc_remote_active && !cdc_remote_sensor_active) {
-        if ((cmd->args[0] == '0' || cmd->args[0] == 'R' || cmd->args[0] == 'T')
+        if ((cmd->args[0] == '0' || cmd->args[0] == 'R' || cmd->args[0] == 'T' || cmd->args[0] == 'U')
             && cmd->args[1] == ',' && isdigit((unsigned char)cmd->args[2])
             && cmd->args[3] == ',' && isdigit((unsigned char)cmd->args[4])
             && cmd->args[5] == '\0') {
@@ -872,9 +894,11 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
             tsl2591_time_t time_val = cmd->args[4] - '0';
 
             if (cmd->args[0] == 'R') {
-                light_val = SENSOR_LIGHT_REFLECTION;
+                light_val = SENSOR_LIGHT_VIS_REFLECTION;
             } else if (cmd->args[0] == 'T') {
-                light_val = SENSOR_LIGHT_TRANSMISSION;
+                light_val = SENSOR_LIGHT_VIS_TRANSMISSION;
+            } else if (cmd->args[0] == 'U') {
+                light_val = SENSOR_LIGHT_UV_TRANSMISSION;
             } else {
                 light_val = SENSOR_LIGHT_OFF;
             }

@@ -29,7 +29,7 @@ static densitometer_t reflection_data = {
     .last_d = NAN,
     .zero_d = NAN,
     .max_d = REFLECTION_MAX_D,
-    .read_light = SENSOR_LIGHT_REFLECTION,
+    .read_light = SENSOR_LIGHT_VIS_REFLECTION,
     .measure_func = reflection_measure
 };
 
@@ -37,7 +37,7 @@ static densitometer_t transmission_data = {
     .last_d = NAN,
     .zero_d = NAN,
     .max_d = TRANSMISSION_MAX_D,
-    .read_light = SENSOR_LIGHT_TRANSMISSION,
+    .read_light = SENSOR_LIGHT_VIS_TRANSMISSION,
     .measure_func = transmission_measure
 };
 
@@ -75,9 +75,9 @@ void densitometer_set_idle_light(const densitometer_t *densitometer, bool enable
         /* Copy over latest idle value from settings */
         settings_user_idle_light_t idle_light;
         settings_get_user_idle_light(&idle_light);
-        if (densitometer->read_light == SENSOR_LIGHT_REFLECTION) {
+        if (densitometer->read_light == SENSOR_LIGHT_VIS_REFLECTION) {
             idle_value = idle_light.reflection;
-        } else if (densitometer->read_light == SENSOR_LIGHT_TRANSMISSION) {
+        } else if (densitometer->read_light == SENSOR_LIGHT_VIS_TRANSMISSION) {
             idle_value = idle_light.transmission;
         }
 

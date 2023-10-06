@@ -329,32 +329,45 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
 {
     //log_d("sensor_set_light_mode: %d, %d, %d", params->light, params->next_cycle, params->value);
 
-    uint8_t pending_reflection;
-    uint8_t pending_transmission;
+    uint8_t pending_vis_reflection;
+    uint8_t pending_vis_transmission;
+    uint8_t pending_uv_transmission;
 
     /* Convert the parameters into pending values for the LEDs */
     if (params->light == SENSOR_LIGHT_OFF || params->value == 0) {
-        pending_reflection = 0;
-        pending_transmission = 0;
-    } else if (params->light == SENSOR_LIGHT_REFLECTION) {
-        pending_reflection = params->value;
-        pending_transmission = 0;
-    } else if (params->light == SENSOR_LIGHT_TRANSMISSION) {
-        pending_reflection = 0;
-        pending_transmission = params->value;
+        pending_vis_reflection = 0;
+        pending_vis_transmission = 0;
+        pending_uv_transmission = 0;
+    } else if (params->light == SENSOR_LIGHT_VIS_REFLECTION) {
+        pending_vis_reflection = params->value;
+        pending_vis_transmission = 0;
+        pending_uv_transmission = 0;
+    } else if (params->light == SENSOR_LIGHT_VIS_TRANSMISSION) {
+        pending_vis_reflection = 0;
+        pending_vis_transmission = params->value;
+        pending_uv_transmission = 0;
+    } else if (params->light == SENSOR_LIGHT_UV_TRANSMISSION) {
+        pending_vis_reflection = 0;
+        pending_vis_transmission = 0;
+        pending_uv_transmission = params->value;
     } else {
-        pending_reflection = 0;
-        pending_transmission = 0;
+        pending_vis_reflection = 0;
+        pending_vis_transmission = 0;
+        pending_uv_transmission = 0;
     }
 
     taskENTER_CRITICAL();
     if (params->next_cycle) {
         /* Schedule the change for the next ISR invocation */
-        pending_int_light_change = 0x80000000 | pending_reflection | (pending_transmission << 8);
+        pending_int_light_change = 0x80000000
+            | pending_vis_reflection
+            | (pending_vis_transmission << 8)
+            | (pending_vis_transmission << 16);
     } else {
         /* Apply the change immediately */
-        light_set_vis_reflection(pending_reflection);
-        light_set_vis_transmission(pending_transmission);
+        light_set_vis_reflection(pending_vis_reflection);
+        light_set_vis_transmission(pending_vis_transmission);
+        light_set_uv_transmission(pending_uv_transmission);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;
     }
@@ -390,6 +403,7 @@ void sensor_int_handler()
     if ((pending_int_light_change & 0x80000000) == 0x80000000) {
         light_set_vis_reflection(pending_int_light_change & 0x000000FF);
         light_set_vis_transmission((pending_int_light_change & 0x0000FF00) >> 8);
+        light_set_uv_transmission((pending_int_light_change & 0x00FF0000) >> 16);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;
     }

@@ -267,7 +267,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                 }
 
                 /* Activate the idle light at default brightness */
-                sensor_set_light_mode(SENSOR_LIGHT_REFLECTION, false, SETTING_IDLE_LIGHT_REFL_DEFAULT);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, SETTING_IDLE_LIGHT_REFL_DEFAULT);
 
                 do {
                     meas_option = display_message(
@@ -289,7 +289,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                 if (meas_result != DENSITOMETER_OK) { break; }
 
                 /* Activate the idle light at default brightness */
-                sensor_set_light_mode(SENSOR_LIGHT_REFLECTION, false, SETTING_IDLE_LIGHT_REFL_DEFAULT);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, SETTING_IDLE_LIGHT_REFL_DEFAULT);
 
                 do {
                     meas_option = display_message(
@@ -427,7 +427,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                     break;
                 }
 
-                sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, false, SETTING_IDLE_LIGHT_TRAN_DEFAULT);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, SETTING_IDLE_LIGHT_TRAN_DEFAULT);
 
                 do {
                     meas_option = display_message(
@@ -448,7 +448,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                 }
                 if (meas_result != DENSITOMETER_OK) { break; }
 
-                sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, false, SETTING_IDLE_LIGHT_TRAN_DEFAULT);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, SETTING_IDLE_LIGHT_TRAN_DEFAULT);
 
                 do {
                     meas_option = display_message(
@@ -924,7 +924,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
             }
 
             if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_DOWN) && !keypad_event.repeated) {
-                if (light_mode < 2) {
+                if (light_mode < 3) {
                     light_mode++;
                 } else {
                     light_mode = 0;
@@ -969,12 +969,16 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
                 light_ch = '-';
                 break;
             case 1:
-                sensor_set_light_mode(SENSOR_LIGHT_REFLECTION, false, 128);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, 128);
                 light_ch = 'R';
                 break;
             case 2:
-                sensor_set_light_mode(SENSOR_LIGHT_TRANSMISSION, false, 128);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, 128);
                 light_ch = 'T';
+                break;
+            case 3:
+                sensor_set_light_mode(SENSOR_LIGHT_UV_TRANSMISSION, false, 128);
+                light_ch = 'U';
                 break;
             default:
                 sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
