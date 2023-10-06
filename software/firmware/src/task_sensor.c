@@ -353,8 +353,8 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
         pending_int_light_change = 0x80000000 | pending_reflection | (pending_transmission << 8);
     } else {
         /* Apply the change immediately */
-        light_set_reflection(pending_reflection);
-        light_set_transmission(pending_transmission);
+        light_set_vis_reflection(pending_reflection);
+        light_set_vis_transmission(pending_transmission);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;
     }
@@ -388,8 +388,8 @@ void sensor_int_handler()
     /* Apply any pending light change values */
     UBaseType_t interrupt_status = taskENTER_CRITICAL_FROM_ISR();
     if ((pending_int_light_change & 0x80000000) == 0x80000000) {
-        light_set_reflection(pending_int_light_change & 0x000000FF);
-        light_set_transmission((pending_int_light_change & 0x0000FF00) >> 8);
+        light_set_vis_reflection(pending_int_light_change & 0x000000FF);
+        light_set_vis_transmission((pending_int_light_change & 0x0000FF00) >> 8);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;
     }

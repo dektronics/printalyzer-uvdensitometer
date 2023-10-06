@@ -30,35 +30,46 @@ typedef struct {
     volatile uint8_t val;
 } light_t;
 
-static light_t light_refl = {0};
-static light_t light_tran = {0};
+static light_t light_vis_refl = {0};
+static light_t light_vis_tran = {0};
+static light_t light_uv_tran = {0};
 
 static void light_set_val(light_t *light, uint8_t val);
 
-void light_init(TIM_HandleTypeDef *htim, uint32_t r_channel, uint32_t t_channel)
+void light_init(TIM_HandleTypeDef *htim, uint32_t r_channel, uint32_t tv_channel, uint32_t tu_channel)
 {
-    light_refl.htim = htim;
-    light_refl.channel = r_channel;
+    light_vis_refl.htim = htim;
+    light_vis_refl.channel = r_channel;
 
-    light_tran.htim = htim;
-    light_tran.channel = t_channel;
+    light_vis_tran.htim = htim;
+    light_vis_tran.channel = tv_channel;
+
+    light_uv_tran.htim = htim;
+    light_uv_tran.channel = tu_channel;
 
     /* Set us to a known initial state */
-    __HAL_TIM_DISABLE_OCxPRELOAD(light_refl.htim, light_refl.channel);
-    __HAL_TIM_DISABLE_OCxPRELOAD(light_tran.htim, light_tran.channel);
-    __HAL_TIM_SET_COUNTER(light_refl.htim, 0);
-    __HAL_TIM_SET_COMPARE(light_refl.htim, light_refl.channel, 0);
-    __HAL_TIM_SET_COMPARE(light_tran.htim, light_tran.channel, 0);
+    __HAL_TIM_DISABLE_OCxPRELOAD(light_vis_refl.htim, light_vis_refl.channel);
+    __HAL_TIM_DISABLE_OCxPRELOAD(light_vis_tran.htim, light_vis_tran.channel);
+    __HAL_TIM_DISABLE_OCxPRELOAD(light_uv_tran.htim, light_uv_tran.channel);
+    __HAL_TIM_SET_COUNTER(light_vis_refl.htim, 0);
+    __HAL_TIM_SET_COMPARE(light_vis_refl.htim, light_vis_refl.channel, 0);
+    __HAL_TIM_SET_COMPARE(light_vis_tran.htim, light_vis_tran.channel, 0);
+    __HAL_TIM_SET_COMPARE(light_uv_tran.htim, light_uv_tran.channel, 0);
 }
 
-void light_set_reflection(uint8_t val)
+void light_set_vis_reflection(uint8_t val)
 {
-    light_set_val(&light_refl, val);
+    light_set_val(&light_vis_refl, val);
 }
 
-void light_set_transmission(uint8_t val)
+void light_set_vis_transmission(uint8_t val)
 {
-    light_set_val(&light_tran, val);
+    light_set_val(&light_vis_tran, val);
+}
+
+void light_set_uv_transmission(uint8_t val)
+{
+    light_set_val(&light_uv_tran, val);
 }
 
 void light_set_val(light_t *light, uint8_t val)
@@ -96,10 +107,12 @@ void light_set_val(light_t *light, uint8_t val)
 void light_int_handler(uint32_t channel, uint32_t interrupt)
 {
     light_t *light = NULL;
-    if (channel == light_refl.channel) {
-        light = &light_refl;
-    } else if (channel == light_tran.channel) {
-        light = &light_tran;
+    if (channel == light_vis_refl.channel) {
+        light = &light_vis_refl;
+    } else if (channel == light_vis_tran.channel) {
+        light = &light_vis_tran;
+    } else if (channel == light_uv_tran.channel) {
+        light = &light_uv_tran;
     }
     if (!light || light->state != LIGHT_STATE_STARTUP) {
         return;

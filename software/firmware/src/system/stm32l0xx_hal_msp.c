@@ -268,20 +268,28 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
          * TIM2 GPIO Configuration
          * PA15    ------> TIM2_CH1
          * PB3     ------> TIM2_CH2
+         * PA2     ------> TIM2_CH3
          */
-        GPIO_InitStruct.Pin = TLED_EN_Pin;
+        GPIO_InitStruct.Pin = TVLED_EN_Pin;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = GPIO_AF5_TIM2;
-        HAL_GPIO_Init(TLED_EN_GPIO_Port, &GPIO_InitStruct);
+        HAL_GPIO_Init(TVLED_EN_GPIO_Port, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = RLED_EN_Pin;
+        GPIO_InitStruct.Pin = RVLED_EN_Pin;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
-        HAL_GPIO_Init(RLED_EN_GPIO_Port, &GPIO_InitStruct);
+        HAL_GPIO_Init(RVLED_EN_GPIO_Port, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = TULED_EN_Pin;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
+        HAL_GPIO_Init(TULED_EN_GPIO_Port, &GPIO_InitStruct);
     }
 }
 
