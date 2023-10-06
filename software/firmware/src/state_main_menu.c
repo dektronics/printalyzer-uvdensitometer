@@ -14,7 +14,7 @@
 #include "settings.h"
 #include "util.h"
 #include "keypad.h"
-#include "tsl2591.h"
+#include "tsl2585.h"
 #include "task_sensor.h"
 #include "task_usbd.h"
 #include "sensor.h"
@@ -867,13 +867,10 @@ void main_menu_settings_usb_key(state_main_menu_t *state, state_controller_t *co
 void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t *controller)
 {
     osStatus_t ret = osOK;
-    tsl2591_gain_t gain = TSL2591_GAIN_LOW;
-    tsl2591_time_t time = TSL2591_TIME_100MS;
+    tsl2585_gain_t gain = TSL2585_GAIN_128X;
+    uint8_t time_index = 1;
     sensor_reading_t reading;
-    float ch0_basic = NAN;
-    float ch1_basic = NAN;
     uint8_t light_mode = 0;
-    char gain_ch = ' ';
     char light_ch = ' ';
     bool display_mode = false;
     bool config_changed = true;
@@ -881,8 +878,9 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
     char buf[128];
 
     do {
-        ret = sensor_set_config(gain, time);
+        ret = sensor_set_config(gain, 719, (time_index * 100) - 1);
         if (ret != osOK) { break; }
+
         ret = sensor_start();
         if (ret != osOK) { break; }
 
@@ -890,7 +888,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         if (ret != osOK) { break; }
     } while (0);
 
-    if (ret != osOK || reading.gain != gain || reading.time != time) {
+    if (ret != osOK || reading.gain != gain) {
         display_message(
             "Sensor", NULL,
             "initialization\n"
@@ -908,17 +906,17 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
             if (keypad_is_key_combo_pressed(&keypad_event, KEYPAD_BUTTON_ACTION, KEYPAD_BUTTON_UP)) {
                 display_mode = !display_mode;
             } else if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_ACTION) && !keypad_event.repeated) {
-                if (gain < TSL2591_GAIN_MAXIMUM) {
+                if (gain < TSL2585_GAIN_MAX) {
                     gain++;
                 } else {
-                    gain = TSL2591_GAIN_LOW;
+                    gain = TSL2585_GAIN_0_5X;
                 }
                 config_changed = true;
             } else if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_UP) && !keypad_event.repeated) {
-                if (time < TSL2591_TIME_600MS) {
-                    time++;
+                if (time_index < 6) {
+                    time_index++;
                 } else {
-                    time = TSL2591_TIME_100MS;
+                    time_index = 1;
                 }
                 config_changed = true;
             }
@@ -941,28 +939,13 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         }
 
         if (config_changed) {
-            if (sensor_set_config(gain, time) == osOK) {
+            if (sensor_set_config(gain, 719, (time_index * 100) - 1) == osOK) {
                 config_changed = false;
                 settings_changed = true;
             }
         }
 
         if (settings_changed) {
-            switch (gain) {
-            case TSL2591_GAIN_LOW:
-                gain_ch = 'L';
-                break;
-            case TSL2591_GAIN_MEDIUM:
-                gain_ch = 'M';
-                break;
-            case TSL2591_GAIN_HIGH:
-                gain_ch = 'H';
-                break;
-            case TSL2591_GAIN_MAXIMUM:
-                gain_ch = 'X';
-                break;
-            }
-
             switch (light_mode) {
             case 0:
                 sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
@@ -991,21 +974,26 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         if (sensor_get_next_reading(&reading, 1000) == osOK) {
             bool is_detect = keypad_is_detect();
             if (display_mode) {
-                sensor_convert_to_basic_counts(&reading, &ch0_basic, &ch1_basic);
+                const float basic_result = sensor_basic_result(&reading);
                 sprintf_(buf,
-                    "CH0=%.5f\n"
-                    "CH1=%.5f\n"
-                    "[%c][%d][%c][%c]",
-                    ch0_basic, ch1_basic,
-                    gain_ch, tsl2591_get_time_value_ms(time), light_ch,
+                    "%.5f\n"
+                    "\n"
+                    "[%X][%d][%c][%c]",
+                    basic_result,
+                    reading.gain,
+                    tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
+                    light_ch,
                     (is_detect ? '*' : ' '));
             } else {
+                const uint32_t scaled_result = sensor_scaled_result(&reading);
                 sprintf(buf,
-                    "CH0=%5d\n"
-                    "CH1=%5d\n"
-                    "[%c][%d][%c][%c]",
-                    reading.ch0_val, reading.ch1_val,
-                    gain_ch, tsl2591_get_time_value_ms(time), light_ch,
+                    "%d\n"
+                    "\n"
+                    "[%X][%d][%c][%c]",
+                    scaled_result,
+                    reading.gain,
+                    tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
+                    light_ch,
                     (is_detect ? '*' : ' '));
             }
             display_static_list("Diagnostics", buf);

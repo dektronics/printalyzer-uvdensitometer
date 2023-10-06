@@ -9,7 +9,8 @@
 #include <cmsis_os.h>
 
 #include "stm32l0xx_hal.h"
-#include "tsl2591.h"
+#include "tsl2591.h" //XXX
+#include "tsl2585.h"
 #include "sensor.h"
 
 /**
@@ -35,16 +36,22 @@ osStatus_t sensor_start();
 osStatus_t sensor_stop();
 
 /**
- * Set the sensor configuration.
- * If called with the sensor enabled, any pending or future sensor readings
- * will be discarded until the change takes effect.
- * If called with the sensor disabled, the change will take effect as part
- * of the next time the sensor is enabled.
+ * FIXME Remove all uses of this function
+ */
+osStatus_t sensor_set_config_old(tsl2591_gain_t gain, tsl2591_time_t time);
+
+/**
+ * Set the sensor's gain and integration time
+ *
+ * The sample time and count are combined to form the integration time,
+ * according to the following formula:
+ * TIME(μs) = (sample_count + 1) * (sample_time + 1) * 1.388889μs
  *
  * @param gain Sensor ADC gain
- * @param time Sensor ADC integration time
+ * @param sample_time Duration of each sample in an integration cycle
+ * @param sample_count Number of samples in an integration cycle
  */
-osStatus_t sensor_set_config(tsl2591_gain_t gain, tsl2591_time_t time);
+osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t sample_count);
 
 /**
  * Change the state of the sensor read light sources.
@@ -59,6 +66,11 @@ osStatus_t sensor_set_config(tsl2591_gain_t gain, tsl2591_time_t time);
  * @param value Value to set when making the change
  */
 osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t value);
+
+/**
+ * FIXME Remove all uses of this function
+ */
+osStatus_t sensor_get_next_reading_old(sensor_reading_old_t *reading, uint32_t timeout);
 
 /**
  * Get the next reading from the sensor.

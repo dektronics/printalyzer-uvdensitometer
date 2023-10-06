@@ -83,7 +83,7 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
 
     do {
         /* Put the sensor into a known initial state */
-        ret = sensor_set_config(TSL2591_GAIN_MAXIMUM, TSL2591_TIME_100MS);
+        ret = sensor_set_config_old(TSL2591_GAIN_MAXIMUM, TSL2591_TIME_100MS);
         if (ret != osOK) { break; }
         ret = sensor_start();
         if (ret != osOK) { break; }
@@ -242,7 +242,7 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
 osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_calibration_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
-    sensor_reading_t reading;
+    sensor_reading_old_t reading;
     uint32_t ticks_start;
 
     /*
@@ -280,13 +280,13 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
         osDelay(1000);
 
         /* Start the sensor */
-        ret = sensor_set_config(TSL2591_GAIN_HIGH, TSL2591_TIME_200MS);
+        ret = sensor_set_config_old(TSL2591_GAIN_HIGH, TSL2591_TIME_200MS);
         if (ret != osOK) { break; }
         ret = sensor_start();
         if (ret != osOK) { break; }
 
         /* Swallow the first reading */
-        ret = sensor_get_next_reading(&reading, 2000);
+        ret = sensor_get_next_reading_old(&reading, 2000);
         if (ret != osOK) { break; }
 
         /* Set LED to full brightness at the next cycle */
@@ -294,7 +294,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
         if (ret != osOK) { break; }
 
         /* Wait for another cycle which will trigger the LED on */
-        ret = sensor_get_next_reading(&reading, 2000);
+        ret = sensor_get_next_reading_old(&reading, 2000);
         if (ret != osOK) { break; }
 
         ticks_start = reading.reading_ticks;
@@ -306,7 +306,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
         /* Iterate over 2 minutes of readings and accumulate regression data */
         log_d("Starting read loop");
         for (int i = 0; i < LIGHT_CAL_ITERATIONS; i++) {
-            ret = sensor_get_next_reading(&reading, 1000);
+            ret = sensor_get_next_reading_old(&reading, 1000);
             if (ret != osOK) { break; }
 
             double x = log((double)(reading.reading_ticks - ticks_start));
@@ -379,7 +379,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
 {
     osStatus_t ret = osOK;
     uint8_t light_value = 0;
-    sensor_reading_t reading;
+    sensor_reading_old_t reading;
     tsl2591_gain_t target_read_gain;
     float ch0_sum = 0;
     float ch1_sum = 0;
@@ -398,7 +398,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
 
     do {
         /* Put the sensor and light into a known initial state, with maximum gain */
-        ret = sensor_set_config(TSL2591_GAIN_MAXIMUM, TSL2591_TIME_100MS);
+        ret = sensor_set_config_old(TSL2591_GAIN_MAXIMUM, TSL2591_TIME_100MS);
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
@@ -410,7 +410,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         /* Do initial read to detect gain */
-        ret = sensor_get_next_reading(&reading, 1000);
+        ret = sensor_get_next_reading_old(&reading, 1000);
         if (ret != osOK) { break; }
         log_v("TSL2591[%d]: CH0=%d, CH1=%d", reading.reading_count, reading.ch0_val, reading.ch1_val);
 
@@ -433,7 +433,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         }
 
         /* Switch to the target read gain and integration time */
-        ret = sensor_set_config(target_read_gain, TSL2591_TIME_200MS);
+        ret = sensor_set_config_old(target_read_gain, TSL2591_TIME_200MS);
         if (ret != osOK) { break; }
 
         /* Take the actual target measurement readings */
@@ -441,7 +441,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
             float ch0_basic = 0;
             float ch1_basic = 0;
 
-            ret = sensor_get_next_reading(&reading, 500);
+            ret = sensor_get_next_reading_old(&reading, 500);
             if (ret != osOK) { break; }
             log_v("TSL2591[%d]: CH0=%d, CH1=%d", reading.reading_count, reading.ch0_val, reading.ch1_val);
 
@@ -495,7 +495,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
 {
     osStatus_t ret = osOK;
     uint8_t light_value = 0;
-    sensor_reading_t reading;
+    sensor_reading_old_t reading;
     float ch0_sum = 0;
     float ch1_sum = 0;
     float ch0_avg = NAN;
@@ -520,7 +520,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
 
     do {
         /* Put the sensor into the configured state */
-        ret = sensor_set_config(gain, time);
+        ret = sensor_set_config_old(gain, time);
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
@@ -533,7 +533,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
 
         /* Take the target measurement readings */
         for (int i = 0; i < SENSOR_TARGET_READ_ITERATIONS; i++) {
-            ret = sensor_get_next_reading(&reading, 2000);
+            ret = sensor_get_next_reading_old(&reading, 2000);
             if (ret != osOK) { break; }
             log_v("TSL2591[%d]: CH0=%d, CH1=%d", reading.reading_count, reading.ch0_val, reading.ch1_val);
 
@@ -598,7 +598,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
 osStatus_t sensor_raw_read_loop(uint8_t count, float *ch0_avg, float *ch1_avg)
 {
     osStatus_t ret = osOK;
-    sensor_reading_t reading;
+    sensor_reading_old_t reading;
     float ch0_sum = 0;
     float ch1_sum = 0;
     bool saturation = false;
@@ -610,7 +610,7 @@ osStatus_t sensor_raw_read_loop(uint8_t count, float *ch0_avg, float *ch1_avg)
     /* Loop over measurements */
     for (uint8_t i = 0; i < count; i++) {
         /* Wait for the next reading */
-        ret = sensor_get_next_reading(&reading, 2000);
+        ret = sensor_get_next_reading_old(&reading, 2000);
         if (ret != osOK) {
             log_e("sensor_get_next_reading error: %d", ret);
             break;
@@ -659,7 +659,7 @@ osStatus_t sensor_gain_calibration_loop(
     sensor_gain_calibration_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
-    sensor_reading_t discard_reading;
+    sensor_reading_old_t discard_reading;
     float ch0_avg_high;
     float ch1_avg_high;
     float ch0_avg_low;
@@ -673,18 +673,18 @@ osStatus_t sensor_gain_calibration_loop(
         if (!gain_status_callback(callback, callback_status, 0, user_data)) { ret = osError; break; }
 
         /* Setup for high gain measurement */
-        ret = sensor_set_config(gain_high, time);
+        ret = sensor_set_config_old(gain_high, time);
         if (ret != osOK) { break; }
 
         /* Wait for the first reading at the new settings to come through */
-        ret = sensor_get_next_reading(&discard_reading, 2000);
+        ret = sensor_get_next_reading_old(&discard_reading, 2000);
         if (ret != osOK) { break; }
 
         /* Set the LED to target brightness on the next cycle */
         sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, led_brightness);
 
         /* Wait for the next cycle which will turn the LED on */
-        ret = sensor_get_next_reading(&discard_reading, 2000);
+        ret = sensor_get_next_reading_old(&discard_reading, 2000);
         if (ret != osOK) { break; }
 
         /* Do the high gain read loop */
@@ -704,18 +704,18 @@ osStatus_t sensor_gain_calibration_loop(
         if (!gain_status_callback(callback, callback_status, 1, user_data)) { ret = osError; break; }
 
         /* Setup for low gain measurement */
-        ret = sensor_set_config(gain_low, time);
+        ret = sensor_set_config_old(gain_low, time);
         if (ret != osOK) { break; }
 
         /* Wait for the first reading at the new settings to come through */
-        ret = sensor_get_next_reading(&discard_reading, 2000);
+        ret = sensor_get_next_reading_old(&discard_reading, 2000);
         if (ret != osOK) { break; }
 
         /* Set the LED to target brightness on the next cycle */
         sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, led_brightness);
 
         /* Wait for the next cycle which will turn the LED on */
-        ret = sensor_get_next_reading(&discard_reading, 2000);
+        ret = sensor_get_next_reading_old(&discard_reading, 2000);
         if (ret != osOK) { break; }
 
         /* Do the low gain read loop */
@@ -793,7 +793,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
 {
     osStatus_t ret = osOK;
     bool count_upward;
-    sensor_reading_t discard_reading;
+    sensor_reading_old_t discard_reading;
     float target_ch0;
     float ch0_avg;
     float closest_ch0 = NAN;
@@ -825,11 +825,11 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
 
     do {
         /* Setup for sensor configuration */
-        ret = sensor_set_config(gain, time);
+        ret = sensor_set_config_old(gain, time);
         if (ret != osOK) { break; }
 
         /* Wait for the first reading at the new settings to come through */
-        ret = sensor_get_next_reading(&discard_reading, 2000);
+        ret = sensor_get_next_reading_old(&discard_reading, 2000);
         if (ret != osOK) { break; }
 
         if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, start_brightness, user_data)) { return osError; }
@@ -842,11 +842,11 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
             sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, i);
 
             /* Wait for the next cycle which will turn the LED on */
-            ret = sensor_get_next_reading(&discard_reading, 2000);
+            ret = sensor_get_next_reading_old(&discard_reading, 2000);
             if (ret != osOK) { break; }
 
             /* Wait for the next cycle which will turn the LED on */
-            ret = sensor_get_next_reading(&discard_reading, 2000);
+            ret = sensor_get_next_reading_old(&discard_reading, 2000);
             if (ret != osOK) { break; }
 
             ret = sensor_raw_read_loop(SENSOR_GAIN_LED_CHECK_READ_ITERATIONS, &ch0_avg, NULL);
@@ -903,7 +903,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
     return ret;
 }
 
-bool sensor_is_reading_saturated(const sensor_reading_t *reading)
+bool sensor_is_reading_saturated(const sensor_reading_old_t *reading)
 {
     if (!reading) {
         return false;
@@ -922,7 +922,7 @@ bool sensor_is_reading_saturated(const sensor_reading_t *reading)
     }
 }
 
-void sensor_convert_to_basic_counts(const sensor_reading_t *reading, float *ch0_basic, float *ch1_basic)
+void sensor_convert_to_basic_counts(const sensor_reading_old_t *reading, float *ch0_basic, float *ch1_basic)
 {
     settings_cal_gain_t cal_gain;
     float ch0_gain;
@@ -954,6 +954,25 @@ void sensor_convert_to_basic_counts(const sensor_reading_t *reading, float *ch0_
     if (ch1_basic) {
         *ch1_basic = (float)reading->ch1_val / ch1_cpl;
     }
+}
+
+uint32_t sensor_scaled_result(const sensor_reading_t *reading)
+{
+    if (!reading) { return 0; }
+    return (uint32_t)reading->raw_result * (uint32_t)reading->scale;
+}
+
+float sensor_basic_result(const sensor_reading_t *reading)
+{
+    if (!reading) { return NAN; }
+
+    const uint32_t scaled_value = sensor_scaled_result(reading);
+    const float atime = tsl2585_integration_time_ms(reading->sample_time, reading->sample_count);
+    const float gain_val = tsl2585_gain_value(reading->gain);
+
+    if (!is_valid_number(atime) || !is_valid_number(gain_val)) { return NAN; }
+
+    return (float)scaled_value / (atime * gain_val);
 }
 
 float sensor_apply_slope_calibration(float basic_reading)

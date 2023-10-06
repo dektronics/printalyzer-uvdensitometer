@@ -37,7 +37,7 @@ void cdc_send_density_reading(char prefix, float d_value, float d_zero, float ra
  *
  * @param reading Raw sensor reading data
  */
-void cdc_send_raw_sensor_reading(const sensor_reading_t *reading);
+void cdc_send_raw_sensor_reading(const sensor_reading_old_t *reading);
 
 /**
  * Send a message indicating the remote control state being changed

@@ -10,7 +10,8 @@
 
 #include "stm32l0xx_hal.h"
 #include "settings.h"
-#include "tsl2591.h"
+#include "tsl2591.h" //XXX
+#include "tsl2585.h"
 #include "sensor.h"
 #include "light.h"
 #include "util.h"
@@ -28,8 +29,9 @@ typedef enum {
 } sensor_control_event_type_t;
 
 typedef struct {
-    tsl2591_gain_t gain;
-    tsl2591_time_t time;
+    tsl2585_gain_t gain;
+    uint16_t sample_time;
+    uint16_t sample_count;
 } sensor_control_config_params_t;
 
 typedef struct {
@@ -57,6 +59,24 @@ typedef struct {
     };
 } sensor_control_event_t;
 
+/**
+ * Configuration state for the TSL2585 light sensor
+ */
+typedef struct {
+    bool running;
+    tsl2585_gain_t gain;
+    uint16_t sample_time;
+    uint16_t sample_count;
+    uint8_t calibration_iteration;
+    bool agc_enabled;
+    uint16_t agc_sample_count;
+    bool config_pending;
+    bool agc_pending;
+    bool sai_active;
+    bool agc_disabled_reset_gain;
+    bool discard_next_reading;
+} tsl2585_state_t;
+
 /* Global I2C handle for the sensor */
 extern I2C_HandleTypeDef hi2c1;
 
@@ -66,10 +86,8 @@ static volatile uint32_t light_change_ticks = 0;
 static volatile uint32_t reading_count = 0;
 
 /* Sensor task state variables */
-static bool sensor_running = false;
-static tsl2591_gain_t sensor_gain = TSL2591_GAIN_LOW;
-static tsl2591_time_t sensor_time = TSL2591_TIME_100MS;
-static bool sensor_discard_next_reading = false;
+static tsl2585_state_t sensor_state = {0};
+static uint32_t last_aint_ticks = 0;
 
 /* Queue for low level sensor control events */
 static osMessageQueueId_t sensor_control_queue = NULL;
@@ -95,6 +113,7 @@ static osStatus_t sensor_control_stop();
 static osStatus_t sensor_control_set_config(const sensor_control_config_params_t *params);
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
+static HAL_StatusTypeDef sensor_control_read_als(sensor_reading_t *reading);
 
 void task_sensor_run(void *argument)
 {
@@ -125,7 +144,11 @@ void task_sensor_run(void *argument)
         return;
     }
 
-    ret = tsl2591_init(&hi2c1);
+    /*
+     * Do a basic initialization of the sensor, which verifies that
+     * the sensor is functional and responding to commands.
+     */
+    ret = tsl2585_init(&hi2c1);
     if (ret != HAL_OK) {
         log_e("Sensor initialization failed");
         sensor_initialized = false;
@@ -202,38 +225,95 @@ osStatus_t sensor_control_start()
     log_d("sensor_control_start");
 
     do {
+        sensor_state.running = false;
+
+        /* Query the initial state of the sensor */
+        if (!sensor_state.config_pending) {
+            ret = tsl2585_get_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, &sensor_state.gain);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_get_sample_time(&hi2c1, &sensor_state.sample_time);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_get_als_num_samples(&hi2c1, &sensor_state.sample_count);
+            if (ret != HAL_OK) { break; }
+        }
+
+        if (!sensor_state.agc_pending) {
+            ret = tsl2585_get_agc_num_samples(&hi2c1, &sensor_state.agc_sample_count);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_get_calibration_nth_iteration(&hi2c1, &sensor_state.calibration_iteration);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_get_agc_calibration(&hi2c1, &sensor_state.agc_enabled);
+            if (ret != HAL_OK) { break; }
+        }
+
         /* Put the sensor into a known initial state */
-        ret = tsl2591_set_enable(&hi2c1, 0x00);
+        ret = tsl2585_enable_modulators(&hi2c1, TSL2585_MOD0);
         if (ret != HAL_OK) { break; }
 
-        sensor_running = false;
-
-        /* Clear any pending interrupt flags */
-        tsl2591_clear_als_int(&hi2c1);
+        ret = tsl2585_set_max_mod_gain(&hi2c1, TSL2585_GAIN_4096X);
         if (ret != HAL_OK) { break; }
 
-        /* Power on the sensor */
-        ret = tsl2591_set_enable(&hi2c1, TSL2591_ENABLE_PON);
-        if (ret != HAL_OK) { break; }
+        /* Apply any startup settings */
+        if (sensor_state.config_pending) {
+            ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain);
+            if (ret != HAL_OK) { break; }
 
-        /* Set the maximum gain and minimum integration time */
-        ret = tsl2591_set_config(&hi2c1, sensor_gain, sensor_time);
-        if (ret != HAL_OK) { break; }
+            ret = tsl2585_set_sample_time(&hi2c1, sensor_state.sample_time);
+            if (ret != HAL_OK) { break; }
 
-        /* Interrupt after every integration cycle */
-        ret = tsl2591_set_persist(&hi2c1, TSL2591_PERSIST_EVERY);
-        if (ret != HAL_OK) { break; }
+            ret = tsl2585_set_als_num_samples(&hi2c1, sensor_state.sample_count);
+            if (ret != HAL_OK) { break; }
+
+            sensor_state.config_pending = false;
+        }
+
+        if (sensor_state.agc_pending) {
+            ret = tsl2585_set_agc_num_samples(&hi2c1, sensor_state.agc_sample_count);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_set_calibration_nth_iteration(&hi2c1, sensor_state.calibration_iteration);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_set_agc_calibration(&hi2c1, sensor_state.agc_enabled);
+            if (ret != HAL_OK) { break; }
+
+            sensor_state.agc_pending = false;
+        }
+
+        /* Log initial state */
+        const float als_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count);
+        const float agc_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.agc_sample_count);
+        log_d("TSL2585 Initial State: Gain=%s, ALS_ATIME=%.2fms, AGC_ATIME=%.2fms",
+            tsl2585_gain_str(sensor_state.gain), als_atime, agc_atime);
 
         /* Clear out any old sensor readings */
         osMessageQueueReset(sensor_reading_queue);
         reading_count = 0;
 
-        /* Enable ALS with interrupts */
-        ret = tsl2591_set_enable(&hi2c1, TSL2591_ENABLE_PON | TSL2591_ENABLE_AEN | TSL2591_ENABLE_AIEN);
-        if (ret != HAL_OK) { break; }
+        /* Configure to interrupt on every ALS cycle */
+        ret = tsl2585_set_als_interrupt_persistence(&hi2c1, 0);
+        if (ret != HAL_OK) {
+            break;
+        }
 
-        sensor_discard_next_reading = true;
-        sensor_running = true;
+        /* Enable sensor ALS interrupts */
+        ret = tsl2585_set_interrupt_enable(&hi2c1, TSL2585_INTENAB_AIEN);
+        if (ret != HAL_OK) {
+            break;
+        }
+
+        /* Enable the sensor (ALS Enable and Power ON) */
+        ret = tsl2585_enable(&hi2c1);
+        if (ret != HAL_OK) {
+            break;
+        }
+
+        sensor_state.discard_next_reading = true;
+        sensor_state.running = true;
     } while (0);
 
     return hal_to_os_status(ret);
@@ -259,15 +339,22 @@ osStatus_t sensor_control_stop()
     log_d("sensor_control_stop");
 
     do {
-        ret = tsl2591_set_enable(&hi2c1, 0x00);
+        ret = tsl2585_disable(&hi2c1);
         if (ret != HAL_OK) { break; }
-        sensor_running = false;
+        sensor_state.running = false;
     } while (0);
 
     return hal_to_os_status(ret);
 }
 
-osStatus_t sensor_set_config(tsl2591_gain_t gain, tsl2591_time_t time)
+osStatus_t sensor_set_config_old(tsl2591_gain_t gain, tsl2591_time_t time)
+{
+    //FIXME Remove this function
+    log_w("Deprecated sensor_set_config");
+    return osOK;
+}
+
+osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t sample_count)
 {
     if (!sensor_initialized) { return osErrorResource; }
 
@@ -277,7 +364,8 @@ osStatus_t sensor_set_config(tsl2591_gain_t gain, tsl2591_time_t time)
         .result = &result,
         .config = {
             .gain = gain,
-            .time = time
+            .sample_time = sample_time,
+            .sample_count = sample_count
         }
     };
     osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
@@ -288,19 +376,31 @@ osStatus_t sensor_set_config(tsl2591_gain_t gain, tsl2591_time_t time)
 osStatus_t sensor_control_set_config(const sensor_control_config_params_t *params)
 {
     HAL_StatusTypeDef ret = HAL_OK;
-    log_d("sensor_control_set_config: %d, %d", params->gain, params->time);
+    log_d("meter_probe_control_sensor_set_config: %d, %d, %d", params->gain, params->sample_time, params->sample_count);
 
-    if (sensor_running) {
-        ret = tsl2591_set_config(&hi2c1, params->gain, params->time);
+    if (sensor_state.running) {
+        ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, params->gain);
         if (ret == HAL_OK) {
-            sensor_gain = params->gain;
-            sensor_time = params->time;
-            sensor_discard_next_reading = true;
-            osMessageQueueReset(sensor_reading_queue);
+            sensor_state.gain = params->gain;
         }
+
+        ret = tsl2585_set_sample_time(&hi2c1, params->sample_time);
+        if (ret == HAL_OK) {
+            sensor_state.sample_time = params->sample_time;
+        }
+
+        ret = tsl2585_set_als_num_samples(&hi2c1, params->sample_count);
+        if (ret == HAL_OK) {
+            sensor_state.sample_count = params->sample_count;
+        }
+
+        sensor_state.discard_next_reading = true;
+        osMessageQueueReset(sensor_reading_queue);
     } else {
-        sensor_gain = params->gain;
-        sensor_time = params->time;
+        sensor_state.gain = params->gain;
+        sensor_state.sample_time = params->sample_time;
+        sensor_state.sample_count = params->sample_count;
+        sensor_state.config_pending = true;
     }
 
     return hal_to_os_status(ret);
@@ -376,6 +476,13 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
     return osOK;
 }
 
+osStatus_t sensor_get_next_reading_old(sensor_reading_old_t *reading, uint32_t timeout)
+{
+    //FIXME Remove this function
+    log_w("Deprecated sensor_set_config");
+    return osOK;
+}
+
 osStatus_t sensor_get_next_reading(sensor_reading_t *reading, uint32_t timeout)
 {
     if (!sensor_initialized) { return osErrorResource; }
@@ -419,58 +526,157 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     HAL_StatusTypeDef ret = HAL_OK;
     uint8_t status = 0;
     sensor_reading_t reading = {0};
-    bool has_channel_data = false;
+    bool has_reading = false;
 
     //log_d("sensor_control_interrupt");
 
-    if (!sensor_running) {
+    if (!sensor_state.running) {
         log_w("Unexpected sensor interrupt!");
     }
 
     do {
-        /* Get the status register */
-        ret = tsl2591_get_status(&hi2c1, &status);
+        /* Get the interrupt status */
+        ret = tsl2585_get_status(&hi2c1, &status);
         if (ret != HAL_OK) { break; }
 
-        /* Make sure we actually triggered the ALS interrupt */
-        if ((status & TSL2591_STATUS_AINT) == 0) {
-            break;
+#if 0
+        /* Log interrupt flags */
+        log_d("MINT=%d, AINT=%d, FINT=%d, SINT=%d",
+            (status & TSL2585_STATUS_MINT) != 0,
+            (status & TSL2585_STATUS_AINT) != 0,
+            (status & TSL2585_STATUS_FINT) != 0,
+            (status & TSL2585_STATUS_SINT) != 0);
+#endif
+
+        if ((status & TSL2585_STATUS_AINT) != 0) {
+            uint32_t elapsed_ticks = params->sensor_ticks - last_aint_ticks;
+            last_aint_ticks = params->sensor_ticks;
+
+            uint8_t status2 = 0;
+            ret = tsl2585_get_status2(&hi2c1, &status2);
+            if (ret != HAL_OK) { break; }
+
+#if 0
+            log_d("STATUS2=0x%02X", status2);
+#endif
+
+            if ((status2 & TSL2585_STATUS2_ALS_DATA_VALID) != 0) {
+                if ((status2 & TSL2585_STATUS2_MOD_ANALOG_SATURATION0) != 0) {
+                    log_d("TSL2585: [analog saturation]");
+                    reading.raw_result = UINT16_MAX;
+                    reading.result_status = SENSOR_RESULT_SATURATED_ANALOG;
+
+                } else if ((status2 & TSL2585_STATUS2_ALS_DIGITAL_SATURATION) != 0) {
+                    log_d("TSL2585: [digital saturation]");
+                    reading.raw_result = UINT16_MAX;
+                    reading.result_status = SENSOR_RESULT_SATURATED_DIGITAL;
+                } else {
+                    /* Get the sensor reading */
+                    ret = sensor_control_read_als(&reading);
+                    if (ret != HAL_OK) { break; }
+                }
+
+                /* If AGC is enabled, then update the configured gain value */
+                if (sensor_state.agc_enabled) {
+                    ret = tsl2585_get_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, &sensor_state.gain);
+                    if (ret != HAL_OK) { break; }
+                }
+
+                if (!sensor_state.discard_next_reading) {
+                    /* Fill out other reading fields */
+                    reading.gain = sensor_state.gain;
+                    reading.sample_time = sensor_state.sample_time;
+                    reading.sample_count = sensor_state.sample_count;
+                    reading.reading_ticks = params->sensor_ticks;
+                    reading.elapsed_ticks = elapsed_ticks;
+                    reading.light_ticks = params->light_ticks;
+                    reading.reading_count = params->reading_count;
+
+                    has_reading = true;
+                } else {
+                    sensor_state.discard_next_reading = false;
+                }
+
+                /*
+                 * If AGC was just disabled, then reset the gain to its last
+                 * known value and ignore the reading. This is necessary because
+                 * disabling AGC on its own seems to reset the gain to a low
+                 * default, and attempting to set it immediately after setting
+                 * the registers to disable AGC does not seem to take.
+                 */
+                if (sensor_state.agc_disabled_reset_gain) {
+                    ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain);
+                    if (ret != HAL_OK) { break; }
+                    sensor_state.agc_disabled_reset_gain = false;
+                    sensor_state.discard_next_reading = true;
+                }
+            }
         }
 
-        /* Clear the ALS interrupt */
-        ret = tsl2591_clear_als_int(&hi2c1);
+        /* Clear the interrupt status */
+        ret = tsl2585_set_status(&hi2c1, status);
         if (ret != HAL_OK) { break; }
-
-        if (sensor_discard_next_reading) {
-            sensor_discard_next_reading = false;
-            break;
-        }
-
-        /* Read full channel data */
-        ret = tsl2591_get_full_channel_data(&hi2c1, &reading.ch0_val, &reading.ch1_val);
-        if (ret != HAL_OK) { break; }
-
-        /* Fill out other reading fields */
-        reading.gain = sensor_gain;
-        reading.time = sensor_time;
-        reading.reading_ticks = params->sensor_ticks;
-        reading.light_ticks = params->light_ticks;
-        reading.reading_count = params->reading_count;
-
-        has_channel_data = true;
     } while (0);
 
-    if (has_channel_data) {
-        log_d("TSL2591[%d]: CH0=%d, CH1=%d, Gain=[%d], Time=%dms",
-            reading.reading_count,
-            reading.ch0_val, reading.ch1_val,
-            sensor_gain, tsl2591_get_time_value_ms(sensor_time));
-
-        cdc_send_raw_sensor_reading(&reading);
+    if (has_reading) {
+        //FIXME cdc_send_raw_sensor_reading(&reading);
 
         QueueHandle_t queue = (QueueHandle_t)sensor_reading_queue;
         xQueueOverwrite(queue, &reading);
     }
 
     return hal_to_os_status(ret);
+}
+
+HAL_StatusTypeDef sensor_control_read_als(sensor_reading_t *reading)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    uint8_t als_status = 0;
+    uint16_t als_data0 = 0;
+    uint8_t asat = 0;
+    uint8_t scale = 0;
+    uint16_t scale_value = 1;
+
+    do {
+        ret = tsl2585_get_als_status(&hi2c1, &als_status);
+        if (ret != HAL_OK) { break; }
+
+        asat = (als_status & TSL2585_ALS_DATA0_ANALOG_SATURATION_STATUS) != 0;
+
+        ret = tsl2585_get_als_data0(&hi2c1, &als_data0);
+        if (ret != HAL_OK) { break; }
+
+        ret = tsl2585_get_als_scale(&hi2c1, &scale);
+        if (ret != HAL_OK) { break; }
+
+        if ((als_status & TSL2585_ALS_DATA0_SCALED_STATUS) == 0) {
+            /* Need to scale value: 2^(ALS_SCALED) */
+            uint16_t base = 2;
+            for (;;) {
+                if (scale & 1) {
+                    scale_value *= base;
+                }
+                scale >>= 1;
+                if (!scale) { break; }
+                base *= base;
+            }
+        }
+
+        if (asat) {
+#if 0
+            log_d("TSL2585: [saturated]");
+#endif
+            reading->result_status = SENSOR_RESULT_SATURATED_ANALOG;
+        } else {
+#if 0
+            log_d("TSL2585: %d", raw_result);
+#endif
+            reading->result_status = SENSOR_RESULT_VALID;
+        }
+
+        reading->raw_result = als_data0;
+        reading->scale = scale_value;
+    } while (0);
+
+    return ret;
 }

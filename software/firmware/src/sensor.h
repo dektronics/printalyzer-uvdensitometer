@@ -9,7 +9,8 @@
 #include <cmsis_os.h>
 
 #include "stm32l0xx_hal.h"
-#include "tsl2591.h"
+#include "tsl2591.h" //XXX
+#include "tsl2585.h"
 
 /**
  * Sensor read light selection.
@@ -34,6 +35,7 @@ typedef enum {
 
 /**
  * Sensor reading data structure.
+ * FIXME This is leftover from the old sensor
  */
 typedef struct {
     uint16_t ch0_val;       /*!< CH0 light reading */
@@ -43,10 +45,29 @@ typedef struct {
     uint32_t reading_ticks; /*!< Tick time when the integration cycle finished */
     uint32_t light_ticks;   /*!< Tick time when the light state last changed */
     uint32_t reading_count; /*!< Number of integration cycles since the sensor was enabled */
+} sensor_reading_old_t;
+
+typedef enum {
+    SENSOR_RESULT_INVALID = 0,
+    SENSOR_RESULT_VALID,
+    SENSOR_RESULT_SATURATED_ANALOG,
+    SENSOR_RESULT_SATURATED_DIGITAL
+} sensor_result_t;
+
+typedef struct {
+    uint16_t raw_result;    /*!< Raw sensor reading */
+    uint16_t scale;         /*!< Scale factor for the raw result */
+    sensor_result_t result_status; /*!< Sensor result status. */
+    tsl2585_gain_t gain;    /*!< Sensor ADC gain */
+    uint16_t sample_time;   /*!< Sensor integration sample time */
+    uint16_t sample_count;  /*!< Sensor integration sample count */
+    uint32_t reading_ticks; /*!< Tick time when the integration cycle finished */
+    uint32_t elapsed_ticks; /*!< Elapsed ticks since the last sensor reading interrupt */
+    uint32_t light_ticks;   /*!< Tick time when the light state last changed */
+    uint32_t reading_count; /*!< Number of integration cycles since the sensor was enabled */
 } sensor_reading_t;
 
 typedef bool (*sensor_gain_calibration_callback_t)(sensor_gain_calibration_status_t status, int param, void *user_data);
-typedef bool (*sensor_time_calibration_callback_t)(tsl2591_time_t time, void *user_data);
 typedef void (*sensor_read_callback_t)(void *user_data);
 
 /**
@@ -122,7 +143,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
  * @param reading Reading to check
  * @return True if saturated, false otherwise
  */
-bool sensor_is_reading_saturated(const sensor_reading_t *reading);
+bool sensor_is_reading_saturated(const sensor_reading_old_t *reading);
 
 /**
  * Convert sensor readings from raw counts to basic counts.
@@ -136,7 +157,26 @@ bool sensor_is_reading_saturated(const sensor_reading_t *reading);
  * @param ch0_basic Basic count output for channel 0
  * @param ch1_basic Basic count output for channel 1
  */
-void sensor_convert_to_basic_counts(const sensor_reading_t *reading, float *ch0_basic, float *ch1_basic);
+void sensor_convert_to_basic_counts(const sensor_reading_old_t *reading, float *ch0_basic, float *ch1_basic);
+
+/**
+ * Get the raw result with the scaling factor applied.
+ *
+ * @param sensor_reading Sensor reading data
+ * @return Scaled raw result
+ */
+uint32_t sensor_scaled_result(const sensor_reading_t *reading);
+
+/**
+ * Get the result in a gain and integration time adjusted format.
+ *
+ * This is the number that should be used for all calculations based on
+ * a sensor reading, outside of specific diagnostic functions.
+ *
+ * @param sensor_reading Sensor reading data
+ * @return Basic count result value
+ */
+float sensor_basic_result(const sensor_reading_t *reading);
 
 /**
  * Apply the configured slope correction formula to a sensor reading.

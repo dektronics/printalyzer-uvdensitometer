@@ -108,7 +108,7 @@ typedef enum {
 #define TSL2585_GPIO_INT_VSYNC_GPIO_OUT    0x02 /*!< Set the VSYNC/GPIO pin HI or LOW */
 #define TSL2585_GPIO_INT_VSYNC_GPIO_IN     0x01 /*!< External HIGH or LOW value applied to the VSYNC/GPIO pin */
 
-HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c, uint8_t *sensor_id);
+HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c);
 
 HAL_StatusTypeDef tsl2585_set_enable(I2C_HandleTypeDef *hi2c, uint8_t value);
 HAL_StatusTypeDef tsl2585_enable(I2C_HandleTypeDef *hi2c);

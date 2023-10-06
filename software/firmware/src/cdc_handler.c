@@ -873,7 +873,7 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
                 tsl2591_gain_t gain_val = cmd->args[4] - '0';
                 tsl2591_time_t time_val = cmd->args[6] - '0';
                 if (gain_val <= TSL2591_GAIN_MAXIMUM && time_val <= TSL2591_TIME_600MS) {
-                    result = sensor_set_config(gain_val, time_val);
+                    result = sensor_set_config_old(gain_val, time_val);
                     if (result == osOK) {
                         cdc_send_command_response(cmd, "OK");
                     } else {
@@ -1057,7 +1057,7 @@ void cdc_send_density_reading(char prefix, float d_value, float d_zero, float ra
     }
 }
 
-void cdc_send_raw_sensor_reading(const sensor_reading_t *reading)
+void cdc_send_raw_sensor_reading(const sensor_reading_old_t *reading)
 {
     if (!cdc_remote_sensor_active || !reading) { return; }
 
