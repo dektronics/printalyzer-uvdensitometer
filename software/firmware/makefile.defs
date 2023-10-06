@@ -3,10 +3,11 @@
 #
 
 PYTHON3_OK := $(shell python3 --version 2>&1)
-ifeq ('$(PYTHON3_OK)','')
-PYTHON := python
+
+ifneq (,$(findstring Python 3,$(BAZ)))
+	PYTHON := python3
 else
-PYTHON := python3
+	PYTHON := python
 endif
 
 PERL := perl
@@ -22,4 +23,4 @@ BUILD_DESCRIBE := g$(shell git describe --always --dirty --exclude '*')
 $(info Build Time: $(BUILD_DATE))
 $(info Build Describe: $(BUILD_DESCRIBE))
 
-OBJCOPY_BIN += densitometer-out.elf densitometer-out.bin densitometer.dfu densitometer.uf2
+OBJCOPY_BIN += uvdensitometer-out.elf uvdensitometer-out.bin uvdensitometer.dfu uvdensitometer.uf2

@@ -23,6 +23,7 @@
 
 extern DMA_HandleTypeDef hdma_adc;
 extern RTC_HandleTypeDef hrtc;
+extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim6;
 
 /******************************************************************************/
@@ -167,6 +168,14 @@ void EXTI4_15_IRQHandler(void)
 void DMA1_Channel1_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(&hdma_adc);
+}
+
+/**
+ * Handles the TIM2 global interrupt.
+ */
+void TIM2_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&htim2);
 }
 
 /**

@@ -90,7 +90,10 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
  */
 void HAL_CRC_MspInit(CRC_HandleTypeDef* hcrc)
 {
-    /* Intentionally omitted per #46 */
+    if (hcrc->Instance == CRC) {
+        /* Peripheral clock enable */
+        __HAL_RCC_CRC_CLK_ENABLE();
+    }
 }
 
 /**
@@ -100,7 +103,10 @@ void HAL_CRC_MspInit(CRC_HandleTypeDef* hcrc)
  */
 void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
 {
-    /* Intentionally omitted per #46 */
+    if (hcrc->Instance == CRC) {
+        /* Peripheral clock disable */
+        __HAL_RCC_CRC_CLK_DISABLE();
+    }
 }
 
 /**
@@ -243,6 +249,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     if (htim_base->Instance == TIM2) {
         /* Peripheral clock enable */
         __HAL_RCC_TIM2_CLK_ENABLE();
+
+        /* TIM2 interrupt Init */
+        HAL_NVIC_SetPriority(TIM2_IRQn, 3, 0);
+        HAL_NVIC_EnableIRQ(TIM2_IRQn);
     }
 }
 
@@ -285,6 +295,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     if (htim_base->Instance == TIM2) {
         /* Peripheral clock disable */
         __HAL_RCC_TIM2_CLK_DISABLE();
+
+        /* TIM2 interrupt DeInit */
+        HAL_NVIC_DisableIRQ(TIM2_IRQn);
     }
 }
 

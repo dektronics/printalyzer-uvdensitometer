@@ -172,14 +172,14 @@ uint8_t const * tud_descriptor_configuration_cb(uint8_t index)
 /**
  * Array of pointer to string descriptors
  */
-char const* string_desc_arr [] =
+char const* string_desc_arr[] =
 {
-    (const char[]) { 0x09, 0x04 }, /*!< 0: Language: English (United States) (0x0409) */
-    "Dektronics",                  /*!< 1: Manufacturer */
-    "Printalyzer Densitometer",    /*!< 2: Product */
-    "123456789012",                /*!< 3: Serials, should use chip ID */
-    "CDC Interface",               /*!< 4: CDC Interface */
-    "HID Interface"                /*!< 5: HID Interface */
+    (const char[]) { 0x09, 0x04 },     /*!< 0: Language: English (United States) (0x0409) */
+    "Dektronics",                      /*!< 1: Manufacturer */
+    "Printalyzer UV/VIS Densitometer", /*!< 2: Product */
+    "123456789012",                    /*!< 3: Serials, should use chip ID */
+    "CDC Interface",                   /*!< 4: CDC Interface */
+    "HID Interface"                    /*!< 5: HID Interface */
 };
 
 static uint16_t _desc_str[32];

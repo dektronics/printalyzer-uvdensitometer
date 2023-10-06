@@ -12,6 +12,7 @@
 #include "keypad.h"
 #include "sensor.h"
 #include "display.h"
+#include "light.h"
 #include "adc_handler.h"
 #include "task_main.h"
 #include "task_sensor.h"
@@ -349,7 +350,7 @@ void tim2_init(void)
     }
 
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 64;
+    sConfigOC.Pulse = 0;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK) {
@@ -599,6 +600,17 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
     UNUSED(hadc);
     adc_completion_callback();
+}
+
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == TIM2) {
+        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+            light_int_handler(TIM_CHANNEL_1, TIM_IT_CC1);
+        } else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
+            light_int_handler(TIM_CHANNEL_2, TIM_IT_CC2);
+        }
+    }
 }
 
 /**

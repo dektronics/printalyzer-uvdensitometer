@@ -15,9 +15,11 @@
 #include "task_usbd.h"
 #include "task_sensor.h"
 #include "adc_handler.h"
+#include "mcp9808.h"
 #include "state_controller.h"
 
 extern SPI_HandleTypeDef hspi1;
+extern I2C_HandleTypeDef hi2c1;
 extern TIM_HandleTypeDef htim2;
 
 extern void system_clock_config(void);
@@ -127,12 +129,16 @@ void task_main_run(void *argument)
 
     /* Initialize the light source */
     light_init(&htim2, TIM_CHANNEL_2, TIM_CHANNEL_1);
+    osDelay(1);
 
     /* Load system settings */
     settings_init();
 
     /* Initialize the ADC handler */
     adc_handler_init();
+
+    /* Initialize the temperature sensor */
+    mcp9808_init(&hi2c1);
 
     /* Initialize the state controller */
     state_controller_init();

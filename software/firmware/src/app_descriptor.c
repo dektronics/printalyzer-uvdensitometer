@@ -2,8 +2,8 @@
 
 const __attribute__((section(".app_descriptor"))) app_descriptor_t app_descriptor = {
     .magic_word = APP_DESCRIPTOR_MAGIC_WORD,
-    .project_name = "Printalyzer Densitometer",
-    .version = "v1.1.0",
+    .project_name = "Printalyzer UV/VIS Densitometer",
+    .version = "v0.0.1",
     .build_date = APP_BUILD_DATE,
     .build_describe = APP_BUILD_DESCRIBE,
     .crc32 = 0xFFFFFFFF /* This is overwritten by the build process */

@@ -18,10 +18,16 @@ typedef void (*display_draw_segment_func)(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint
 static void display_draw_digit_impl(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, uint8_t digit,
     display_draw_segment_func draw_func);
 static void display_draw_msegment(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, display_seg_t segments);
+static void display_draw_ssegment(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, display_seg_t segments);
 
 void display_draw_mdigit(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, uint8_t digit)
 {
     display_draw_digit_impl(u8g2, x, y, digit, display_draw_msegment);
+}
+
+void display_draw_sdigit(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, uint8_t digit)
+{
+    display_draw_digit_impl(u8g2, x, y, digit, display_draw_ssegment);
 }
 
 void display_draw_digit_impl(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, uint8_t digit,
@@ -104,5 +110,47 @@ void display_draw_msegment(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, display_s
         u8g2_DrawLine(u8g2, x + 3, y + 17, x + 14, y + 17);
         u8g2_DrawLine(u8g2, x + 2, y + 18, x + 15, y + 18);
         u8g2_DrawLine(u8g2, x + 3, y + 19, x + 14, y + 19);
+    }
+}
+
+/**
+ * Draw a segments of a digit on a 12x19 pixel grid
+ */
+void display_draw_ssegment(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, display_seg_t segments)
+{
+    if ((segments & seg_a) != 0) {
+        u8g2_DrawLine(u8g2, x + 1, y + 0, x + 10, y + 0);
+        u8g2_DrawLine(u8g2, x + 2, y + 1, x + 9,  y + 1);
+        u8g2_DrawLine(u8g2, x + 3, y + 2, x + 8,  y + 2);
+    }
+    if ((segments & seg_b) != 0) {
+        u8g2_DrawLine(u8g2, x + 9,  y + 3, x + 9,  y + 6);
+        u8g2_DrawLine(u8g2, x + 10, y + 2, x + 10, y + 7);
+        u8g2_DrawLine(u8g2, x + 11, y + 1, x + 11, y + 8);
+    }
+    if ((segments & seg_c) != 0) {
+        u8g2_DrawLine(u8g2, x + 9,  y + 12, x + 9,  y + 15);
+        u8g2_DrawLine(u8g2, x + 10, y + 11, x + 10, y + 16);
+        u8g2_DrawLine(u8g2, x + 11, y + 10, x + 11, y + 17);
+    }
+    if ((segments & seg_d) != 0) {
+        u8g2_DrawLine(u8g2, x + 3, y + 16, x + 8,  y + 16);
+        u8g2_DrawLine(u8g2, x + 2, y + 17, x + 9,  y + 17);
+        u8g2_DrawLine(u8g2, x + 1, y + 18, x + 10, y + 18);
+    }
+    if ((segments & seg_e) != 0) {
+        u8g2_DrawLine(u8g2, x + 0, y + 10, x + 0, y + 17);
+        u8g2_DrawLine(u8g2, x + 1, y + 11, x + 1, y + 16);
+        u8g2_DrawLine(u8g2, x + 2, y + 12, x + 2, y + 15);
+    }
+    if ((segments & seg_f) != 0) {
+        u8g2_DrawLine(u8g2, x + 0, y + 1, x + 0, y + 8);
+        u8g2_DrawLine(u8g2, x + 1, y + 2, x + 1, y + 7);
+        u8g2_DrawLine(u8g2, x + 2, y + 3, x + 2, y + 6);
+    }
+    if ((segments & seg_g) != 0) {
+        u8g2_DrawLine(u8g2, x + 2, y + 8,  x + 9,  y + 8);
+        u8g2_DrawLine(u8g2, x + 1, y + 9,  x + 10, y + 9);
+        u8g2_DrawLine(u8g2, x + 2, y + 10, x + 9,  y + 10);
     }
 }
