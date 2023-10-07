@@ -21,8 +21,19 @@ typedef enum {
 typedef enum {
     TSL2585_STEP0 = 0,
     TSL2585_STEP1,
-    TSL2585_STEP2
+    TSL2585_STEP2,
+    TSL2585_STEP3
 } tsl2585_step_t;
+
+typedef enum {
+    TSL2585_PHD_0 = 0, /*!< IR */
+    TSL2585_PHD_1,     /*!< Photopic */
+    TSL2585_PHD_2,     /*!< IR */
+    TSL2585_PHD_3,     /*!< UV-A */
+    TSL2585_PHD_4,     /*!< UV-A */
+    TSL2585_PHD_5,     /*!< Photopic */
+    TSL2585_PHD_MAX
+} tsl2585_photodiode_t;
 
 typedef enum {
     TSL2585_GAIN_0_5X  = 0,
@@ -135,6 +146,9 @@ HAL_StatusTypeDef tsl2585_set_max_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_gain
 
 HAL_StatusTypeDef tsl2585_get_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t step, tsl2585_gain_t *gain);
 HAL_StatusTypeDef tsl2585_set_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t step, tsl2585_gain_t gain);
+
+HAL_StatusTypeDef tsl2585_set_mod_photodiode_smux(I2C_HandleTypeDef *hi2c,
+    tsl2585_step_t step, const tsl2585_modulator_t phd_mod[static TSL2585_PHD_MAX]);
 
 HAL_StatusTypeDef tsl2585_get_calibration_nth_iteration(I2C_HandleTypeDef *hi2c, uint8_t *iteration);
 HAL_StatusTypeDef tsl2585_set_calibration_nth_iteration(I2C_HandleTypeDef *hi2c, uint8_t iteration);

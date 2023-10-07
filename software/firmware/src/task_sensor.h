@@ -41,6 +41,16 @@ osStatus_t sensor_stop();
 osStatus_t sensor_set_config_old(tsl2591_gain_t gain, tsl2591_time_t time);
 
 /**
+ * Set the sensor's spectrum measurement mode
+ *
+ * This configures the photodiodes on the sensor to determine which
+ * elements will contribute to the output.
+ *
+ * @param mode Sensor spectrum selection
+ */
+osStatus_t sensor_set_mode(sensor_mode_t mode);
+
+/**
  * Set the sensor's gain and integration time
  *
  * The sample time and count are combined to form the integration time,

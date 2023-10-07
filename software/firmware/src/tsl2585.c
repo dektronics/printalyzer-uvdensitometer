@@ -368,6 +368,9 @@ bool tsl2686_get_gain_register(tsl2585_modulator_t mod, tsl2585_step_t step, uin
         } else if (step == TSL2585_STEP2) {
             *reg = TSL2585_MEAS_SEQR_STEP2_MOD_GAINX_L;
             *upper = false;
+        } else if (step == TSL2585_STEP3) {
+            *reg = TSL2585_MEAS_SEQR_STEP3_MOD_GAINX_L;
+            *upper = false;
         }
     } else if (mod == TSL2585_MOD1) {
         if (step == TSL2585_STEP0) {
@@ -379,6 +382,9 @@ bool tsl2686_get_gain_register(tsl2585_modulator_t mod, tsl2585_step_t step, uin
         } else if (step == TSL2585_STEP2) {
             *reg = TSL2585_MEAS_SEQR_STEP2_MOD_GAINX_L;
             *upper = true;
+        } else if (step == TSL2585_STEP3) {
+            *reg = TSL2585_MEAS_SEQR_STEP3_MOD_GAINX_L;
+            *upper = true;
         }
     } else if (mod == TSL2585_MOD2) {
         if (step == TSL2585_STEP0) {
@@ -389,6 +395,9 @@ bool tsl2686_get_gain_register(tsl2585_modulator_t mod, tsl2585_step_t step, uin
             *upper = false;
         } else if (step == TSL2585_STEP2) {
             *reg = TSL2585_MEAS_SEQR_STEP2_MOD_GAINX_H;
+            *upper = false;
+        } else if (step == TSL2585_STEP3) {
+            *reg = TSL2585_MEAS_SEQR_STEP3_MOD_GAINX_H;
             *upper = false;
         }
     }
@@ -445,6 +454,75 @@ HAL_StatusTypeDef tsl2585_set_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulato
     }
 
     ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+}
+
+HAL_StatusTypeDef tsl2585_set_mod_photodiode_smux(I2C_HandleTypeDef *hi2c,
+    tsl2585_step_t step, const tsl2585_modulator_t phd_mod[static TSL2585_PHD_MAX])
+{
+    HAL_StatusTypeDef ret;
+    uint8_t reg;
+    uint8_t data[2];
+    uint8_t phd_mod_vals[TSL2585_PHD_MAX];
+
+    /* Select the appropriate step register */
+    switch (step) {
+    case TSL2585_STEP0:
+        reg = TSL2585_MEAS_SEQR_STEP0_MOD_PHDX_SMUX_L;
+        break;
+    case TSL2585_STEP1:
+        reg = TSL2585_MEAS_SEQR_STEP1_MOD_PHDX_SMUX_L;
+        break;
+    case TSL2585_STEP2:
+        reg = TSL2585_MEAS_SEQR_STEP2_MOD_PHDX_SMUX_L;
+        break;
+    case TSL2585_STEP3:
+        reg = TSL2585_MEAS_SEQR_STEP3_MOD_PHDX_SMUX_L;
+        break;
+    default:
+        return HAL_ERROR;
+    }
+
+    /* Convert the input array to the right series of 2-bit values */
+    for (uint8_t i = 0; i < TSL2585_PHD_MAX; i++) {
+        switch(phd_mod[i]) {
+        case TSL2585_MOD0:
+            phd_mod_vals[i] = 0x01;
+            break;
+        case TSL2585_MOD1:
+            phd_mod_vals[i] = 0x02;
+            break;
+        case TSL2585_MOD2:
+            phd_mod_vals[i] = 0x03;
+            break;
+        default:
+            phd_mod_vals[i] = 0;
+            break;
+        }
+    }
+
+    /* Read the current value */
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, data, 2, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    /* Clear everything but the unrelated or reserved bits */
+    data[0] = 0;
+    data[1] &= 0xF0;
+
+
+    /* Apply the selected assignments */
+    data[0] |= phd_mod_vals[TSL2585_PHD_3] << 6;
+    data[0] |= phd_mod_vals[TSL2585_PHD_2] << 4;
+    data[0] |= phd_mod_vals[TSL2585_PHD_1] << 2;
+    data[0] |= phd_mod_vals[TSL2585_PHD_0];
+    data[1] |= phd_mod_vals[TSL2585_PHD_5] << 2;
+    data[1] |= phd_mod_vals[TSL2585_PHD_4];
+
+    /* Write the updated value */
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, data, 2, HAL_MAX_DELAY);
 
     return ret;
 }

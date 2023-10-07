@@ -22,6 +22,15 @@ typedef enum {
     SENSOR_LIGHT_UV_TRANSMISSION
 } sensor_light_t;
 
+/**
+ * Sensor spectrum measurement mode
+ */
+typedef enum {
+    SENSOR_MODE_DEFAULT = 0,
+    SENSOR_MODE_VIS,
+    SENSOR_MODE_UV
+} sensor_mode_t;
+
 typedef enum {
     SENSOR_GAIN_CALIBRATION_STATUS_INIT = 0,
     SENSOR_GAIN_CALIBRATION_STATUS_MEDIUM,

@@ -867,18 +867,24 @@ void main_menu_settings_usb_key(state_main_menu_t *state, state_controller_t *co
 void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t *controller)
 {
     osStatus_t ret = osOK;
+    sensor_mode_t sensor_mode = SENSOR_MODE_DEFAULT;
     tsl2585_gain_t gain = TSL2585_GAIN_128X;
     uint8_t time_index = 1;
     sensor_reading_t reading;
     uint8_t light_mode = 0;
     char light_ch = ' ';
     bool display_mode = false;
+    bool mode_changed = false;
     bool config_changed = true;
     bool settings_changed = true;
+    char modebuf[16];
     char numbuf[16];
     char buf[128];
 
     do {
+        ret = sensor_set_mode(sensor_mode);
+        if (ret != osOK) { break; }
+
         ret = sensor_set_config(gain, 719, (time_index * 100) - 1);
         if (ret != osOK) { break; }
 
@@ -923,12 +929,21 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
             }
 
             if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_DOWN) && !keypad_event.repeated) {
-                if (light_mode < 3) {
-                    light_mode++;
+                if (keypad_is_detect()) {
+                    if (sensor_mode < SENSOR_MODE_UV) {
+                        sensor_mode++;
+                    } else {
+                        sensor_mode = SENSOR_MODE_DEFAULT;
+                    }
+                    mode_changed = true;
                 } else {
-                    light_mode = 0;
+                    if (light_mode < 3) {
+                        light_mode++;
+                    } else {
+                        light_mode = 0;
+                    }
+                    settings_changed = true;
                 }
-                settings_changed = true;
             }
 
             if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_MENU)) {
@@ -936,6 +951,13 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
             } else if (keypad_event.pressed && keypad_event.key == KEYPAD_FORCE_TIMEOUT) {
                 state_controller_set_next_state(controller, STATE_HOME);
                 break;
+            }
+        }
+
+        if (mode_changed) {
+            if (sensor_set_mode(sensor_mode) == osOK) {
+                mode_changed = false;
+                settings_changed = true;
             }
         }
 
@@ -947,6 +969,21 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         }
 
         if (settings_changed) {
+            switch (sensor_mode) {
+            case SENSOR_MODE_DEFAULT:
+                sprintf_(modebuf, "Default");
+                break;
+            case SENSOR_MODE_VIS:
+                sprintf_(modebuf, "VIS");
+                break;
+            case SENSOR_MODE_UV:
+                sprintf_(modebuf, "UV");
+                break;
+            default:
+                sprintf_(modebuf, "");
+                break;
+            }
+
             switch (light_mode) {
             case 0:
                 sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
@@ -993,9 +1030,9 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
 
             sprintf(buf,
                 "%s\n"
-                "\n"
+                "%s\n"
                 "[%X][%d][%c][%c]",
-                numbuf,
+                numbuf, modebuf,
                 reading.gain,
                 (int)tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
                 light_ch,
