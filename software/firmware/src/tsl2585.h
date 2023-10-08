@@ -53,6 +53,18 @@ typedef enum {
     TSL2585_GAIN_MAX   = 14
 } tsl2585_gain_t;
 
+typedef struct {
+    bool overflow;
+    bool underflow;
+    uint16_t level;
+} tsl2585_fifo_status_t;
+
+typedef enum {
+    TSL2585_ALS_FIFO_16BIT = 0x00,
+    TSL2585_ALS_FIFO_24BIT = 0x01,
+    TSL2585_ALS_FIFO_32BIT = 0x03
+} tsl2585_als_fifo_data_format_t;
+
 /* ENABLE register values */
 #define TSL2585_ENABLE_FDEN 0x40 /*!< Flicker detection enable */
 #define TSL2585_ENABLE_AEN  0x02 /*!< ALS Enable */
@@ -242,12 +254,30 @@ HAL_StatusTypeDef tsl2585_get_als_interrupt_persistence(I2C_HandleTypeDef *hi2c,
 HAL_StatusTypeDef tsl2585_set_als_interrupt_persistence(I2C_HandleTypeDef *hi2c, uint8_t value);
 
 HAL_StatusTypeDef tsl2585_get_als_status(I2C_HandleTypeDef *hi2c, uint8_t *status);
+HAL_StatusTypeDef tsl2585_get_als_status2(I2C_HandleTypeDef *hi2c, uint8_t *status);
+HAL_StatusTypeDef tsl2585_get_als_status3(I2C_HandleTypeDef *hi2c, uint8_t *status);
+
 HAL_StatusTypeDef tsl2585_get_als_scale(I2C_HandleTypeDef *hi2c, uint8_t *scale);
+HAL_StatusTypeDef tsl2585_set_als_scale(I2C_HandleTypeDef *hi2c, uint8_t scale);
+
+HAL_StatusTypeDef tsl2585_get_fifo_als_status_write_enable(I2C_HandleTypeDef *hi2c, bool *enable);
+HAL_StatusTypeDef tsl2585_set_fifo_als_status_write_enable(I2C_HandleTypeDef *hi2c, bool enable);
+
+HAL_StatusTypeDef tsl2585_get_fifo_als_data_format(I2C_HandleTypeDef *hi2c, tsl2585_als_fifo_data_format_t *format);
+HAL_StatusTypeDef tsl2585_set_fifo_als_data_format(I2C_HandleTypeDef *hi2c, tsl2585_als_fifo_data_format_t format);
+
 HAL_StatusTypeDef tsl2585_get_als_msb_position(I2C_HandleTypeDef *hi2c, uint8_t *position);
+HAL_StatusTypeDef tsl2585_set_als_msb_position(I2C_HandleTypeDef *hi2c, uint8_t position);
 
 HAL_StatusTypeDef tsl2585_get_als_data0(I2C_HandleTypeDef *hi2c, uint16_t *data);
 HAL_StatusTypeDef tsl2585_get_als_data1(I2C_HandleTypeDef *hi2c, uint16_t *data);
 HAL_StatusTypeDef tsl2585_get_als_data2(I2C_HandleTypeDef *hi2c, uint16_t *data);
+
+HAL_StatusTypeDef tsl2585_set_fifo_data_write_enable(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, bool enable);
+
+HAL_StatusTypeDef tsl2585_get_fifo_status(I2C_HandleTypeDef *hi2c, tsl2585_fifo_status_t *status);
+
+HAL_StatusTypeDef tsl2585_read_fifo(I2C_HandleTypeDef *hi2c, uint8_t *data, uint16_t len);
 
 const char* tsl2585_gain_str(tsl2585_gain_t gain);
 float tsl2585_gain_value(tsl2585_gain_t gain);

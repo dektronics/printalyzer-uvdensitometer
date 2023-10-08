@@ -209,6 +209,18 @@ HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c)
 
     log_i("Status: %02X", data);
 
+    //XXX
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, 0xED, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) { return ret; }
+    log_d("MOD_GAIN_H: %02X", data);
+    data = (data & 0xCF) | 0x30;
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, 0xED, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) { return ret; }
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, 0xED, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) { return ret; }
+    log_d("MOD_GAIN_H: %02X", data);
+    //XXX
+
     /* Power on the sensor */
     ret = tsl2585_enable(hi2c);
     if (ret != HAL_OK) {
@@ -839,6 +851,16 @@ HAL_StatusTypeDef tsl2585_get_als_status(I2C_HandleTypeDef *hi2c, uint8_t *statu
     return HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_ALS_STATUS, I2C_MEMADD_SIZE_8BIT, status, 1, HAL_MAX_DELAY);
 }
 
+HAL_StatusTypeDef tsl2585_get_als_status2(I2C_HandleTypeDef *hi2c, uint8_t *status)
+{
+    return HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_ALS_STATUS2, I2C_MEMADD_SIZE_8BIT, status, 1, HAL_MAX_DELAY);
+}
+
+HAL_StatusTypeDef tsl2585_get_als_status3(I2C_HandleTypeDef *hi2c, uint8_t *status)
+{
+    return HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_ALS_STATUS3, I2C_MEMADD_SIZE_8BIT, status, 1, HAL_MAX_DELAY);
+}
+
 HAL_StatusTypeDef tsl2585_get_als_scale(I2C_HandleTypeDef *hi2c, uint8_t *scale)
 {
     HAL_StatusTypeDef ret;
@@ -856,6 +878,92 @@ HAL_StatusTypeDef tsl2585_get_als_scale(I2C_HandleTypeDef *hi2c, uint8_t *scale)
     return HAL_OK;
 }
 
+HAL_StatusTypeDef tsl2585_set_als_scale(I2C_HandleTypeDef *hi2c, uint8_t scale)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE0, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    data = (data & 0xF0) | (scale & 0x0F);
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE0, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+
+}
+
+HAL_StatusTypeDef tsl2585_get_fifo_als_status_write_enable(I2C_HandleTypeDef *hi2c, bool *enable)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE0, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (enable) {
+        *enable = data & 0x10;
+    }
+
+    return HAL_OK;
+}
+
+HAL_StatusTypeDef tsl2585_set_fifo_als_status_write_enable(I2C_HandleTypeDef *hi2c, bool enable)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE0, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    data = (data & 0xEF) | (enable ? 0x10 : 0x00);
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE0, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+}
+
+HAL_StatusTypeDef tsl2585_get_fifo_als_data_format(I2C_HandleTypeDef *hi2c, tsl2585_als_fifo_data_format_t *format)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_CFG4, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (format) {
+        *format = data & 0x03;
+    }
+
+    return HAL_OK;
+}
+
+HAL_StatusTypeDef tsl2585_set_fifo_als_data_format(I2C_HandleTypeDef *hi2c, tsl2585_als_fifo_data_format_t format)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_CFG4, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    data = (data & 0x03) | format;
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_CFG4, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+}
+
 HAL_StatusTypeDef tsl2585_get_als_msb_position(I2C_HandleTypeDef *hi2c, uint8_t *position)
 {
     HAL_StatusTypeDef ret;
@@ -871,6 +979,23 @@ HAL_StatusTypeDef tsl2585_get_als_msb_position(I2C_HandleTypeDef *hi2c, uint8_t 
     }
 
     return HAL_OK;
+}
+
+HAL_StatusTypeDef tsl2585_set_als_msb_position(I2C_HandleTypeDef *hi2c, uint8_t position)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE1, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    data = (data & 0xE0) | (position & 0x1F);
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_MEAS_MODE1, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
 }
 
 HAL_StatusTypeDef tsl2585_get_als_data0(I2C_HandleTypeDef *hi2c, uint16_t *data)
@@ -928,6 +1053,75 @@ HAL_StatusTypeDef tsl2585_get_als_data2(I2C_HandleTypeDef *hi2c, uint16_t *data)
     }
 
     return HAL_OK;
+}
+
+HAL_StatusTypeDef tsl2585_set_fifo_data_write_enable(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, bool enable)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+    uint8_t reg;
+
+    switch (mod) {
+    case TSL2585_MOD0:
+        reg = TSL2585_MOD_FIFO_DATA_CFG0;
+        break;
+    case TSL2585_MOD1:
+        reg = TSL2585_MOD_FIFO_DATA_CFG1;
+        break;
+    case TSL2585_MOD2:
+        reg = TSL2585_MOD_FIFO_DATA_CFG2;
+        break;
+    default:
+        return HAL_ERROR;
+    }
+
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS,
+        reg, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    data = (data & 0x7F) | (enable ? 0x80 : 0x00);
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+}
+
+HAL_StatusTypeDef tsl2585_get_fifo_status(I2C_HandleTypeDef *hi2c, tsl2585_fifo_status_t *status)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t buf[2];
+
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS,
+        TSL2585_FIFO_STATUS0, I2C_MEMADD_SIZE_8BIT,
+        buf, sizeof(buf), HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (status) {
+        status->overflow = (buf[1] & 0x80) ==  0x80;
+        status->underflow = (buf[1] & 0x40) == 0x40;
+        status->level = ((uint16_t)buf[0] << 2) | ((uint16_t)buf[1] & 0x03);
+    }
+
+    return ret;
+}
+
+HAL_StatusTypeDef tsl2585_read_fifo(I2C_HandleTypeDef *hi2c, uint8_t *data, uint16_t len)
+{
+    HAL_StatusTypeDef ret;
+
+    if (!data || len == 0 || len > 512) {
+        return HAL_ERROR;
+    }
+
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS,
+        TSL2585_FIFO_DATA, I2C_MEMADD_SIZE_8BIT,
+        data, len, HAL_MAX_DELAY);
+
+    return ret;
 }
 
 static const char *TSL2585_GAIN_STR[] = {

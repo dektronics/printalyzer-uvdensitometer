@@ -284,6 +284,32 @@ osStatus_t sensor_control_start()
             if (ret != HAL_OK) { break; }
         }
 
+        //XXX ---- FIFO Tinker ----
+        ret = tsl2585_set_fifo_als_status_write_enable(&hi2c1, true);
+        if (ret != HAL_OK) { break; }
+
+        ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD0, true);
+        if (ret != HAL_OK) { break; }
+        ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD1, false);
+        if (ret != HAL_OK) { break; }
+        ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD2, false);
+        if (ret != HAL_OK) { break; }
+
+        uint8_t msb_position;
+        ret = tsl2585_get_als_msb_position(&hi2c1, &msb_position);
+        if (ret != HAL_OK) { break; }
+        log_d("--> Initial MSB position: %d", msb_position);
+
+        msb_position = 0;//6;
+        ret = tsl2585_set_als_msb_position(&hi2c1, msb_position);
+        if (ret != HAL_OK) { break; }
+        log_d("--> Set MSB position to: %d", msb_position);
+
+        ret = tsl2585_set_fifo_als_data_format(&hi2c1, TSL2585_ALS_FIFO_32BIT);
+        if (ret != HAL_OK) { break; }
+
+        //XXX ---- FIFO Tinker ----
+
         /* Put the sensor into a known initial state */
         ret = tsl2585_enable_modulators(&hi2c1, TSL2585_MOD0);
         if (ret != HAL_OK) { break; }
@@ -660,6 +686,20 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
             uint32_t elapsed_ticks = params->sensor_ticks - last_aint_ticks;
             last_aint_ticks = params->sensor_ticks;
 
+            //XXX ----
+            tsl2585_fifo_status_t fifo_status;
+            ret = tsl2585_get_fifo_status(&hi2c1, &fifo_status);
+            if (ret != HAL_OK) { break; }
+            log_d("FIFO_STATUS: OVERFLOW=%d, UNDERFLOW=%d, LEVEL=%d", fifo_status.overflow, fifo_status.underflow, fifo_status.level);
+
+            uint8_t fifo_data[8];
+            ret = tsl2585_read_fifo(&hi2c1, fifo_data, 8);
+            if (ret != HAL_OK) { break; }
+            log_d("FIFO_DATA: %02X%02X%02X%02X%02X%02X%02X%02X",
+                fifo_data[0], fifo_data[1], fifo_data[2], fifo_data[3],
+                fifo_data[4], fifo_data[5], fifo_data[6], fifo_data[7]);
+            //XXX ----
+
             uint8_t status2 = 0;
             ret = tsl2585_get_status2(&hi2c1, &status2);
             if (ret != HAL_OK) { break; }
@@ -763,6 +803,13 @@ HAL_StatusTypeDef sensor_control_read_als(sensor_reading_t *reading)
 
         ret = tsl2585_get_als_scale(&hi2c1, &scale);
         if (ret != HAL_OK) { break; }
+
+        uint8_t als_status2 = 0;
+        uint8_t als_status3 = 0;
+        tsl2585_get_als_status2(&hi2c1, &als_status2);
+        tsl2585_get_als_status3(&hi2c1, &als_status3);
+
+        log_d("ALS_STATUS=%02X %02X %02X, ALS_DATA0=%04X", als_status, als_status2, als_status3, als_data0);//XXX
 
         if ((als_status & TSL2585_ALS_DATA0_SCALED_STATUS) == 0) {
             /* Need to scale value: 2^(ALS_SCALED) */
