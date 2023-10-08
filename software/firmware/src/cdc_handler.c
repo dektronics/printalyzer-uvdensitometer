@@ -567,7 +567,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
 #ifdef TEST_LIGHT_CAL
     else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "LR") == 0 && cdc_remote_active) {
         /* This command is only enabled for development and testing purposes */
-        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_VIS_REFLECTION, NULL, NULL);
+        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_VIS_REFLECTION);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {
@@ -576,7 +576,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         return true;
     } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "LT") == 0 && cdc_remote_active) {
         /* This command is only enabled for development and testing purposes */
-        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_VIS_TRANSMISSION, NULL, NULL);
+        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_VIS_TRANSMISSION);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {
@@ -585,7 +585,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         return true;
     } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "LTU") == 0 && cdc_remote_active) {
         /* This command is only enabled for development and testing purposes */
-        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_UV_TRANSMISSION, NULL, NULL);
+        osStatus_t result = sensor_light_calibration(SENSOR_LIGHT_UV_TRANSMISSION);
         if (result == osOK) {
             cdc_send_command_response(cmd, "OK");
         } else {

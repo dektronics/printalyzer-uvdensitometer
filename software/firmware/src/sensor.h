@@ -101,10 +101,9 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
  * logarithmic regression on the results, and save the resulting drop factor.
  *
  * @param light_source Light source to calibrate
- * @param callback Callback to monitor progress of the calibration
  * @return osOK on success
  */
-osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_calibration_callback_t callback, void *user_data);
+osStatus_t sensor_light_calibration(sensor_light_t light_source);
 #endif
 
 /**

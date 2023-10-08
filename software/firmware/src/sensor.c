@@ -239,10 +239,12 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
 }
 
 #ifdef TEST_LIGHT_CAL
-osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_calibration_callback_t callback, void *user_data)
+osStatus_t sensor_light_calibration(sensor_light_t light_source)
 {
     osStatus_t ret = osOK;
-    sensor_reading_old_t reading;
+    sensor_mode_t mode = SENSOR_MODE_DEFAULT;
+    tsl2585_gain_t gain = TSL2585_GAIN_128X;
+    sensor_reading_t reading;
     uint32_t ticks_start;
 
     /*
@@ -280,13 +282,35 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
         osDelay(1000);
 
         /* Start the sensor */
-        ret = sensor_set_config_old(TSL2591_GAIN_HIGH, TSL2591_TIME_200MS);
+        switch (light_source) {
+        case SENSOR_LIGHT_VIS_REFLECTION:
+            mode = SENSOR_MODE_VIS;
+            gain = TSL2585_GAIN_32X;
+            break;
+        case SENSOR_LIGHT_VIS_TRANSMISSION:
+            mode = SENSOR_MODE_VIS;
+            gain = TSL2585_GAIN_2X;
+            break;
+        case SENSOR_LIGHT_UV_TRANSMISSION:
+            mode = SENSOR_MODE_UV;
+            gain = TSL2585_GAIN_2048X;
+            break;
+        default:
+            break;
+        }
+
+        ret = sensor_set_mode(mode);
         if (ret != osOK) { break; }
+
+        /* 200ms integration time */
+        ret = sensor_set_config(gain, 719, 199);
+        if (ret != osOK) { break; }
+
         ret = sensor_start();
         if (ret != osOK) { break; }
 
         /* Swallow the first reading */
-        ret = sensor_get_next_reading_old(&reading, 2000);
+        ret = sensor_get_next_reading(&reading, 2000);
         if (ret != osOK) { break; }
 
         /* Set LED to full brightness at the next cycle */
@@ -294,33 +318,28 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
         if (ret != osOK) { break; }
 
         /* Wait for another cycle which will trigger the LED on */
-        ret = sensor_get_next_reading_old(&reading, 2000);
+        ret = sensor_get_next_reading(&reading, 2000);
         if (ret != osOK) { break; }
+        log_d("TSL2585[%d]: %ld", reading.reading_count, sensor_scaled_result(&reading));
 
         ticks_start = reading.reading_ticks;
-
-        if (callback) {
-            if (!callback(0, user_data)) { ret = osError; break; }
-        }
 
         /* Iterate over 2 minutes of readings and accumulate regression data */
         log_d("Starting read loop");
         for (int i = 0; i < LIGHT_CAL_ITERATIONS; i++) {
-            ret = sensor_get_next_reading_old(&reading, 1000);
+            ret = sensor_get_next_reading(&reading, 1000);
             if (ret != osOK) { break; }
 
             double x = log((double)(reading.reading_ticks - ticks_start));
+            uint32_t scaled_result = sensor_scaled_result(&reading);
+
+            log_d("TSL2585[%d]: %ld", reading.reading_count, scaled_result);
 
             sum_x += x;
             sum_xx += x * x;
-            sum_xy += x * (double)reading.ch0_val;
-            sum_y += (double)reading.ch0_val;
-            sum_yy += (double)reading.ch0_val * (double)reading.ch0_val;
-
-            uint8_t progress = lroundf((i / n_real) * 100.0F);
-            if (callback) {
-                if (!callback(progress, user_data)) { ret = osError; break; }
-            }
+            sum_xy += x * (double)scaled_result;
+            sum_y += (double)scaled_result;
+            sum_yy += (double)scaled_result * (double)scaled_result;
         }
         log_d("Finished read loop");
     } while (0);
@@ -330,10 +349,6 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source, sensor_light_ca
 
     /* Stop the sensor */
     sensor_stop();
-
-    if (callback) {
-        if (!callback(100, user_data)) { ret = osError; }
-    }
 
     osDelay(500);
 
