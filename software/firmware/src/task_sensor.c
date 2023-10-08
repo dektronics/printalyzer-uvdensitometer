@@ -66,6 +66,7 @@ typedef struct {
  */
 typedef struct {
     bool running;
+    uint8_t uv_calibration;
     sensor_mode_t sensor_mode;
     tsl2585_gain_t gain;
     uint16_t sample_time;
@@ -169,7 +170,16 @@ void task_sensor_run(void *argument)
      * Do a basic initialization of the sensor, which verifies that
      * the sensor is functional and responding to commands.
      */
-    ret = tsl2585_init(&hi2c1);
+    do {
+        ret = tsl2585_init(&hi2c1);
+        if (ret != HAL_OK) { break; }
+
+        ret = tsl2585_get_uv_calibration(&hi2c1, &sensor_state.uv_calibration);
+        if (ret != HAL_OK) { break; }
+
+        log_d("UV calibration value: %d", sensor_state.uv_calibration);
+    } while (0);
+
     if (ret != HAL_OK) {
         log_e("Sensor initialization failed");
         sensor_initialized = false;
@@ -672,6 +682,13 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
                     /* Get the sensor reading */
                     ret = sensor_control_read_als(&reading);
                     if (ret != HAL_OK) { break; }
+
+                    /* If in UV mode, apply the UV calibration value */
+                    if (sensor_state.sensor_mode == SENSOR_MODE_UV) {
+                        reading.raw_result = lroundf(
+                            (float)reading.raw_result
+                            / (1.0F - (((float)sensor_state.uv_calibration - 127.0F) / 100.0F)));
+                    }
                 }
 
                 /* If AGC is enabled, then update the configured gain value */

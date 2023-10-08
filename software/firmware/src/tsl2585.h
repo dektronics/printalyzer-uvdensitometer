@@ -150,6 +150,8 @@ HAL_StatusTypeDef tsl2585_set_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulato
 HAL_StatusTypeDef tsl2585_set_mod_photodiode_smux(I2C_HandleTypeDef *hi2c,
     tsl2585_step_t step, const tsl2585_modulator_t phd_mod[static TSL2585_PHD_MAX]);
 
+HAL_StatusTypeDef tsl2585_get_uv_calibration(I2C_HandleTypeDef *hi2c, uint8_t *value);
+
 HAL_StatusTypeDef tsl2585_get_calibration_nth_iteration(I2C_HandleTypeDef *hi2c, uint8_t *iteration);
 HAL_StatusTypeDef tsl2585_set_calibration_nth_iteration(I2C_HandleTypeDef *hi2c, uint8_t iteration);
 
