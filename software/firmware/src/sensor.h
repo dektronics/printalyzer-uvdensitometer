@@ -64,8 +64,7 @@ typedef enum {
 } sensor_result_t;
 
 typedef struct {
-    uint16_t raw_result;    /*!< Raw sensor reading */
-    uint16_t scale;         /*!< Scale factor for the raw result */
+    uint32_t als_data;      /*!< Full ALS sensor reading */
     sensor_result_t result_status; /*!< Sensor result status. */
     tsl2585_gain_t gain;    /*!< Sensor ADC gain */
     uint16_t sample_time;   /*!< Sensor integration sample time */
@@ -166,14 +165,6 @@ bool sensor_is_reading_saturated(const sensor_reading_old_t *reading);
  * @param ch1_basic Basic count output for channel 1
  */
 void sensor_convert_to_basic_counts(const sensor_reading_old_t *reading, float *ch0_basic, float *ch1_basic);
-
-/**
- * Get the raw result with the scaling factor applied.
- *
- * @param sensor_reading Sensor reading data
- * @return Scaled raw result
- */
-uint32_t sensor_scaled_result(const sensor_reading_t *reading);
 
 /**
  * Get the result in a gain and integration time adjusted format.

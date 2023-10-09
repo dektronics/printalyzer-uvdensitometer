@@ -971,23 +971,16 @@ void sensor_convert_to_basic_counts(const sensor_reading_old_t *reading, float *
     }
 }
 
-uint32_t sensor_scaled_result(const sensor_reading_t *reading)
-{
-    if (!reading) { return 0; }
-    return (uint32_t)reading->raw_result * (uint32_t)reading->scale;
-}
-
 float sensor_basic_result(const sensor_reading_t *reading)
 {
     if (!reading) { return NAN; }
 
-    const uint32_t scaled_value = sensor_scaled_result(reading);
     const float atime = tsl2585_integration_time_ms(reading->sample_time, reading->sample_count);
     const float gain_val = tsl2585_gain_value(reading->gain);
 
     if (!is_valid_number(atime) || !is_valid_number(gain_val)) { return NAN; }
 
-    return (float)scaled_value / (atime * gain_val);
+    return (float)reading->als_data / (atime * gain_val);
 }
 
 float sensor_apply_slope_calibration(float basic_reading)

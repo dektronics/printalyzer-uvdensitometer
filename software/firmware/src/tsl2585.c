@@ -133,6 +133,7 @@ static const uint8_t TSL2585_ADDRESS = 0x39 << 1; // Use 8-bit address
 #define TSL2585_MEAS_SEQR_STEP3_MOD_PHDX_SMUX_H 0xE3 /*!< Photodiode 4-5 to modulator mapping through multiplexer for sequencer step 3 */
 #define TSL2585_MOD_CALIB_CFG0   0xE4 /*!< Modulator calibration config0 */
 #define TSL2585_MOD_CALIB_CFG2   0xE6 /*!< Modulator calibration config2 */
+#define TSL2585_MOD_GAIN_H       0xED /*!< Modulator gain table selection (undocumented, from app note) */
 #define TSL2585_VSYNC_PERIOD_L        0xF2 /*!< Measured VSYNC period */
 #define TSL2585_VSYNC_PERIOD_H        0xF3 /*!< Read and clear measured VSYNC period */
 #define TSL2585_VSYNC_PERIOD_TARGET_L 0xF4 /*!< Targeted VSYNC period */
@@ -208,18 +209,6 @@ HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c)
     }
 
     log_i("Status: %02X", data);
-
-    //XXX
-    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, 0xED, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
-    if (ret != HAL_OK) { return ret; }
-    log_d("MOD_GAIN_H: %02X", data);
-    data = (data & 0xCF) | 0x30;
-    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, 0xED, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
-    if (ret != HAL_OK) { return ret; }
-    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, 0xED, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
-    if (ret != HAL_OK) { return ret; }
-    log_d("MOD_GAIN_H: %02X", data);
-    //XXX
 
     /* Power on the sensor */
     ret = tsl2585_enable(hi2c);
@@ -331,6 +320,28 @@ HAL_StatusTypeDef tsl2585_get_status4(I2C_HandleTypeDef *hi2c, uint8_t *status)
 HAL_StatusTypeDef tsl2585_get_status5(I2C_HandleTypeDef *hi2c, uint8_t *status)
 {
     return HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_STATUS5, I2C_MEMADD_SIZE_8BIT, status, 1, HAL_MAX_DELAY);
+}
+
+HAL_StatusTypeDef tsl2585_set_mod_gain_table_select(I2C_HandleTypeDef *hi2c, bool alternate)
+{
+    /*
+     * Selects the alternate gain table, which determines the number of
+     * residual bits, as documented in AN001059.
+     * This register is completely undocumented in the actual datasheet.
+     */
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_MOD_GAIN_H, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    data = (data & 0xCF) | (alternate ? 0x30 : 0x00);
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_MOD_GAIN_H, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
 }
 
 HAL_StatusTypeDef tsl2585_get_max_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_gain_t *gain)

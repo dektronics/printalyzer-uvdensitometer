@@ -869,6 +869,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
     osStatus_t ret = osOK;
     sensor_mode_t sensor_mode = SENSOR_MODE_DEFAULT;
     tsl2585_gain_t gain = TSL2585_GAIN_128X;
+    const tsl2585_gain_t max_gain = TSL2585_GAIN_256X;
     uint8_t time_index = 1;
     sensor_reading_t reading;
     uint8_t light_mode = 0;
@@ -913,7 +914,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
             if (keypad_is_key_combo_pressed(&keypad_event, KEYPAD_BUTTON_ACTION, KEYPAD_BUTTON_UP)) {
                 display_mode = !display_mode;
             } else if (keypad_is_key_pressed(&keypad_event, KEYPAD_BUTTON_ACTION) && !keypad_event.repeated) {
-                if (gain < TSL2585_GAIN_MAX - 1) {
+                if (gain < max_gain) {
                     gain++;
                 } else {
                     gain = TSL2585_GAIN_0_5X;
@@ -1023,8 +1024,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
                     const float basic_result = sensor_basic_result(&reading);
                     sprintf_(numbuf, "%.5f", basic_result);
                 } else {
-                    const uint32_t scaled_result = sensor_scaled_result(&reading);
-                    sprintf_(numbuf, "%ld", scaled_result);
+                    sprintf_(numbuf, "%ld", reading.als_data);
                 }
             }
 
