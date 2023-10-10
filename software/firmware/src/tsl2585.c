@@ -481,6 +481,86 @@ HAL_StatusTypeDef tsl2585_set_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulato
     return ret;
 }
 
+HAL_StatusTypeDef tsl2585_get_mod_residual_enable(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t *steps)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t reg;
+    bool upper;
+    uint8_t data;
+
+    switch (mod) {
+    case TSL2585_MOD0:
+        reg = TSL2585_MEAS_SEQR_RESIDUAL_0;
+        upper = false;
+        break;
+    case TSL2585_MOD1:
+        reg = TSL2585_MEAS_SEQR_RESIDUAL_0;
+        upper = true;
+        break;
+    case TSL2585_MOD2:
+        reg = TSL2585_MEAS_SEQR_RESIDUAL_1_AND_WAIT;
+        upper = false;
+        break;
+    default:
+        return HAL_ERROR;
+    }
+
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (steps) {
+        if (upper) {
+            *steps = (data & 0xF0) >> 4;
+        } else {
+            *steps = (data & 0x0F);
+        }
+    }
+
+    return ret;
+}
+
+HAL_StatusTypeDef tsl2585_set_mod_residual_enable(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t steps)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t reg;
+    bool upper;
+    uint8_t data;
+
+    switch (mod) {
+    case TSL2585_MOD0:
+        reg = TSL2585_MEAS_SEQR_RESIDUAL_0;
+        upper = false;
+        break;
+    case TSL2585_MOD1:
+        reg = TSL2585_MEAS_SEQR_RESIDUAL_0;
+        upper = true;
+        break;
+    case TSL2585_MOD2:
+        reg = TSL2585_MEAS_SEQR_RESIDUAL_1_AND_WAIT;
+        upper = false;
+        break;
+    default:
+        return HAL_ERROR;
+    }
+
+    ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (upper) {
+        data = (data & 0x0F) | (((uint8_t)steps) & 0x0F) << 4;
+    } else {
+        data = (data & 0xF0) | (((uint8_t)steps) & 0x0F);
+    }
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+}
+
 HAL_StatusTypeDef tsl2585_set_mod_photodiode_smux(I2C_HandleTypeDef *hi2c,
     tsl2585_step_t step, const tsl2585_modulator_t phd_mod[static TSL2585_PHD_MAX])
 {

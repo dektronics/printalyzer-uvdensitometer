@@ -136,7 +136,6 @@ static osStatus_t sensor_control_set_config(const sensor_control_config_params_t
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
 static HAL_StatusTypeDef sensor_control_read_fifo(uint8_t *als_status, uint8_t *als_status2, uint8_t *als_status3, uint32_t *als_data);
-//XXX static HAL_StatusTypeDef sensor_control_read_als(sensor_reading_t *reading);
 
 void task_sensor_run(void *argument)
 {
@@ -306,6 +305,9 @@ osStatus_t sensor_control_start()
         /* Set MSB position for full 26-bit result */
         ret = tsl2585_set_als_msb_position(&hi2c1, 6);
         if (ret != HAL_OK) { break; }
+
+        /* Make sure residuals are enabled */
+        ret = tsl2585_set_mod_residual_enable(&hi2c1, TSL2585_MOD0, TSL2585_STEPS_ALL);
 
         /* Select alternate gain table, which caps gain at 256x but gives us more residual bits */
         ret = tsl2585_set_mod_gain_table_select(&hi2c1, true);
@@ -703,25 +705,22 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
                 reading.result_status = SENSOR_RESULT_SATURATED_ANALOG;
             } else {
                 tsl2585_gain_t als_gain = (als_status2 & 0x0F);
-                //TODO update configured gain (maybe only if AGC?)
 
-                if ((als_status & TSL2585_ALS_DATA0_SCALED_STATUS) == 0) {
-                    log_d("--> Need to scale?");
+                /* If AGC is enabled, then update the configured gain value */
+                if (sensor_state.agc_enabled) {
+                    sensor_state.gain = als_gain;
                 }
 
                 reading.als_data = als_data;
                 reading.gain = als_gain;
                 reading.result_status = SENSOR_RESULT_VALID;
 
-#if 0
                 /* If in UV mode, apply the UV calibration value */
                 if (sensor_state.sensor_mode == SENSOR_MODE_UV) {
                     als_data = lroundf(
                         (float)als_data
                         / (1.0F - (((float)sensor_state.uv_calibration - 127.0F) / 100.0F)));
                 }
-#endif
-
             }
 
             if (!sensor_state.discard_next_reading) {
@@ -751,74 +750,6 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
                 sensor_state.agc_disabled_reset_gain = false;
                 sensor_state.discard_next_reading = true;
             }
-
-
-//            uint8_t status2 = 0;
-//            ret = tsl2585_get_status2(&hi2c1, &status2);
-//            if (ret != HAL_OK) { break; }
-//
-//#if 0
-//            log_d("STATUS2=0x%02X", status2);
-//#endif
-//
-//            if ((status2 & TSL2585_STATUS2_ALS_DATA_VALID) != 0) {
-//                if ((status2 & TSL2585_STATUS2_MOD_ANALOG_SATURATION0) != 0) {
-//                    log_d("TSL2585: [analog saturation]");
-//                    reading.raw_result = UINT16_MAX;
-//                    reading.result_status = SENSOR_RESULT_SATURATED_ANALOG;
-//
-//                } else if ((status2 & TSL2585_STATUS2_ALS_DIGITAL_SATURATION) != 0) {
-//                    log_d("TSL2585: [digital saturation]");
-//                    reading.raw_result = UINT16_MAX;
-//                    reading.result_status = SENSOR_RESULT_SATURATED_DIGITAL;
-//                } else {
-//                    /* Get the sensor reading */
-//                    ret = sensor_control_read_als(&reading);
-//                    if (ret != HAL_OK) { break; }
-//
-//                    /* If in UV mode, apply the UV calibration value */
-//                    if (sensor_state.sensor_mode == SENSOR_MODE_UV) {
-//                        reading.raw_result = lroundf(
-//                            (float)reading.raw_result
-//                            / (1.0F - (((float)sensor_state.uv_calibration - 127.0F) / 100.0F)));
-//                    }
-//                }
-//
-//                /* If AGC is enabled, then update the configured gain value */
-//                if (sensor_state.agc_enabled) {
-//                    ret = tsl2585_get_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, &sensor_state.gain);
-//                    if (ret != HAL_OK) { break; }
-//                }
-//
-//                if (!sensor_state.discard_next_reading) {
-//                    /* Fill out other reading fields */
-//                    reading.gain = sensor_state.gain;
-//                    reading.sample_time = sensor_state.sample_time;
-//                    reading.sample_count = sensor_state.sample_count;
-//                    reading.reading_ticks = params->sensor_ticks;
-//                    reading.elapsed_ticks = elapsed_ticks;
-//                    reading.light_ticks = params->light_ticks;
-//                    reading.reading_count = params->reading_count;
-//
-//                    has_reading = true;
-//                } else {
-//                    sensor_state.discard_next_reading = false;
-//                }
-//
-//                /*
-//                 * If AGC was just disabled, then reset the gain to its last
-//                 * known value and ignore the reading. This is necessary because
-//                 * disabling AGC on its own seems to reset the gain to a low
-//                 * default, and attempting to set it immediately after setting
-//                 * the registers to disable AGC does not seem to take.
-//                 */
-//                if (sensor_state.agc_disabled_reset_gain) {
-//                    ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain);
-//                    if (ret != HAL_OK) { break; }
-//                    sensor_state.agc_disabled_reset_gain = false;
-//                    sensor_state.discard_next_reading = true;
-//                }
-//            }
         }
 
         /* Clear the interrupt status */
@@ -827,11 +758,10 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     } while (0);
 
     if (has_reading) {
-        log_d("TSL2585[%d]: MOD0=%ld, Gain=[%s], Time=%.2fms, R=%01X",
+        log_d("TSL2585[%d]: MOD0=%ld, Gain=[%s], Time=%.2fms",
             reading.reading_count,
             reading.als_data, tsl2585_gain_str(reading.gain),
-            tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count),
-            (uint8_t)(reading.als_data & 0x0F));
+            tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count));
 
         //FIXME cdc_send_raw_sensor_reading(&reading);
 
@@ -886,65 +816,3 @@ HAL_StatusTypeDef sensor_control_read_fifo(uint8_t *als_status, uint8_t *als_sta
 
     return ret;
 }
-
-#if 0
-HAL_StatusTypeDef sensor_control_read_als(sensor_reading_t *reading)
-{
-    HAL_StatusTypeDef ret = HAL_OK;
-    uint8_t als_status = 0;
-    uint16_t als_data0 = 0;
-    uint8_t asat = 0;
-    uint8_t scale = 0;
-    uint16_t scale_value = 1;
-
-    do {
-        ret = tsl2585_get_als_status(&hi2c1, &als_status);
-        if (ret != HAL_OK) { break; }
-
-        asat = (als_status & TSL2585_ALS_DATA0_ANALOG_SATURATION_STATUS) != 0;
-
-        ret = tsl2585_get_als_data0(&hi2c1, &als_data0);
-        if (ret != HAL_OK) { break; }
-
-        ret = tsl2585_get_als_scale(&hi2c1, &scale);
-        if (ret != HAL_OK) { break; }
-
-        uint8_t als_status2 = 0;
-        uint8_t als_status3 = 0;
-        tsl2585_get_als_status2(&hi2c1, &als_status2);
-        tsl2585_get_als_status3(&hi2c1, &als_status3);
-
-        log_d("ALS_STATUS=%02X %02X %02X, ALS_DATA0=%04X", als_status, als_status2, als_status3, als_data0);//XXX
-
-        if ((als_status & TSL2585_ALS_DATA0_SCALED_STATUS) == 0) {
-            /* Need to scale value: 2^(ALS_SCALED) */
-            uint16_t base = 2;
-            for (;;) {
-                if (scale & 1) {
-                    scale_value *= base;
-                }
-                scale >>= 1;
-                if (!scale) { break; }
-                base *= base;
-            }
-        }
-
-        if (asat) {
-#if 0
-            log_d("TSL2585: [saturated]");
-#endif
-            reading->result_status = SENSOR_RESULT_SATURATED_ANALOG;
-        } else {
-#if 0
-            log_d("TSL2585: %d", raw_result);
-#endif
-            reading->result_status = SENSOR_RESULT_VALID;
-        }
-
-        reading->raw_result = als_data0;
-        reading->scale = scale_value;
-    } while (0);
-
-    return ret;
-}
-#endif

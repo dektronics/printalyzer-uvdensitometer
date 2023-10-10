@@ -19,10 +19,12 @@ typedef enum {
 } tsl2585_modulator_t;
 
 typedef enum {
-    TSL2585_STEP0 = 0,
-    TSL2585_STEP1,
-    TSL2585_STEP2,
-    TSL2585_STEP3
+    TSL2585_STEP0 = 0x01,
+    TSL2585_STEP1 = 0x02,
+    TSL2585_STEP2 = 0x04,
+    TSL2585_STEP3 = 0x08,
+    TSL2585_STEPS_NONE = 0x00,
+    TSL2585_STEPS_ALL = 0x0F
 } tsl2585_step_t;
 
 typedef enum {
@@ -160,6 +162,22 @@ HAL_StatusTypeDef tsl2585_set_max_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_gain
 
 HAL_StatusTypeDef tsl2585_get_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t step, tsl2585_gain_t *gain);
 HAL_StatusTypeDef tsl2585_set_mod_gain(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t step, tsl2585_gain_t gain);
+
+/**
+ * Gets whether residual measurement shall be performed on the selected modulator
+ *
+ * @param mod Modulator to configure residual measurement on
+ * @param steps Mask of sequencer steps residual measurement is enabled for
+ */
+HAL_StatusTypeDef tsl2585_get_mod_residual_enable(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t *steps);
+
+/**
+ * Sets whether residual measurement shall be performed on the selected modulator
+ *
+ * @param mod Modulator to configure residual measurement on
+ * @param steps Mask of sequencer steps to enable residual measurement for
+ */
+HAL_StatusTypeDef tsl2585_set_mod_residual_enable(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mod, tsl2585_step_t steps);
 
 HAL_StatusTypeDef tsl2585_set_mod_photodiode_smux(I2C_HandleTypeDef *hi2c,
     tsl2585_step_t step, const tsl2585_modulator_t phd_mod[static TSL2585_PHD_MAX]);
