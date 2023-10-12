@@ -210,8 +210,24 @@ void DensInterface::sendInvokeDiagSensorStop()
     sendCommand(command);
 }
 
-void DensInterface::sendSetDiagSensorConfig(int gain, int integration)
+void DensInterface::sendSetUvDiagSensorMode(int mode)
 {
+    if (deviceType_ != DeviceType::DeviceUvVis) { return; }
+    if (mode < 0) { mode = 0; }
+    else if (mode > 2) { mode = 2; }
+
+    QStringList args;
+    args.append("MODE");
+    args.append(QString::number(mode));
+
+    DensCommand command(DensCommand::TypeSet, DensCommand::CategoryDiagnostics, "S", args);
+    sendCommand(command);
+}
+
+void DensInterface::sendSetBaselineDiagSensorConfig(int gain, int integration)
+{
+    if (deviceType_ != DeviceBaseline) { return; }
+
     if (gain < 0) { gain = 0; }
     else if (gain > 3) { gain = 3; }
     if (integration < 0) { integration = 0; }
@@ -226,8 +242,31 @@ void DensInterface::sendSetDiagSensorConfig(int gain, int integration)
     sendCommand(command);
 }
 
-void DensInterface::sendInvokeDiagRead(DensInterface::SensorLight light, int gain, int integration)
+void DensInterface::sendSetUvDiagSensorConfig(int gain, int sampleTime, int sampleCount)
 {
+    if (deviceType_ != DeviceUvVis) { return; }
+
+    if (gain < 0) { gain = 0; }
+    else if (gain > 9) { gain = 9; }
+    if (sampleTime < 0) { sampleTime = 0; }
+    else if (sampleTime > 2047) { sampleTime = 2047; }
+    if (sampleCount < 0) { sampleCount = 0; }
+    else if (sampleCount > 2047) { sampleCount = 2047; }
+
+    QStringList args;
+    args.append("CFG");
+    args.append(QString::number(gain));
+    args.append(QString::number(sampleTime));
+    args.append(QString::number(sampleCount));
+
+    DensCommand command(DensCommand::TypeSet, DensCommand::CategoryDiagnostics, "S", args);
+    sendCommand(command);
+}
+
+void DensInterface::sendInvokeBaselineDiagRead(DensInterface::SensorLight light, int gain, int integration)
+{
+    if (deviceType_ != DeviceBaseline) { return; }
+
     QStringList args;
     if (light == SensorLight::SensorLightReflection) {
         args.append("R");
@@ -238,6 +277,29 @@ void DensInterface::sendInvokeDiagRead(DensInterface::SensorLight light, int gai
     }
     args.append(QString::number(gain));
     args.append(QString::number(integration));
+
+    DensCommand command(DensCommand::TypeInvoke, DensCommand::CategoryDiagnostics, "READ", args);
+    sendCommand(command);
+}
+
+void DensInterface::sendInvokeUvDiagRead(DensInterface::SensorLight light, int mode, int gain, int sampleTime, int sampleCount)
+{
+    if (deviceType_ != DeviceUvVis) { return; }
+
+    QStringList args;
+    if (light == SensorLight::SensorLightReflection) {
+        args.append("R");
+    } else if (light == SensorLight::SensorLightTransmission) {
+        args.append("T");
+    } else if (light == SensorLightUvTransmission) {
+        args.append("U");
+    } else {
+        args.append("0");
+    }
+    args.append(QString::number(mode));
+    args.append(QString::number(gain));
+    args.append(QString::number(sampleTime));
+    args.append(QString::number(sampleCount));
 
     DensCommand command(DensCommand::TypeInvoke, DensCommand::CategoryDiagnostics, "READ", args);
     sendCommand(command);
@@ -782,17 +844,32 @@ void DensInterface::readDiagnosticsResponse(const DensCommand &response)
                && response.args().at(0) == QLatin1String("OK")) {
         emit diagSensorChanged();
     } else if (response.type() == DensCommand::TypeGet
-               && response.action() == QLatin1String("S")
-               && response.args().size() >= 2) {
-        emit diagSensorGetReading(
-                    response.args().at(0).toInt(),
-                    response.args().at(1).toInt());
+               && response.action() == QLatin1String("S")) {
+        if (deviceType_ == DeviceBaseline && response.args().size() >= 2) {
+            emit diagSensorBaselineGetReading(
+                response.args().at(0).toInt(),
+                response.args().at(1).toInt());
+        } else if (deviceType_ == DeviceUvVis && response.args().size() >= 4) {
+            emit diagSensorUvGetReading(
+                response.args().at(0).toUInt(),
+                response.args().at(1).toInt(),
+                response.args().at(2).toInt(),
+                response.args().at(3).toInt());
+        } else {
+            qDebug() << response.toString();
+        }
     } else if (response.type() == DensCommand::TypeInvoke
-               && response.action() == QLatin1String("READ")
-               && response.args().size() >= 2) {
-        emit diagSensorInvokeReading(
-                    response.args().at(0).toInt(),
-                    response.args().at(1).toInt());
+               && response.action() == QLatin1String("READ")) {
+        if (deviceType_ == DeviceBaseline && response.args().size() >= 2) {
+            emit diagSensorBaselineInvokeReading(
+                response.args().at(0).toInt(),
+                response.args().at(1).toInt());
+        } else if (deviceType_ == DeviceUvVis && response.args().size() >= 1) {
+            emit diagSensorUvInvokeReading(
+                response.args().at(0).toUInt());
+        } else {
+            qDebug() << response.toString();
+        }
     } else if (response.type() == DensCommand::TypeGet
             && response.action() == QLatin1String("LOG")
             && response.args().size() == 1

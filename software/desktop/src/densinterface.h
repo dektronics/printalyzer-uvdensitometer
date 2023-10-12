@@ -34,7 +34,8 @@ public:
     enum SensorLight {
         SensorLightOff,
         SensorLightReflection,
-        SensorLightTransmission
+        SensorLightTransmission,
+        SensorLightUvTransmission
     };
     Q_ENUM(SensorLight)
 
@@ -61,8 +62,11 @@ public slots:
     void sendSetDiagLightTranUv(int value);
     void sendInvokeDiagSensorStart();
     void sendInvokeDiagSensorStop();
-    void sendSetDiagSensorConfig(int gain, int integration);
-    void sendInvokeDiagRead(DensInterface::SensorLight light, int gain, int integration);
+    void sendSetUvDiagSensorMode(int mode);
+    void sendSetBaselineDiagSensorConfig(int gain, int integration);
+    void sendSetUvDiagSensorConfig(int gain, int sampleTime, int sampleCount);
+    void sendInvokeBaselineDiagRead(DensInterface::SensorLight light, int gain, int integration);
+    void sendInvokeUvDiagRead(DensInterface::SensorLight light, int mode, int gain, int sampleTime, int sampleCount);
     void sendSetDiagLoggingModeUsb();
     void sendSetDiagLoggingModeDebug();
 
@@ -137,8 +141,10 @@ signals:
     void diagLightTranUvChanged();
     void diagSensorInvoked();
     void diagSensorChanged();
-    void diagSensorGetReading(int ch0, int ch1);
-    void diagSensorInvokeReading(int ch0, int ch1);
+    void diagSensorBaselineGetReading(int ch0, int ch1);
+    void diagSensorUvGetReading(unsigned int ch0, int gain, int sampleTime, int sampleCount);
+    void diagSensorBaselineInvokeReading(int ch0, int ch1);
+    void diagSensorUvInvokeReading(unsigned int ch0);
     void diagLogLine(const QByteArray &data);
 
     void calLightResponse();

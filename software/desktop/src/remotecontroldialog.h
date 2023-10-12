@@ -25,8 +25,10 @@ private slots:
     void onDiagLightChanged();
     void onDiagSensorInvoked();
     void onDiagSensorChanged();
-    void onDiagSensorGetReading(int ch0, int ch1);
-    void onDiagSensorInvokeReading(int ch0, int ch1);
+    void onDiagSensorBaselineGetReading(int ch0, int ch1);
+    void onDiagSensorUvGetReading(unsigned int ch0, int gain, int sampleTime, int sampleCount);
+    void onDiagSensorBaselineInvokeReading(int ch0, int ch1);
+    void onDiagSensorUvInvokeReading(unsigned int ch0);
 
     void onReflOffClicked();
     void onReflOnClicked();
@@ -45,12 +47,16 @@ private slots:
 
     void onSensorStartClicked();
     void onSensorStopClicked();
+    void onSensorModeIndexChanged(int index);
     void onSensorGainIndexChanged(int index);
     void onSensorIntIndexChanged(int index);
     void onReflReadClicked();
     void onTranReadClicked();
+    void onTranUvReadClicked();
 
 private:
+    void sendSetDiagSensorConfig();
+    void sendInvokeDiagRead(DensInterface::SensorLight light);
     void ledControlState(bool enabled);
     void sensorControlState(bool enabled);
     void updateSensorReading(int ch0, int ch1);
