@@ -135,6 +135,7 @@ typedef enum {
 
 HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c);
 
+HAL_StatusTypeDef tsl2585_get_enable(I2C_HandleTypeDef *hi2c, uint8_t *value);
 HAL_StatusTypeDef tsl2585_set_enable(I2C_HandleTypeDef *hi2c, uint8_t value);
 HAL_StatusTypeDef tsl2585_enable(I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef tsl2585_disable(I2C_HandleTypeDef *hi2c);
@@ -143,6 +144,8 @@ HAL_StatusTypeDef tsl2585_set_interrupt_enable(I2C_HandleTypeDef *hi2c, uint8_t 
 
 HAL_StatusTypeDef tsl2585_set_sleep_after_interrupt(I2C_HandleTypeDef *hi2c, bool enabled);
 
+HAL_StatusTypeDef tsl2585_soft_reset(I2C_HandleTypeDef *hi2c);
+HAL_StatusTypeDef tsl2585_clear_fifo(I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef tsl2585_clear_sleep_after_interrupt(I2C_HandleTypeDef *hi2c);
 
 HAL_StatusTypeDef tsl2585_enable_modulators(I2C_HandleTypeDef *hi2c, tsl2585_modulator_t mods);

@@ -216,6 +216,15 @@ HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c)
         return ret;
     }
 
+    /* Perform a soft reset to clear any leftover state */
+    ret = tsl2585_soft_reset(hi2c);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    /* Short delay to allow the soft reset to complete */
+    HAL_Delay(1);
+
     /* Power off the sensor */
     ret = tsl2585_disable(hi2c);
     if (ret != HAL_OK) {
@@ -223,6 +232,23 @@ HAL_StatusTypeDef tsl2585_init(I2C_HandleTypeDef *hi2c)
     }
 
     log_i("TSL2585 Initialized");
+
+    return HAL_OK;
+}
+
+HAL_StatusTypeDef tsl2585_get_enable(I2C_HandleTypeDef *hi2c, uint8_t *value)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_ENABLE, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (value) {
+        *value = data & 0x43; /* Mask bits 6,1:0 */
+    }
 
     return HAL_OK;
 }
@@ -270,6 +296,24 @@ HAL_StatusTypeDef tsl2585_set_sleep_after_interrupt(I2C_HandleTypeDef *hi2c, boo
     ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_CFG0, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
 
     return ret;
+}
+
+HAL_StatusTypeDef tsl2585_soft_reset(I2C_HandleTypeDef *hi2c)
+{
+    uint8_t data;
+
+    data = TSL2585_CONTROL_SOFT_RESET;
+
+    return HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_CONTROL, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+}
+
+HAL_StatusTypeDef tsl2585_clear_fifo(I2C_HandleTypeDef *hi2c)
+{
+    uint8_t data;
+
+    data = TSL2585_CONTROL_FIFO_CLR;
+
+    return HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_CONTROL, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
 }
 
 HAL_StatusTypeDef tsl2585_clear_sleep_after_interrupt(I2C_HandleTypeDef *hi2c)

@@ -188,6 +188,17 @@ void task_sensor_run(void *argument)
         sensor_initialized = true;
     }
 
+    /*
+     * Set some sensible defaults just in case the sensor isn't configured
+     * prior to starting. Without this, we could run with an integration
+     * time faster than we can deal with and overflow the FIFO.
+     * Its safest to keep our default integration time at least 10ms,
+     * though setting it to 100ms for a comfortable buffer.
+     */
+    sensor_state.sample_time = 719;
+    sensor_state.sample_count = 99;
+    sensor_state.config_pending = true;
+
     /* Release the startup semaphore */
     if (osSemaphoreRelease(task_start_semaphore) != osOK) {
         log_e("Unable to release task_start_semaphore");
@@ -260,6 +271,10 @@ osStatus_t sensor_control_start()
 
     do {
         sensor_state.running = false;
+
+        /* Clear the FIFO */
+        ret = tsl2585_clear_fifo(&hi2c1);
+        if (ret != HAL_OK) { break; }
 
         /* Query the initial state of the sensor */
         if (!sensor_state.config_pending) {
@@ -666,7 +681,13 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     sensor_reading_t reading = {0};
     bool has_reading = false;
 
-    //log_d("sensor_control_interrupt");
+    TaskHandle_t current_task_handle = xTaskGetCurrentTaskHandle();
+    UBaseType_t current_task_priority = uxTaskPriorityGet(current_task_handle);
+    vTaskPrioritySet(current_task_handle, osPriorityRealtime);
+
+#if 0
+    log_d("sensor_control_interrupt");
+#endif
 
     if (!sensor_state.running) {
         log_w("Unexpected sensor interrupt!");
@@ -757,13 +778,15 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
         if (ret != HAL_OK) { break; }
     } while (0);
 
+    vTaskPrioritySet(current_task_handle, current_task_priority);
+
     if (has_reading) {
         log_d("TSL2585[%d]: MOD0=%ld, Gain=[%s], Time=%.2fms",
             reading.reading_count,
             reading.als_data, tsl2585_gain_str(reading.gain),
             tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count));
 
-        //FIXME cdc_send_raw_sensor_reading(&reading);
+        cdc_send_raw_sensor_reading(&reading);
 
         QueueHandle_t queue = (QueueHandle_t)sensor_reading_queue;
         xQueueOverwrite(queue, &reading);

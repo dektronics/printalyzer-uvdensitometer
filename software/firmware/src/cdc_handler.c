@@ -105,6 +105,7 @@ static size_t encode_f32(char *out, float value);
 static uint8_t decode_hex_char(char ch, bool *ok);
 static float decode_f32(const char *buf);
 static size_t decode_f32_array_args(const char *args, float *elements, size_t len);
+static size_t decode_u16_array_args(const char *args, uint16_t *elements, size_t len);
 
 extern I2C_HandleTypeDef hi2c1;
 
@@ -796,7 +797,8 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
      *
      * "ID S,START"   -> Invoke sensor start [remote]
      * "ID S,STOP"    -> Invoke sensor stop [remote]
-     * "SD S,CFG,n,m" -> Set sensor gain (n = [0-3]) and integration time (m = [0-5]) [remote]
+     * "SD S,MODE,m"  -> Set sensor smux mode (s = [0-2]) [remote]
+     * "SD S,CFG,g,t,c" -> Set sensor gain (g = [0-13]), sample time (t = [0-2047]), and sample count (c=[0-2047]) [remote]
      * "GD S,READING" -> Get next sensor reading [remote]
      *
      * "ID READ,L,n,m" -> Perform controlled sensor target read
@@ -870,13 +872,24 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
                 cdc_send_command_response(cmd, "ERR");
             }
             return true;
+        } else if (cmd->type == CMD_TYPE_SET && strncmp(cmd->args, "MODE,", 5) == 0) {
+            sensor_mode_t mode = (sensor_mode_t)atoi(cmd->args + 5);
+            result = sensor_set_mode(mode);
+            if (result == osOK) {
+                cdc_send_command_response(cmd, "OK");
+            } else {
+                cdc_send_command_response(cmd, "ERR");
+            }
+            return true;
         } else if (cmd->type == CMD_TYPE_SET && strncmp(cmd->args, "CFG,", 4) == 0) {
-            if (isdigit((unsigned char)cmd->args[4]) && cmd->args[5] == ','
-                && isdigit((unsigned char)cmd->args[6]) && cmd->args[7] == '\0') {
-                tsl2591_gain_t gain_val = cmd->args[4] - '0';
-                tsl2591_time_t time_val = cmd->args[6] - '0';
-                if (gain_val <= TSL2591_GAIN_MAXIMUM && time_val <= TSL2591_TIME_600MS) {
-                    result = sensor_set_config_old(gain_val, time_val);
+            uint16_t args[3] = {0};
+            size_t n = decode_u16_array_args(cmd->args + 4, args, 3);
+            if (n >= 3) {
+                tsl2585_gain_t gain_val = (tsl2585_gain_t)args[0];
+                uint16_t sample_time = args[1];
+                uint16_t sample_count = args[2];
+                if (gain_val < TSL2585_GAIN_MAX && sample_time < 2048 && sample_count < 2048) {
+                    result = sensor_set_config(gain_val, sample_time, sample_count);
                     if (result == osOK) {
                         cdc_send_command_response(cmd, "OK");
                     } else {
@@ -889,36 +902,40 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
         return true;
     } else if (strcmp(cmd->action, "READ") == 0 && cdc_remote_active && !cdc_remote_sensor_active) {
         if ((cmd->args[0] == '0' || cmd->args[0] == 'R' || cmd->args[0] == 'T' || cmd->args[0] == 'U')
-            && cmd->args[1] == ',' && isdigit((unsigned char)cmd->args[2])
-            && cmd->args[3] == ',' && isdigit((unsigned char)cmd->args[4])
-            && cmd->args[5] == '\0') {
-            sensor_light_t light_val;
-            tsl2591_gain_t gain_val = cmd->args[2] - '0';
-            tsl2591_time_t time_val = cmd->args[4] - '0';
+            && cmd->args[1] == ',') {
+            uint16_t args[4] = {0};
+            size_t n = decode_u16_array_args(cmd->args + 2, args, 4);
+            if (n >= 4) {
+                uint32_t als_reading;
+                sensor_light_t light;
+                sensor_mode_t mode = (sensor_mode_t)args[0];
+                tsl2585_gain_t gain = (tsl2585_gain_t)args[1];
+                uint16_t sample_time = args[2];
+                uint16_t sample_count = args[3];
 
-            if (cmd->args[0] == 'R') {
-                light_val = SENSOR_LIGHT_VIS_REFLECTION;
-            } else if (cmd->args[0] == 'T') {
-                light_val = SENSOR_LIGHT_VIS_TRANSMISSION;
-            } else if (cmd->args[0] == 'U') {
-                light_val = SENSOR_LIGHT_UV_TRANSMISSION;
-            } else {
-                light_val = SENSOR_LIGHT_OFF;
+                if (cmd->args[0] == 'R') {
+                    light = SENSOR_LIGHT_VIS_REFLECTION;
+                } else if (cmd->args[0] == 'T') {
+                    light = SENSOR_LIGHT_VIS_TRANSMISSION;
+                } else if (cmd->args[0] == 'U') {
+                    light = SENSOR_LIGHT_UV_TRANSMISSION;
+                } else {
+                    light = SENSOR_LIGHT_OFF;
+                }
+
+                osStatus_t result = sensor_read_target_raw(
+                    light, mode, gain, sample_time, sample_count,
+                    &als_reading);
+
+                if (result == osOK) {
+                    char buf[64];
+                    sprintf(buf, "%lu", als_reading);
+                    cdc_send_command_response(cmd, buf);
+                } else {
+                    cdc_send_command_response(cmd, "ERR");
+                }
+                return true;
             }
-
-            uint16_t ch0_result;
-            uint16_t ch1_result;
-            osStatus_t result = sensor_read_target_raw(light_val, gain_val, time_val,
-                &ch0_result, &ch1_result);
-
-            if (result == osOK) {
-                char buf[64];
-                sprintf(buf, "%d,%d", ch0_result, ch1_result);
-                cdc_send_command_response(cmd, buf);
-            } else {
-                cdc_send_command_response(cmd, "ERR");
-            }
-            return true;
         }
     } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "WIPE") == 0 && cdc_remote_active) {
         char exp_buf[32];
@@ -1060,7 +1077,7 @@ void cdc_send_density_reading(char prefix, float d_value, float d_zero, float ra
     }
 }
 
-void cdc_send_raw_sensor_reading(const sensor_reading_old_t *reading)
+void cdc_send_raw_sensor_reading(const sensor_reading_t *reading)
 {
     if (!cdc_remote_sensor_active || !reading) { return; }
 
@@ -1071,8 +1088,8 @@ void cdc_send_raw_sensor_reading(const sensor_reading_old_t *reading)
     };
     char buf[64];
 
-    sprintf(buf, "%d,%d,%d,%d",
-        reading->ch0_val, reading->ch1_val, reading->gain, reading->time);
+    sprintf(buf, "%lu,%d,%d,%d",
+        reading->als_data, reading->gain, reading->sample_time, reading->sample_count);
     cdc_send_command_response(&cmd, buf);
 }
 
@@ -1200,6 +1217,39 @@ size_t decode_f32_array_args(const char *args, float *elements, size_t len)
                 elements[n] = decode_f32(numbuf);
             } else {
                 elements[n] = NAN;
+            }
+            n++;
+            if (args[q] == '\0') {
+                break;
+            } else {
+                p = q + 1;
+                q = p;
+            }
+        } else {
+            q++;
+        }
+    }
+
+    return n;
+}
+
+size_t decode_u16_array_args(const char *args, uint16_t *elements, size_t len)
+{
+    char numbuf[16];
+    size_t n = 0;
+    size_t p, q;
+
+    p = 0;
+    q = p;
+    while (n < len) {
+        if (args[q] == ',' || args[q] == '\0') {
+            if (p >= q) { break; }
+            if (q - p < sizeof(numbuf) - 1) {
+                bzero(numbuf, sizeof(numbuf));
+                strncpy(numbuf, args + p, q - p);
+                elements[n] = atoi(numbuf);
+            } else {
+                elements[n] = 0;
             }
             n++;
             if (args[q] == '\0') {

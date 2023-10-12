@@ -505,27 +505,30 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
 }
 
 osStatus_t sensor_read_target_raw(sensor_light_t light_source,
-    tsl2591_gain_t gain, tsl2591_time_t time,
-    uint16_t *ch0_result, uint16_t *ch1_result)
+    sensor_mode_t mode, tsl2585_gain_t gain,
+    uint16_t sample_time, uint16_t sample_count,
+    uint32_t *als_reading)
 {
     osStatus_t ret = osOK;
     uint8_t light_value = 0;
-    sensor_reading_old_t reading;
-    float ch0_sum = 0;
-    float ch1_sum = 0;
-    float ch0_avg = NAN;
-    float ch1_avg = NAN;
+    sensor_reading_t reading;
+    double als_sum = 0;
+    double als_avg = NAN;
     bool saturated = false;
 
     if (light_source != SENSOR_LIGHT_OFF
         && light_source != SENSOR_LIGHT_VIS_REFLECTION
-        && light_source != SENSOR_LIGHT_VIS_TRANSMISSION) {
+        && light_source != SENSOR_LIGHT_VIS_TRANSMISSION
+        && light_source != SENSOR_LIGHT_UV_TRANSMISSION) {
         return osErrorParameter;
     }
-    if (gain < TSL2591_GAIN_LOW || gain > TSL2591_GAIN_MAXIMUM) {
+    if (mode < 0 || mode > SENSOR_MODE_UV) {
         return osErrorParameter;
     }
-    if (time < TSL2591_TIME_100MS || time > TSL2591_TIME_600MS) {
+    if (gain < 0 || gain > TSL2585_GAIN_MAX) {
+        return osErrorParameter;
+    }
+    if (sample_time > 2047 || sample_count > 2047) {
         return osErrorParameter;
     }
 
@@ -535,7 +538,10 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
 
     do {
         /* Put the sensor into the configured state */
-        ret = sensor_set_config_old(gain, time);
+        ret = sensor_set_mode(mode);
+        if (ret != osOK) { break; }
+
+        ret = sensor_set_config(gain, sample_time, sample_count);
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
@@ -548,9 +554,8 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
 
         /* Take the target measurement readings */
         for (int i = 0; i < SENSOR_TARGET_READ_ITERATIONS; i++) {
-            ret = sensor_get_next_reading_old(&reading, 2000);
+            ret = sensor_get_next_reading(&reading, 2000);
             if (ret != osOK) { break; }
-            log_v("TSL2591[%d]: CH0=%d, CH1=%d", reading.reading_count, reading.ch0_val, reading.ch1_val);
 
             /* Make sure we're consistent with our read cycles */
             if (reading.reading_count != i + 2) {
@@ -560,20 +565,18 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
             }
 
             /* Abort if the sensor is saturated */
-            if (sensor_is_reading_saturated(&reading)) {
+            if (reading.result_status != SENSOR_RESULT_VALID) {
                 log_w("Aborting due to sensor saturation");
                 saturated = true;
                 break;
             }
 
             /* Accumulate the results */
-            ch0_sum += (float)reading.ch0_val;
-            ch1_sum += (float)reading.ch1_val;
+            als_sum += (double)reading.als_data;
         }
         if (ret != osOK) { break; }
 
-        ch0_avg = (ch0_sum / (float)SENSOR_TARGET_READ_ITERATIONS);
-        ch1_avg = (ch1_sum / (float)SENSOR_TARGET_READ_ITERATIONS);
+        als_avg = (als_sum / (double)SENSOR_TARGET_READ_ITERATIONS);
     } while (0);
 
     /* Turn off the sensor */
@@ -583,11 +586,9 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
     if (ret == osOK) {
         log_i("Sensor read complete");
         if (saturated) {
-            if (ch0_result) { *ch0_result = USHRT_MAX; }
-            if (ch1_result) { *ch1_result = USHRT_MAX; }
+            if (als_reading) { *als_reading = UINT32_MAX; }
         } else {
-            if (ch0_result) { *ch0_result = (uint16_t)lroundf(ch0_avg); }
-            if (ch1_result) { *ch1_result = (uint16_t)lroundf(ch1_avg); }
+            if (als_reading) { *als_reading = (uint32_t)lroundf(als_avg); }
         }
     } else {
         log_e("Sensor read failed: ret=%d", ret);
