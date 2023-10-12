@@ -50,12 +50,14 @@ private slots:
     void onSensorModeIndexChanged(int index);
     void onSensorGainIndexChanged(int index);
     void onSensorIntIndexChanged(int index);
+    void onAgcCheckBoxStateChanged(int state);
     void onReflReadClicked();
     void onTranReadClicked();
     void onTranUvReadClicked();
 
 private:
     void sendSetDiagSensorConfig();
+    void sendSetDiagSensorAgc();
     void sendInvokeDiagRead(DensInterface::SensorLight light);
     void ledControlState(bool enabled);
     void sensorControlState(bool enabled);

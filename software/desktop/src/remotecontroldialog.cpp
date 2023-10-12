@@ -42,6 +42,7 @@ RemoteControlDialog::RemoteControlDialog(DensInterface *densInterface, QWidget *
     connect(ui->modeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &RemoteControlDialog::onSensorModeIndexChanged);
     connect(ui->gainComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &RemoteControlDialog::onSensorGainIndexChanged);
     connect(ui->intComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &RemoteControlDialog::onSensorIntIndexChanged);
+    connect(ui->agcCheckBox, &QCheckBox::stateChanged, this, &RemoteControlDialog::onAgcCheckBoxStateChanged);
     connect(ui->reflReadPushButton, &QPushButton::clicked, this, &RemoteControlDialog::onReflReadClicked);
     connect(ui->tranReadPushButton, &QPushButton::clicked, this, &RemoteControlDialog::onTranReadClicked);
     connect(ui->tranUvReadPushButton, &QPushButton::clicked, this, &RemoteControlDialog::onTranUvReadClicked);
@@ -67,6 +68,7 @@ RemoteControlDialog::RemoteControlDialog(DensInterface *densInterface, QWidget *
         ui->tranUvReadPushButton->setVisible(false);
         ui->modeLabel->setVisible(false);
         ui->modeComboBox->setVisible(false);
+        ui->agcCheckBox->setVisible(false);
     }
 
     ledControlState(true);
@@ -228,6 +230,7 @@ void RemoteControlDialog::onSensorStartClicked()
     if (sensorConfigOnStart_) {
         densInterface_->sendSetUvDiagSensorMode(ui->modeComboBox->currentIndex());
         sendSetDiagSensorConfig();
+        sendSetDiagSensorAgc();
     }
     densInterface_->sendInvokeDiagSensorStart();
 }
@@ -240,6 +243,18 @@ void RemoteControlDialog::sendSetDiagSensorConfig()
             719, ((ui->intComboBox->currentIndex() + 1) * 100) - 1);
     } else {
         densInterface_->sendSetBaselineDiagSensorConfig(ui->gainComboBox->currentIndex(), ui->intComboBox->currentIndex());
+    }
+}
+
+void RemoteControlDialog::sendSetDiagSensorAgc()
+{
+    if (ui->agcCheckBox->isChecked()) {
+        // Currently using the same sample count as ALS measurements.
+        // Perhaps this should be a separate setting, or something to
+        // experiment with.
+        densInterface_->sendSetUvDiagSensorAgcEnable(((ui->intComboBox->currentIndex() + 1) * 100) - 1);
+    } else {
+        densInterface_->sendSetUvDiagSensorAgcDisable();
     }
 }
 
@@ -277,6 +292,17 @@ void RemoteControlDialog::onSensorIntIndexChanged(int index)
     if (sensorStarted_) {
         sensorControlState(false);
         sendSetDiagSensorConfig();
+    } else {
+        sensorConfigOnStart_ = true;
+    }
+}
+
+void RemoteControlDialog::onAgcCheckBoxStateChanged(int state)
+{
+    Q_UNUSED(state)
+    if (sensorStarted_) {
+        sensorControlState(false);
+        sendSetDiagSensorAgc();
     } else {
         sensorConfigOnStart_ = true;
     }
@@ -337,7 +363,17 @@ void RemoteControlDialog::sensorControlState(bool enabled)
 {
     ui->sensorStartPushButton->setEnabled(enabled ? !sensorStarted_ : false);
     ui->sensorStopPushButton->setEnabled(enabled ? sensorStarted_ : false);
-    ui->gainComboBox->setEnabled(enabled);
+
+    if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
+        if (ui->agcCheckBox->isChecked()) {
+            ui->gainComboBox->setEnabled(!sensorStarted_);
+        } else {
+            ui->gainComboBox->setEnabled(enabled);
+        }
+    } else {
+        ui->gainComboBox->setEnabled(enabled);
+    }
+
     ui->intComboBox->setEnabled(enabled);
     ui->reflReadPushButton->setEnabled(enabled ? !sensorStarted_ : false);
     ui->tranReadPushButton->setEnabled(enabled ? !sensorStarted_ : false);

@@ -263,6 +263,30 @@ void DensInterface::sendSetUvDiagSensorConfig(int gain, int sampleTime, int samp
     sendCommand(command);
 }
 
+
+void DensInterface::sendSetUvDiagSensorAgcEnable(int sampleCount)
+{
+    if (deviceType_ != DeviceUvVis) { return; }
+
+    QStringList args;
+    args.append("AGCEN");
+    args.append(QString::number(sampleCount));
+
+    DensCommand command(DensCommand::TypeSet, DensCommand::CategoryDiagnostics, "S", args);
+    sendCommand(command);
+}
+
+void DensInterface::sendSetUvDiagSensorAgcDisable()
+{
+    if (deviceType_ != DeviceUvVis) { return; }
+
+    QStringList args;
+    args.append("AGCDIS");
+
+    DensCommand command(DensCommand::TypeSet, DensCommand::CategoryDiagnostics, "S", args);
+    sendCommand(command);
+}
+
 void DensInterface::sendInvokeBaselineDiagRead(DensInterface::SensorLight light, int gain, int integration)
 {
     if (deviceType_ != DeviceBaseline) { return; }

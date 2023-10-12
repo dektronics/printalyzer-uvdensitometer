@@ -65,6 +65,8 @@ public slots:
     void sendSetUvDiagSensorMode(int mode);
     void sendSetBaselineDiagSensorConfig(int gain, int integration);
     void sendSetUvDiagSensorConfig(int gain, int sampleTime, int sampleCount);
+    void sendSetUvDiagSensorAgcEnable(int sampleCount);
+    void sendSetUvDiagSensorAgcDisable();
     void sendInvokeBaselineDiagRead(DensInterface::SensorLight light, int gain, int integration);
     void sendInvokeUvDiagRead(DensInterface::SensorLight light, int mode, int gain, int sampleTime, int sampleCount);
     void sendSetDiagLoggingModeUsb();

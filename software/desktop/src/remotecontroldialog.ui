@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>433</width>
-    <height>374</height>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -270,6 +270,13 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="agcCheckBox">
+        <property name="text">
+         <string>Automatic Gain Control</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="reflReadPushButton">
