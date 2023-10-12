@@ -41,7 +41,7 @@ static densitometer_t transmission_data = {
     .measure_func = transmission_measure
 };
 
-static bool densitometer_allow_uncalibrated = false;
+static bool densitometer_allow_uncalibrated = true; //XXX false;
 
 void densitometer_set_allow_uncalibrated_measurements(bool allow)
 {
@@ -102,15 +102,15 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     }
 
     /* Perform sensor read */
-    float ch0_basic;
-    if (sensor_read_target(densitometer->read_light, &ch0_basic, NULL, callback, user_data) != osOK) {
+    float als_basic;
+    if (sensor_read_target(densitometer->read_light, &als_basic, callback, user_data) != osOK) {
         log_w("Sensor read error");
         densitometer_set_idle_light(densitometer, true);
         return DENSITOMETER_SENSOR_ERROR;
     }
 
     /* Combine and correct the basic reading */
-    float corr_value = sensor_apply_slope_calibration(ch0_basic);
+    float corr_value = sensor_apply_slope_calibration(als_basic);
 
     if (use_target_cal) {
         /* Convert all values into log units */
@@ -124,7 +124,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
         /* Calculate the measured density */
         float meas_d = (m * (meas_ll - cal_lo_ll)) + cal_reflection.lo_d;
 
-        log_i("D=%.2f, VALUE=%f,%f", meas_d, ch0_basic, corr_value);
+        log_i("D=%.2f, VALUE=%f,%f", meas_d, als_basic, corr_value);
 
         /* Clamp the return value to be within an acceptable range */
         if (meas_d <= 0.0F) { meas_d = 0.0F; }
@@ -133,7 +133,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
         densitometer->last_d = meas_d;
 
     } else {
-        log_i("D=<uncal>, VALUE=%f,%f", ch0_basic, corr_value);
+        log_i("D=<uncal>, VALUE=%f,%f", als_basic, corr_value);
 
         /* Assign a default reading when missing target calibration */
         densitometer->last_d = 0.0F;
@@ -143,7 +143,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     densitometer_set_idle_light(densitometer, true);
 
     if (cdc_is_connected()) {
-        cdc_send_density_reading('R', densitometer->last_d, densitometer->zero_d, ch0_basic, corr_value);
+        cdc_send_density_reading('R', densitometer->last_d, densitometer->zero_d, als_basic, corr_value);
     } else {
         hid_send_density_reading('R', densitometer->last_d, densitometer->zero_d);
     }
@@ -166,15 +166,15 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     }
 
     /* Perform sensor read */
-    float ch0_basic;
-    if (sensor_read_target(densitometer->read_light, &ch0_basic, NULL, callback, user_data) != osOK) {
+    float als_basic;
+    if (sensor_read_target(densitometer->read_light, &als_basic, callback, user_data) != osOK) {
         log_w("Sensor read error");
         densitometer_set_idle_light(densitometer, true);
         return DENSITOMETER_SENSOR_ERROR;
     }
 
     /* Combine and correct the basic reading */
-    float corr_value = sensor_apply_slope_calibration(ch0_basic);
+    float corr_value = sensor_apply_slope_calibration(als_basic);
 
     if (use_target_cal) {
         /* Calculate the measured CAL-HI density relative to the zero value */
@@ -189,7 +189,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
         /* Calculate the calibration corrected density */
         float corr_d = meas_d * adj_factor;
 
-        log_i("D=%.2f, VALUE=%f,%f", corr_d, ch0_basic, corr_value);
+        log_i("D=%.2f, VALUE=%f,%f", corr_d, als_basic, corr_value);
 
         /* Clamp the return value to be within an acceptable range */
         if (corr_d <= 0.0F) { corr_d = 0.0F; }
@@ -198,7 +198,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
         densitometer->last_d = corr_d;
 
     } else {
-        log_i("D=<uncal>, VALUE=%f,%f", ch0_basic, corr_value);
+        log_i("D=<uncal>, VALUE=%f,%f", als_basic, corr_value);
 
         /* Assign a default reading when missing target calibration */
         densitometer->last_d = 0.0F;
@@ -208,7 +208,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     densitometer_set_idle_light(densitometer, true);
 
     if (cdc_is_connected()) {
-        cdc_send_density_reading('T', densitometer->last_d, densitometer->zero_d, ch0_basic, corr_value);
+        cdc_send_density_reading('T', densitometer->last_d, densitometer->zero_d, als_basic, corr_value);
     } else {
         hid_send_density_reading('T', densitometer->last_d, densitometer->zero_d);
     }
@@ -221,16 +221,16 @@ densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float
     if (!densitometer) { return DENSITOMETER_CAL_ERROR; }
 
     /* Perform sensor read */
-    float ch0_basic;
-    if (sensor_read_target(densitometer->read_light, &ch0_basic, NULL, callback, user_data) != osOK) {
+    float als_basic;
+    if (sensor_read_target(densitometer->read_light, &als_basic, callback, user_data) != osOK) {
         log_w("Sensor read error");
         return DENSITOMETER_SENSOR_ERROR;
     }
 
     /* Combine and correct the basic reading */
-    float corr_value = sensor_apply_slope_calibration(ch0_basic);
+    float corr_value = sensor_apply_slope_calibration(als_basic);
 
-    if (ch0_basic < 0.0001F || corr_value < 0.0001F) {
+    if (als_basic < 0.0001F || corr_value < 0.0001F) {
         return DENSITOMETER_CAL_ERROR;
     }
 

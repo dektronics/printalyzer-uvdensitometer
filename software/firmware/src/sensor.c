@@ -389,17 +389,16 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source)
 #endif
 
 osStatus_t sensor_read_target(sensor_light_t light_source,
-    float *ch0_result, float *ch1_result,
+    float *als_result,
     sensor_read_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
     uint8_t light_value = 0;
-    sensor_reading_old_t reading;
-    tsl2591_gain_t target_read_gain;
-    float ch0_sum = 0;
-    float ch1_sum = 0;
-    float ch0_avg = NAN;
-    float ch1_avg = NAN;
+    sensor_reading_t reading;
+    sensor_mode_t sensor_mode;
+    tsl2585_gain_t target_read_gain;
+    double als_sum = 0;
+    double als_avg = NAN;
 
     if (light_source != SENSOR_LIGHT_VIS_REFLECTION
         && light_source != SENSOR_LIGHT_VIS_TRANSMISSION
@@ -407,13 +406,25 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         return osErrorParameter;
     }
 
+    if (light_source == SENSOR_LIGHT_UV_TRANSMISSION) {
+        sensor_mode = SENSOR_MODE_UV;
+    } else {
+        sensor_mode = SENSOR_MODE_VIS;
+    }
+
     light_value = sensor_get_read_brightness(light_source);
 
     log_i("Starting sensor target read (light=%d)", light_value);
 
     do {
-        /* Put the sensor and light into a known initial state, with maximum gain */
-        ret = sensor_set_config_old(TSL2591_GAIN_MAXIMUM, TSL2591_TIME_100MS);
+        /* Put the sensor and light into a known initial state */
+        ret = sensor_set_mode(sensor_mode);
+        if (ret != osOK) { break; }
+
+        ret = sensor_set_config(TSL2585_GAIN_256X, 719, 99);
+        if (ret != osOK) { break; }
+
+        ret = sensor_set_agc_enabled(49);
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
@@ -425,66 +436,59 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         /* Do initial read to detect gain */
-        ret = sensor_get_next_reading_old(&reading, 1000);
+        ret = sensor_get_next_reading(&reading, 1000);
         if (ret != osOK) { break; }
-        log_v("TSL2591[%d]: CH0=%d, CH1=%d", reading.reading_count, reading.ch0_val, reading.ch1_val);
+
+        target_read_gain = reading.gain;
+
+        /* Disable the AGC */
+        ret = sensor_set_agc_disabled();
+        if (ret != osOK) { break; }
 
         /* Invoke the progress callback */
         if (callback) { callback(user_data); }
 
-        /*
-         * Pick target gain based on previous result.
-         * Since the measurement integration time will be approximately
-         * double the initialization integration time, this detection
-         * needs to be at a point slightly less than half the saturation
-         * point for measurement readings.
-         * The regular saturation detection won't work here, because
-         * the 100ms saturation point is slightly greater than half-way.
-         */
-        if (reading.ch0_val > 32700 || reading.ch1_val > 32700) {
-            target_read_gain = TSL2591_GAIN_HIGH;
-        } else {
-            target_read_gain = TSL2591_GAIN_MAXIMUM;
-        }
+        //TODO Figure out if we need to add some padding for constant measurement time
+
+        //TODO Detect errors or saturation here
 
         /* Switch to the target read gain and integration time */
-        ret = sensor_set_config_old(target_read_gain, TSL2591_TIME_200MS);
+        ret = sensor_set_config(target_read_gain, 719, 199);
         if (ret != osOK) { break; }
 
         /* Take the actual target measurement readings */
         for (int i = 0; i < SENSOR_TARGET_READ_ITERATIONS; i++) {
-            float ch0_basic = 0;
-            float ch1_basic = 0;
+            double als_basic = 0;
 
-            ret = sensor_get_next_reading_old(&reading, 500);
-            if (ret != osOK) { break; }
-            log_v("TSL2591[%d]: CH0=%d, CH1=%d", reading.reading_count, reading.ch0_val, reading.ch1_val);
+            ret = sensor_get_next_reading(&reading, 1000);
+            if (ret != osOK) { log_d("-->Foo1: %d", ret); break; }
 
             /* Invoke the progress callback */
             if (callback) { callback(user_data); }
 
+#if 0
+            //TODO
             /* Make sure we're consistent with our read cycles */
             if (reading.reading_count != i + 4) {
                 log_e("Unexpected read cycle count: %d", reading.reading_count);
                 ret = osError;
                 break;
             }
+#endif
 
-            /* Make sure we didn't unexpectedly saturate */
-            if (sensor_is_reading_saturated(&reading)) {
-                log_e("Unexpected sensor saturation");
+            /* Make sure we didn't unexpectedly saturate or generate an error */
+            if (reading.result_status != SENSOR_RESULT_VALID) {
+                log_e("Unexpected sensor result: %d", reading.result_status);
                 ret = osError;
                 break;
             }
 
-            sensor_convert_to_basic_counts(&reading, &ch0_basic, &ch1_basic);
-            ch0_sum += ch0_basic;
-            ch1_sum += ch1_basic;
+            als_basic = sensor_convert_to_basic_counts(&reading);
+            als_sum += als_basic;
         }
         if (ret != osOK) { break; }
 
-        ch0_avg = (ch0_sum / (float)SENSOR_TARGET_READ_ITERATIONS);
-        ch1_avg = (ch1_sum / (float)SENSOR_TARGET_READ_ITERATIONS);
+        als_avg = (als_sum / (double)SENSOR_TARGET_READ_ITERATIONS);
     } while (0);
 
     /* Turn off the sensor */
@@ -493,8 +497,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
 
     if (ret == osOK) {
         log_i("Sensor read complete");
-        if (ch0_result) { *ch0_result = ch0_avg; }
-        if (ch1_result) { *ch1_result = ch1_avg; }
+        if (als_result) { *als_result = (float)als_avg; }
     } else {
         log_e("Sensor read failed: ret=%d", ret);
         if (ret == osOK) {
@@ -941,38 +944,34 @@ bool sensor_is_reading_saturated(const sensor_reading_old_t *reading)
     }
 }
 
-void sensor_convert_to_basic_counts(const sensor_reading_old_t *reading, float *ch0_basic, float *ch1_basic)
+double sensor_convert_to_basic_counts(const sensor_reading_t *reading)
 {
-    settings_cal_gain_t cal_gain;
-    float ch0_gain;
-    float ch1_gain;
-    float atime_ms;
+    //TODO
+    //settings_cal_gain_t cal_gain;
+    double als_gain;
+    double atime_ms;
+    double als_reading;
 
     if (!reading) {
-        if (ch0_basic) { *ch0_basic = NAN; }
-        if (ch1_basic) { *ch1_basic = NAN; }
-        return;
+        return NAN;
     }
 
     /* Get the gain value from sensor calibration */
-    settings_get_cal_gain(&cal_gain);
-    settings_get_cal_gain_fields(&cal_gain, reading->gain, &ch0_gain, &ch1_gain);
+    //settings_get_cal_gain(&cal_gain);
+    //settings_get_cal_gain_fields(&cal_gain, reading->gain, &ch0_gain, &ch1_gain);
 
     /*
      * Integration time is uncalibrated, due to the assumption that all
      * target measurements will be done at the same setting.
      */
-    atime_ms = tsl2591_get_time_value_ms(reading->time);
+    atime_ms = tsl2585_integration_time_ms(reading->sample_time, reading->sample_count);
 
-    float ch0_cpl = (atime_ms * ch0_gain) / (TSL2591_LUX_GA * TSL2591_LUX_DF);
-    float ch1_cpl = (atime_ms * ch1_gain) / (TSL2591_LUX_GA * TSL2591_LUX_DF);
+    als_gain = tsl2585_gain_value(reading->gain);
 
-    if (ch0_basic) {
-        *ch0_basic = (float)reading->ch0_val / ch0_cpl;
-    }
-    if (ch1_basic) {
-        *ch1_basic = (float)reading->ch1_val / ch1_cpl;
-    }
+    /* Divide to get numbers in a similar range as previous sensors */
+    als_reading = (double)reading->als_data / 16.0F;
+
+    return als_reading / (atime_ms * als_gain);
 }
 
 float sensor_basic_result(const sensor_reading_t *reading)

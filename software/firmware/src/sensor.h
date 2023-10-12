@@ -113,12 +113,11 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source);
  * from which target density can be calculated.
  *
  * @param light_source Light source to use for target measurement
- * @param ch0_result Channel 0 result, in basic counts
- * @param ch1_result Channel 1 result, in basic counts
+ * @param als_result Sensor result
  * @return osOK on success
  */
 osStatus_t sensor_read_target(sensor_light_t light_source,
-    float *ch0_result, float *ch1_result,
+    float *als_result,
     sensor_read_callback_t callback, void *user_data);
 
 /**
@@ -163,10 +162,9 @@ bool sensor_is_reading_saturated(const sensor_reading_old_t *reading);
  * calculations shall be performed in terms of basic counts.
  *
  * @param reading Reading structure with all raw values
- * @param ch0_basic Basic count output for channel 0
- * @param ch1_basic Basic count output for channel 1
+ * @return Basic count output for the sensor
  */
-void sensor_convert_to_basic_counts(const sensor_reading_old_t *reading, float *ch0_basic, float *ch1_basic);
+double sensor_convert_to_basic_counts(const sensor_reading_t *reading);
 
 /**
  * Get the result in a gain and integration time adjusted format.
