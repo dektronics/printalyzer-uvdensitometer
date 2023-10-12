@@ -544,6 +544,9 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
         ret = sensor_set_config(gain, sample_time, sample_count);
         if (ret != osOK) { break; }
 
+        ret = sensor_set_agc_disabled();
+        if (ret != osOK) { break; }
+
         /* Activate light source synchronized with sensor cycle */
         ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
         if (ret != osOK) { break; }

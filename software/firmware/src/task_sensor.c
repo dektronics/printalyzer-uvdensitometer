@@ -25,6 +25,8 @@ typedef enum {
     SENSOR_CONTROL_START,
     SENSOR_CONTROL_SET_MODE,
     SENSOR_CONTROL_SET_CONFIG,
+    SENSOR_CONTROL_SET_AGC_ENABLED,
+    SENSOR_CONTROL_SET_AGC_DISABLED,
     SENSOR_CONTROL_SET_LIGHT_MODE,
     SENSOR_CONTROL_INTERRUPT
 } sensor_control_event_type_t;
@@ -34,6 +36,10 @@ typedef struct {
     uint16_t sample_time;
     uint16_t sample_count;
 } sensor_control_config_params_t;
+
+typedef struct {
+    uint16_t sample_count;
+} sensor_control_agc_params_t;
 
 typedef struct {
     sensor_light_t light;
@@ -56,6 +62,7 @@ typedef struct {
     union {
         sensor_mode_t sensor_mode;
         sensor_control_config_params_t config;
+        sensor_control_agc_params_t agc;
         sensor_control_light_mode_params_t light_mode;
         sensor_control_interrupt_params_t interrupt;
     };
@@ -133,6 +140,8 @@ static osStatus_t sensor_control_start();
 static osStatus_t sensor_control_stop();
 static osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode);
 static osStatus_t sensor_control_set_config(const sensor_control_config_params_t *params);
+static osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *params);
+static osStatus_t sensor_control_set_agc_disabled();
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
 static HAL_StatusTypeDef sensor_control_read_fifo(uint8_t *als_status, uint8_t *als_status2, uint8_t *als_status3, uint32_t *als_data);
@@ -221,6 +230,12 @@ void task_sensor_run(void *argument)
                 break;
             case SENSOR_CONTROL_SET_CONFIG:
                 ret = sensor_control_set_config(&control_event.config);
+                break;
+            case SENSOR_CONTROL_SET_AGC_ENABLED:
+                ret = sensor_control_set_agc_enabled(&control_event.agc);
+                break;
+            case SENSOR_CONTROL_SET_AGC_DISABLED:
+                ret = sensor_control_set_agc_disabled();
                 break;
             case SENSOR_CONTROL_SET_LIGHT_MODE:
                 ret = sensor_control_set_light_mode(&control_event.light_mode);
@@ -554,6 +569,98 @@ osStatus_t sensor_control_set_config(const sensor_control_config_params_t *param
         sensor_state.sample_time = params->sample_time;
         sensor_state.sample_count = params->sample_count;
         sensor_state.config_pending = true;
+    }
+
+    return hal_to_os_status(ret);
+}
+
+osStatus_t sensor_set_agc_enabled(uint16_t sample_count)
+{
+    if (!sensor_initialized) { return osErrorResource; }
+
+    osStatus_t result = osOK;
+    sensor_control_event_t control_event = {
+        .event_type = SENSOR_CONTROL_SET_AGC_ENABLED,
+        .result = &result,
+        .agc = {
+            .sample_count = sample_count
+        }
+    };
+    osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
+    osSemaphoreAcquire(sensor_control_semaphore, portMAX_DELAY);
+    return result;
+}
+
+osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *params)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    log_d("sensor_control_set_agc_enabled: %d", params->sample_count);
+
+    if (sensor_state.running) {
+        ret = tsl2585_set_agc_num_samples(&hi2c1, params->sample_count);
+        if (ret == HAL_OK) {
+            sensor_state.agc_sample_count = sensor_state.sample_count;
+        }
+
+        ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 1);
+        if (ret == HAL_OK) {
+            sensor_state.calibration_iteration = 1;
+        }
+
+        ret = tsl2585_set_agc_calibration(&hi2c1, true);
+        if (ret == HAL_OK) {
+            sensor_state.agc_enabled = true;
+        }
+    } else {
+        sensor_state.agc_enabled = true;
+        sensor_state.agc_sample_count = params->sample_count;
+        sensor_state.calibration_iteration = 1;
+        sensor_state.agc_pending = true;
+    }
+
+    return hal_to_os_status(ret);
+}
+
+osStatus_t sensor_set_agc_disabled()
+{
+    if (!sensor_initialized) { return osErrorResource; }
+
+    osStatus_t result = osOK;
+    sensor_control_event_t control_event = {
+        .event_type = SENSOR_CONTROL_SET_AGC_DISABLED,
+        .result = &result
+    };
+    osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
+    osSemaphoreAcquire(sensor_control_semaphore, portMAX_DELAY);
+    return result;
+}
+
+osStatus_t sensor_control_set_agc_disabled()
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+
+    log_d("sensor_control_set_agc_disabled");
+
+    if (sensor_state.running) {
+        do {
+            ret = tsl2585_set_agc_calibration(&hi2c1, false);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 0);
+            if (ret != HAL_OK) { break; }
+
+            ret = tsl2585_set_agc_num_samples(&hi2c1, 0);
+            if (ret != HAL_OK) { break; }
+        } while (0);
+        if (ret == HAL_OK) {
+            sensor_state.agc_enabled = false;
+            sensor_state.agc_disabled_reset_gain = true;
+            sensor_state.discard_next_reading = true;
+        }
+    } else {
+        sensor_state.agc_enabled = false;
+        sensor_state.calibration_iteration = 0;
+        sensor_state.agc_pending = true;
     }
 
     return hal_to_os_status(ret);

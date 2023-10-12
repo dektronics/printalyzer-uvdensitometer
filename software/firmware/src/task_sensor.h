@@ -64,6 +64,19 @@ osStatus_t sensor_set_mode(sensor_mode_t mode);
 osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t sample_count);
 
 /**
+ * Enable the sensor's automatic gain control
+ *
+ * @param sample_count Number of samples in an AGC integration cycle
+ */
+osStatus_t sensor_set_agc_enabled(uint16_t sample_count);
+
+/**
+ * Disable the sensor's automatic gain control
+ * @return
+ */
+osStatus_t sensor_set_agc_disabled();
+
+/**
  * Change the state of the sensor read light sources.
  *
  * Both lights are treated as mutually exclusive and are never turned on at

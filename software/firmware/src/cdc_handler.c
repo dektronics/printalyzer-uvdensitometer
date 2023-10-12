@@ -799,6 +799,8 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
      * "ID S,STOP"    -> Invoke sensor stop [remote]
      * "SD S,MODE,m"  -> Set sensor smux mode (s = [0-2]) [remote]
      * "SD S,CFG,g,t,c" -> Set sensor gain (g = [0-13]), sample time (t = [0-2047]), and sample count (c=[0-2047]) [remote]
+     * "SD S,AGCEN,c" -> Enable the sensor's automatic gain control, and set AGC sample count (c=[0-2047]) [remote]
+     * "SD S,AGCDIS"  -> Disable the sensor's automatic gain control [remote]
      * "GD S,READING" -> Get next sensor reading [remote]
      *
      * "ID READ,L,n,m" -> Perform controlled sensor target read
@@ -897,6 +899,24 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
                     }
                     return true;
                 }
+            }
+        } else if (cmd->type == CMD_TYPE_SET && strncmp(cmd->args, "AGCEN,", 6) == 0) {
+            uint8_t sample_count = atoi(cmd->args + 6);
+            if (sample_count < 2048) {
+                result = sensor_set_agc_enabled(sample_count);
+                if (result == osOK) {
+                    cdc_send_command_response(cmd, "OK");
+                } else {
+                    cdc_send_command_response(cmd, "ERR");
+                }
+                return true;
+            }
+        } else if (cmd->type == CMD_TYPE_SET && strncmp(cmd->args, "AGCDIS", 6) == 0) {
+            result = sensor_set_agc_disabled();
+            if (result == osOK) {
+                cdc_send_command_response(cmd, "OK");
+            } else {
+                cdc_send_command_response(cmd, "ERR");
             }
         }
         return true;
