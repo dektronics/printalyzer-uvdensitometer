@@ -25,7 +25,7 @@ struct __densitometer_t {
     const densitometer_result_t (*measure_func)(densitometer_t *densitometer, sensor_read_callback_t callback, void *user_data);
 };
 
-static densitometer_t reflection_data = {
+static densitometer_t vis_reflection_data = {
     .last_d = NAN,
     .zero_d = NAN,
     .max_d = REFLECTION_MAX_D,
@@ -33,7 +33,7 @@ static densitometer_t reflection_data = {
     .measure_func = reflection_measure
 };
 
-static densitometer_t transmission_data = {
+static densitometer_t vis_transmission_data = {
     .last_d = NAN,
     .zero_d = NAN,
     .max_d = TRANSMISSION_MAX_D,
@@ -41,21 +41,34 @@ static densitometer_t transmission_data = {
     .measure_func = transmission_measure
 };
 
-static bool densitometer_allow_uncalibrated = true; //XXX false;
+static densitometer_t uv_transmission_data = {
+    .last_d = NAN,
+    .zero_d = NAN,
+    .max_d = TRANSMISSION_MAX_D,
+    .read_light = SENSOR_LIGHT_UV_TRANSMISSION,
+    .measure_func = transmission_measure
+};
+
+static bool densitometer_allow_uncalibrated = false;
 
 void densitometer_set_allow_uncalibrated_measurements(bool allow)
 {
     densitometer_allow_uncalibrated = allow;
 }
 
-densitometer_t *densitometer_reflection()
+densitometer_t *densitometer_vis_reflection()
 {
-    return &reflection_data;
+    return &vis_reflection_data;
 }
 
-densitometer_t *densitometer_transmission()
+densitometer_t *densitometer_vis_transmission()
 {
-    return &transmission_data;
+    return &vis_transmission_data;
+}
+
+densitometer_t *densitometer_uv_transmission()
+{
+    return &uv_transmission_data;
 }
 
 densitometer_result_t densitometer_measure(densitometer_t *densitometer, sensor_read_callback_t callback, void *user_data)
@@ -73,15 +86,19 @@ void densitometer_set_idle_light(const densitometer_t *densitometer, bool enable
         uint8_t idle_value = 0;
 
         /* Copy over latest idle value from settings */
-        settings_user_idle_light_t idle_light;
-        settings_get_user_idle_light(&idle_light);
+        sensor_light_t idle_light = densitometer->read_light;
+        settings_user_idle_light_t idle_light_settings;
+        settings_get_user_idle_light(&idle_light_settings);
         if (densitometer->read_light == SENSOR_LIGHT_VIS_REFLECTION) {
-            idle_value = idle_light.reflection;
+            idle_value = idle_light_settings.reflection;
         } else if (densitometer->read_light == SENSOR_LIGHT_VIS_TRANSMISSION) {
-            idle_value = idle_light.transmission;
+            idle_value = idle_light_settings.transmission;
+        } else if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
+            idle_value = idle_light_settings.transmission;
+            idle_light = SENSOR_LIGHT_VIS_TRANSMISSION;
         }
 
-        sensor_set_light_mode(densitometer->read_light, false, idle_value);
+        sensor_set_light_mode(idle_light, false, idle_value);
     } else {
         sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
     }
@@ -93,7 +110,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     bool use_target_cal = true;
 
     /* Get the current calibration values */
-    if (!settings_get_cal_reflection(&cal_reflection)) {
+    if (!settings_get_cal_vis_reflection(&cal_reflection)) {
         if (densitometer_allow_uncalibrated) {
             use_target_cal = false;
         } else {
@@ -157,7 +174,13 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     bool use_target_cal = true;
 
     /* Get the current calibration values */
-    if (!settings_get_cal_transmission(&cal_transmission)) {
+    bool result;
+    if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
+        result = settings_get_cal_uv_transmission(&cal_transmission);
+    } else {
+        result = settings_get_cal_vis_transmission(&cal_transmission);
+    }
+    if (!result) {
         if (densitometer_allow_uncalibrated) {
             use_target_cal = false;
         } else {

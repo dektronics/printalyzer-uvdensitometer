@@ -29,9 +29,10 @@ static bool settings_load_cal_gain();
 static void settings_set_cal_slope_defaults(settings_cal_slope_t *cal_slope);
 static bool settings_load_cal_slope();
 static void settings_set_cal_reflection_defaults(settings_cal_reflection_t *cal_reflection);
-static bool settings_load_cal_reflection();
+static bool settings_load_cal_vis_reflection();
 static void settings_set_cal_transmission_defaults(settings_cal_transmission_t *cal_transmission);
-static bool settings_load_cal_transmission();
+static bool settings_load_cal_vis_transmission();
+static bool settings_load_cal_uv_transmission();
 static void settings_set_user_usb_key_defaults(settings_user_usb_key_t *usb_key);
 static bool settings_load_user_usb_key();
 static void settings_set_user_idle_light_defaults(settings_user_idle_light_t *idle_light);
@@ -92,11 +93,14 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define PAGE_CAL_TARGET_SIZE               (128U)
 #define PAGE_CAL_TARGET_VERSION            1UL
 
-#define CONFIG_CAL_REFLECTION              (PAGE_CAL_TARGET + 4U)
-#define CONFIG_CAL_REFLECTION_SIZE         (20U)
+#define CONFIG_CAL_VIS_REFLECTION          (PAGE_CAL_TARGET + 4U)
+#define CONFIG_CAL_VIS_REFLECTION_SIZE     (20U)
 
-#define CONFIG_CAL_TRANSMISSION            (PAGE_CAL_TARGET + 24U)
-#define CONFIG_CAL_TRANSMISSION_SIZE       (16U)
+#define CONFIG_CAL_VIS_TRANSMISSION        (PAGE_CAL_TARGET + 24U)
+#define CONFIG_CAL_VIS_TRANSMISSION_SIZE   (16U)
+
+#define CONFIG_CAL_UV_TRANSMISSION         (PAGE_CAL_TARGET + 40U)
+#define CONFIG_CAL_UV_TRANSMISSION_SIZE    (16U)
 
 /*
  * User Settings (128b)
@@ -118,8 +122,9 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 static settings_cal_light_t setting_cal_light = {0};
 static settings_cal_gain_t setting_cal_gain = {0};
 static settings_cal_slope_t setting_cal_slope = {0};
-static settings_cal_reflection_t setting_cal_reflection = {0};
-static settings_cal_transmission_t setting_cal_transmission = {0};
+static settings_cal_reflection_t setting_cal_vis_reflection = {0};
+static settings_cal_transmission_t setting_cal_vis_transmission = {0};
+static settings_cal_transmission_t setting_cal_uv_transmission = {0};
 static settings_user_usb_key_t setting_user_usb_key = {0};
 static settings_user_idle_light_t setting_user_idle_light = {0};
 static settings_user_display_format_t setting_user_display_format = {0};
@@ -327,15 +332,17 @@ bool settings_init_cal_target(bool force_clear)
 {
     bool result;
     /* Initialize all fields to their default values */
-    settings_set_cal_reflection_defaults(&setting_cal_reflection);
-    settings_set_cal_transmission_defaults(&setting_cal_transmission);
+    settings_set_cal_reflection_defaults(&setting_cal_vis_reflection);
+    settings_set_cal_transmission_defaults(&setting_cal_vis_transmission);
+    settings_set_cal_transmission_defaults(&setting_cal_uv_transmission);
 
     /* Load settings if the version matches */
     uint32_t version = force_clear ? 0 : settings_read_uint32(PAGE_CAL_TARGET);
     if (version == PAGE_CAL_TARGET_VERSION) {
         /* Version is good, load data with per-field validation */
-        settings_load_cal_reflection();
-        settings_load_cal_transmission();
+        settings_load_cal_vis_reflection();
+        settings_load_cal_vis_transmission();
+        settings_load_cal_uv_transmission();
         result = true;
     } else {
         /* Version is bad, initialize a blank page */
@@ -360,14 +367,17 @@ bool settings_clear_cal_target()
     /* Write an empty reflection cal struct */
     settings_cal_reflection_t cal_reflection;
     settings_set_cal_reflection_defaults(&cal_reflection);
-    if (!settings_set_cal_reflection(&cal_reflection)) {
+    if (!settings_set_cal_vis_reflection(&cal_reflection)) {
         return false;
     }
 
-    /* Write an empty transmission cal struct */
+    /* Write empty transmission cal structs */
     settings_cal_transmission_t cal_transmission;
     settings_set_cal_transmission_defaults(&cal_transmission);
-    if (!settings_set_cal_transmission(&cal_transmission)) {
+    if (!settings_set_cal_vis_transmission(&cal_transmission)) {
+        return false;
+    }
+    if (!settings_set_cal_uv_transmission(&cal_transmission)) {
         return false;
     }
 
@@ -803,12 +813,12 @@ void settings_set_cal_reflection_defaults(settings_cal_reflection_t *cal_reflect
     cal_reflection->hi_value = NAN;
 }
 
-bool settings_set_cal_reflection(const settings_cal_reflection_t *cal_reflection)
+bool settings_set_cal_vis_reflection(const settings_cal_reflection_t *cal_reflection)
 {
     HAL_StatusTypeDef ret = HAL_OK;
     if (!cal_reflection) { return false; }
 
-    uint8_t buf[CONFIG_CAL_REFLECTION_SIZE];
+    uint8_t buf[CONFIG_CAL_VIS_REFLECTION_SIZE];
     copy_from_f32(&buf[0], cal_reflection->lo_d);
     copy_from_f32(&buf[4], cal_reflection->lo_value);
     copy_from_f32(&buf[8], cal_reflection->hi_d);
@@ -817,21 +827,21 @@ bool settings_set_cal_reflection(const settings_cal_reflection_t *cal_reflection
     uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 4);
     copy_from_u32(&buf[16], crc);
 
-    ret = settings_write_buffer(CONFIG_CAL_REFLECTION, buf, sizeof(buf));
+    ret = settings_write_buffer(CONFIG_CAL_VIS_REFLECTION, buf, sizeof(buf));
 
     if (ret == HAL_OK) {
-        memcpy(&setting_cal_reflection, cal_reflection, sizeof(settings_cal_reflection_t));
+        memcpy(&setting_cal_vis_reflection, cal_reflection, sizeof(settings_cal_reflection_t));
         return true;
     } else {
         return false;
     }
 }
 
-bool settings_load_cal_reflection()
+bool settings_load_cal_vis_reflection()
 {
-    uint8_t buf[CONFIG_CAL_REFLECTION_SIZE];
+    uint8_t buf[CONFIG_CAL_VIS_REFLECTION_SIZE];
 
-    if (settings_read_buffer(CONFIG_CAL_REFLECTION, buf, sizeof(buf)) != HAL_OK) {
+    if (settings_read_buffer(CONFIG_CAL_VIS_REFLECTION, buf, sizeof(buf)) != HAL_OK) {
         return false;
     }
 
@@ -839,27 +849,27 @@ bool settings_load_cal_reflection()
     uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 4);
 
     if (crc != calculated_crc) {
-        log_w("Invalid cal reflection CRC: %08X != %08X", crc, calculated_crc);
+        log_w("Invalid cal VIS reflection CRC: %08X != %08X", crc, calculated_crc);
         return false;
     } else {
-        setting_cal_reflection.lo_d = copy_to_f32(&buf[0]);
-        setting_cal_reflection.lo_value = copy_to_f32(&buf[4]);
-        setting_cal_reflection.hi_d = copy_to_f32(&buf[8]);
-        setting_cal_reflection.hi_value = copy_to_f32(&buf[12]);
+        setting_cal_vis_reflection.lo_d = copy_to_f32(&buf[0]);
+        setting_cal_vis_reflection.lo_value = copy_to_f32(&buf[4]);
+        setting_cal_vis_reflection.hi_d = copy_to_f32(&buf[8]);
+        setting_cal_vis_reflection.hi_value = copy_to_f32(&buf[12]);
         return true;
     }
 }
 
-bool settings_get_cal_reflection(settings_cal_reflection_t *cal_reflection)
+bool settings_get_cal_vis_reflection(settings_cal_reflection_t *cal_reflection)
 {
     if (!cal_reflection) { return false; }
 
     /* Copy over the settings values */
-    memcpy(cal_reflection, &setting_cal_reflection, sizeof(settings_cal_reflection_t));
+    memcpy(cal_reflection, &setting_cal_vis_reflection, sizeof(settings_cal_reflection_t));
 
     /* Set default values if validation fails */
     if (!settings_validate_cal_reflection(cal_reflection)) {
-        log_w("Invalid reflection calibration values");
+        log_w("Invalid VIS reflection calibration values");
         log_w("CAL-LO: D=%.2f, VALUE=%f", cal_reflection->lo_d, cal_reflection->lo_value);
         log_w("CAL-HI: D=%.2f, VALUE=%f", cal_reflection->hi_d, cal_reflection->hi_value);
         settings_set_cal_reflection_defaults(cal_reflection);
@@ -905,12 +915,12 @@ void settings_set_cal_transmission_defaults(settings_cal_transmission_t *cal_tra
     cal_transmission->hi_value = NAN;
 }
 
-bool settings_set_cal_transmission(const settings_cal_transmission_t *cal_transmission)
+bool settings_set_cal_vis_transmission(const settings_cal_transmission_t *cal_transmission)
 {
     HAL_StatusTypeDef ret = HAL_OK;
     if (!cal_transmission) { return false; }
 
-    uint8_t buf[CONFIG_CAL_TRANSMISSION_SIZE];
+    uint8_t buf[CONFIG_CAL_VIS_TRANSMISSION_SIZE];
     copy_from_f32(&buf[0], cal_transmission->zero_value);
     copy_from_f32(&buf[4], cal_transmission->hi_d);
     copy_from_f32(&buf[8], cal_transmission->hi_value);
@@ -918,21 +928,21 @@ bool settings_set_cal_transmission(const settings_cal_transmission_t *cal_transm
     uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 3);
     copy_from_u32(&buf[12], crc);
 
-    ret = settings_write_buffer(CONFIG_CAL_TRANSMISSION, buf, sizeof(buf));
+    ret = settings_write_buffer(CONFIG_CAL_VIS_TRANSMISSION, buf, sizeof(buf));
 
     if (ret == HAL_OK) {
-        memcpy(&setting_cal_transmission, cal_transmission, sizeof(settings_cal_transmission_t));
+        memcpy(&setting_cal_vis_transmission, cal_transmission, sizeof(settings_cal_transmission_t));
         return true;
     } else {
         return false;
     }
 }
 
-bool settings_load_cal_transmission()
+bool settings_load_cal_vis_transmission()
 {
-    uint8_t buf[CONFIG_CAL_TRANSMISSION_SIZE];
+    uint8_t buf[CONFIG_CAL_VIS_TRANSMISSION_SIZE];
 
-    if (settings_read_buffer(CONFIG_CAL_TRANSMISSION, buf, sizeof(buf)) != HAL_OK) {
+    if (settings_read_buffer(CONFIG_CAL_VIS_TRANSMISSION, buf, sizeof(buf)) != HAL_OK) {
         return false;
     }
 
@@ -940,26 +950,90 @@ bool settings_load_cal_transmission()
     uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 3);
 
     if (crc != calculated_crc) {
-        log_w("Invalid cal transmission CRC: %08X != %08X", crc, calculated_crc);
+        log_w("Invalid cal VIS transmission CRC: %08X != %08X", crc, calculated_crc);
         return false;
     } else {
-        setting_cal_transmission.zero_value = copy_to_f32(&buf[0]);
-        setting_cal_transmission.hi_d = copy_to_f32(&buf[4]);
-        setting_cal_transmission.hi_value = copy_to_f32(&buf[8]);
+        setting_cal_vis_transmission.zero_value = copy_to_f32(&buf[0]);
+        setting_cal_vis_transmission.hi_d = copy_to_f32(&buf[4]);
+        setting_cal_vis_transmission.hi_value = copy_to_f32(&buf[8]);
         return true;
     }
 }
 
-bool settings_get_cal_transmission(settings_cal_transmission_t *cal_transmission)
+bool settings_get_cal_vis_transmission(settings_cal_transmission_t *cal_transmission)
 {
     if (!cal_transmission) { return false; }
 
     /* Copy over the settings values */
-    memcpy(cal_transmission, &setting_cal_transmission, sizeof(settings_cal_transmission_t));
+    memcpy(cal_transmission, &setting_cal_vis_transmission, sizeof(settings_cal_transmission_t));
 
     /* Set default values if validation fails */
     if (!settings_validate_cal_transmission(cal_transmission)) {
-        log_w("Invalid transmission calibration values");
+        log_w("Invalid VIS transmission calibration values");
+        log_w("CAL-ZERO: VALUE=%f", cal_transmission->zero_value);
+        log_w("CAL-HI: D=%.2f, VALUE=%f", cal_transmission->hi_d, cal_transmission->hi_value);
+        settings_set_cal_transmission_defaults(cal_transmission);
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool settings_set_cal_uv_transmission(const settings_cal_transmission_t *cal_transmission)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    if (!cal_transmission) { return false; }
+
+    uint8_t buf[CONFIG_CAL_UV_TRANSMISSION_SIZE];
+    copy_from_f32(&buf[0], cal_transmission->zero_value);
+    copy_from_f32(&buf[4], cal_transmission->hi_d);
+    copy_from_f32(&buf[8], cal_transmission->hi_value);
+
+    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 3);
+    copy_from_u32(&buf[12], crc);
+
+    ret = settings_write_buffer(CONFIG_CAL_UV_TRANSMISSION, buf, sizeof(buf));
+
+    if (ret == HAL_OK) {
+        memcpy(&setting_cal_uv_transmission, cal_transmission, sizeof(settings_cal_transmission_t));
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool settings_load_cal_uv_transmission()
+{
+    uint8_t buf[CONFIG_CAL_UV_TRANSMISSION_SIZE];
+
+    if (settings_read_buffer(CONFIG_CAL_UV_TRANSMISSION, buf, sizeof(buf)) != HAL_OK) {
+        return false;
+    }
+
+    uint32_t crc = copy_to_u32(&buf[12]);
+    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 3);
+
+    if (crc != calculated_crc) {
+        log_w("Invalid cal UV transmission CRC: %08X != %08X", crc, calculated_crc);
+        return false;
+    } else {
+        setting_cal_uv_transmission.zero_value = copy_to_f32(&buf[0]);
+        setting_cal_uv_transmission.hi_d = copy_to_f32(&buf[4]);
+        setting_cal_uv_transmission.hi_value = copy_to_f32(&buf[8]);
+        return true;
+    }
+}
+
+bool settings_get_cal_uv_transmission(settings_cal_transmission_t *cal_transmission)
+{
+    if (!cal_transmission) { return false; }
+
+    /* Copy over the settings values */
+    memcpy(cal_transmission, &setting_cal_uv_transmission, sizeof(settings_cal_transmission_t));
+
+    /* Set default values if validation fails */
+    if (!settings_validate_cal_transmission(cal_transmission)) {
+        log_w("Invalid UV transmission calibration values");
         log_w("CAL-ZERO: VALUE=%f", cal_transmission->zero_value);
         log_w("CAL-HI: D=%.2f, VALUE=%f", cal_transmission->hi_d, cal_transmission->hi_value);
         settings_set_cal_transmission_defaults(cal_transmission);

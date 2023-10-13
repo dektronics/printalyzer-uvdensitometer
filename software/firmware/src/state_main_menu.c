@@ -25,8 +25,9 @@ extern I2C_HandleTypeDef hi2c1;
 typedef enum {
     MAIN_MENU_HOME,
     MAIN_MENU_CALIBRATION,
-    MAIN_MENU_CALIBRATION_REFLECTION,
-    MAIN_MENU_CALIBRATION_TRANSMISSION,
+    MAIN_MENU_CALIBRATION_VIS_REFLECTION,
+    MAIN_MENU_CALIBRATION_VIS_TRANSMISSION,
+    MAIN_MENU_CALIBRATION_UV_TRANSMISSION,
     MAIN_MENU_CALIBRATION_SENSOR_GAIN,
     MAIN_MENU_CALIBRATION_SENSOR_SLOPE,
     MAIN_MENU_SETTINGS,
@@ -66,7 +67,7 @@ static state_main_menu_t state_main_menu_data = {
 static void main_menu_home(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_calibration(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_calibration_reflection(state_main_menu_t *state, state_controller_t *controller);
-static void main_menu_calibration_transmission(state_main_menu_t *state, state_controller_t *controller);
+static void main_menu_calibration_transmission(state_main_menu_t *state, state_controller_t *controller, bool vis_uv);
 static void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_calibration_sensor_slope(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings(state_main_menu_t *state, state_controller_t *controller);
@@ -107,10 +108,12 @@ void state_main_menu_process(state_t *state_base, state_controller_t *controller
         main_menu_home(state, controller);
     } else if (state->menu_state == MAIN_MENU_CALIBRATION) {
         main_menu_calibration(state, controller);
-    } else if (state->menu_state == MAIN_MENU_CALIBRATION_REFLECTION) {
+    } else if (state->menu_state == MAIN_MENU_CALIBRATION_VIS_REFLECTION) {
         main_menu_calibration_reflection(state, controller);
-    } else if (state->menu_state == MAIN_MENU_CALIBRATION_TRANSMISSION) {
-        main_menu_calibration_transmission(state, controller);
+    } else if (state->menu_state == MAIN_MENU_CALIBRATION_VIS_TRANSMISSION) {
+        main_menu_calibration_transmission(state, controller, true);
+    } else if (state->menu_state == MAIN_MENU_CALIBRATION_UV_TRANSMISSION) {
+        main_menu_calibration_transmission(state, controller, false);
     } else if (state->menu_state == MAIN_MENU_CALIBRATION_SENSOR_GAIN) {
         main_menu_calibration_sensor_gain(state, controller);
     } else if (state->menu_state == MAIN_MENU_CALIBRATION_SENSOR_SLOPE) {
@@ -154,18 +157,21 @@ void main_menu_calibration(state_main_menu_t *state, state_controller_t *control
 {
     state->cal_option = display_selection_list(
         "Calibration", state->cal_option,
-        "Reflection\n"
-        "Transmission\n"
+        "VIS Reflection\n"
+        "VIS Trans.\n"
+        "UV Trans.\n"
         "Sensor Gain\n"
         "Sensor Slope");
 
     if (state->cal_option == 1) {
-        state->menu_state = MAIN_MENU_CALIBRATION_REFLECTION;
+        state->menu_state = MAIN_MENU_CALIBRATION_VIS_REFLECTION;
     } else if (state->cal_option == 2) {
-        state->menu_state = MAIN_MENU_CALIBRATION_TRANSMISSION;
+        state->menu_state = MAIN_MENU_CALIBRATION_VIS_TRANSMISSION;
     } else if (state->cal_option == 3) {
-        state->menu_state = MAIN_MENU_CALIBRATION_SENSOR_GAIN;
+        state->menu_state = MAIN_MENU_CALIBRATION_UV_TRANSMISSION;
     } else if (state->cal_option == 4) {
+        state->menu_state = MAIN_MENU_CALIBRATION_SENSOR_GAIN;
+    } else if (state->cal_option == 5) {
         state->menu_state = MAIN_MENU_CALIBRATION_SENSOR_SLOPE;
     } else if (state->cal_option == UINT8_MAX) {
         state_controller_set_next_state(controller, STATE_HOME);
@@ -184,7 +190,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
     uint8_t option = 1;
 
     char sep = settings_get_decimal_separator();
-    settings_get_cal_reflection(&cal_reflection);
+    settings_get_cal_vis_reflection(&cal_reflection);
 
     do {
         format_density_value(buf_lo, cal_reflection.lo_d);
@@ -197,7 +203,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
             buf_lo, buf_hi);
 
         option = display_selection_list(
-            "Reflection", option, buf);
+            "VIS Reflection", option, buf);
 
         if (option == 1) {
             uint16_t working_value;
@@ -278,7 +284,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                 } while (!keypad_is_detect() && meas_option != 0 && meas_option != UINT8_MAX);
 
                 if (meas_option == 1) {
-                    densitometer_t *densitometer = densitometer_reflection();
+                    densitometer_t *densitometer = densitometer_vis_reflection();
                     elements.density100 = lroundf(cal_reflection.lo_d * 100);
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
@@ -300,7 +306,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                 } while (!keypad_is_detect() && meas_option != 0 && meas_option != UINT8_MAX);
 
                 if (meas_option == 1) {
-                    densitometer_t *densitometer = densitometer_reflection();
+                    densitometer_t *densitometer = densitometer_vis_reflection();
                     elements.density100 = lroundf(cal_reflection.hi_d * 100);
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
@@ -316,7 +322,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                     break;
                 }
 
-                if (!settings_set_cal_reflection(&cal_reflection)) {
+                if (!settings_set_cal_vis_reflection(&cal_reflection)) {
                     log_w("Unable to save cal data");
                     cal_saved = false;
                     break;
@@ -365,7 +371,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
     }
 }
 
-void main_menu_calibration_transmission(state_main_menu_t *state, state_controller_t *controller)
+void main_menu_calibration_transmission(state_main_menu_t *state, state_controller_t *controller, bool vis_uv)
 {
     char buf[128];
     char buf_hi[DENSITY_BUF_SIZE];
@@ -373,7 +379,11 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
     uint8_t option = 1;
 
     char sep = settings_get_decimal_separator();
-    settings_get_cal_transmission(&cal_transmission);
+    if (vis_uv) {
+        settings_get_cal_vis_transmission(&cal_transmission);
+    } else {
+        settings_get_cal_uv_transmission(&cal_transmission);
+    }
 
     do {
         format_density_value(buf_hi, cal_transmission.hi_d);
@@ -384,7 +394,8 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
             buf_hi);
 
         option = display_selection_list(
-            "Transmission", option, buf);
+            (vis_uv ? "VIS Trans." : "UV Trans."),
+            option, buf);
 
         if (option == 1) {
             uint16_t working_value;
@@ -438,7 +449,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                 } while (!keypad_is_detect() && meas_option != 0 && meas_option != UINT8_MAX);
 
                 if (meas_option == 1) {
-                    densitometer_t *densitometer = densitometer_transmission();
+                    densitometer_t *densitometer = vis_uv ? densitometer_vis_transmission() : densitometer_uv_transmission();
                     elements.density100 = 0;
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
@@ -459,7 +470,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                 } while (!keypad_is_detect() && meas_option != 0 && meas_option != UINT8_MAX);
 
                 if (meas_option == 1) {
-                    densitometer_t *densitometer = densitometer_transmission();
+                    densitometer_t *densitometer = vis_uv ? densitometer_vis_transmission() : densitometer_uv_transmission();
                     elements.density100 = lroundf(cal_transmission.hi_d * 100);
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
@@ -475,7 +486,10 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                     break;
                 }
 
-                if (!settings_set_cal_transmission(&cal_transmission)) {
+                bool save_result = vis_uv ?
+                    settings_set_cal_vis_transmission(&cal_transmission)
+                    : settings_set_cal_uv_transmission(&cal_transmission);
+                if (!save_result) {
                     log_w("Unable to save cal data");
                     cal_saved = false;
                     break;

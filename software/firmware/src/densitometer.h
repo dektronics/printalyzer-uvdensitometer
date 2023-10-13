@@ -32,14 +32,19 @@ typedef struct __densitometer_t densitometer_t;
 void densitometer_set_allow_uncalibrated_measurements(bool allow);
 
 /**
- * Get the densitometer instance for measuring reflection density
+ * Get the densitometer instance for measuring VIS reflection density
  */
-densitometer_t *densitometer_reflection();
+densitometer_t *densitometer_vis_reflection();
 
 /**
- * Get the densitometer instance for measuring transmission density
+ * Get the densitometer instance for measuring VIS transmission density
  */
-densitometer_t *densitometer_transmission();
+densitometer_t *densitometer_vis_transmission();
+
+/**
+ * Get the densitometer instance for measuring UV transmission density
+ */
+densitometer_t *densitometer_uv_transmission();
 
 /**
  * Measure a target material to get its density.

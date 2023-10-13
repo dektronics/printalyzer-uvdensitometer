@@ -16,6 +16,7 @@
 
 typedef struct {
     state_t base;
+    bool vis_uv;
     bool display_dirty;
     bool light_dirty;
     bool is_detect_prev;
@@ -38,12 +39,13 @@ static void state_transmission_display_entry(state_t *state_base, state_controll
 
 static void state_display_process(state_t *state_base, state_controller_t *controller);
 
-static state_display_t state_reflection_display_data = {
+static state_display_t state_vis_reflection_display_data = {
     .base = {
         .state_entry = state_reflection_display_entry,
         .state_process = state_display_process,
         .state_exit = NULL
     },
+    .vis_uv = true,
     .display_dirty = true,
     .light_dirty = true,
     .is_detect_prev = false,
@@ -53,19 +55,20 @@ static state_display_t state_reflection_display_data = {
     .menu_pending = false,
     .up_repeat = 0,
     .down_repeat = 0,
-    .measure_state = STATE_REFLECTION_MEASURE,
-    .alternate_state = STATE_TRANSMISSION_DISPLAY,
+    .measure_state = STATE_VIS_REFLECTION_MEASURE,
+    .alternate_state = STATE_VIS_TRANSMISSION_DISPLAY,
     .densitometer = NULL,
     .display_title = "Reflection",
     .display_mode = DISPLAY_MODE_REFLECTION
 };
 
-static state_display_t state_transmission_display_data = {
+static state_display_t state_vis_transmission_display_data = {
     .base = {
         .state_entry = state_transmission_display_entry,
         .state_process = state_display_process,
         .state_exit = NULL
     },
+    .vis_uv = true,
     .display_dirty = true,
     .light_dirty = true,
     .is_detect_prev = false,
@@ -75,21 +78,49 @@ static state_display_t state_transmission_display_data = {
     .menu_pending = false,
     .up_repeat = 0,
     .down_repeat = 0,
-    .measure_state = STATE_TRANSMISSION_MEASURE,
-    .alternate_state = STATE_REFLECTION_DISPLAY,
+    .measure_state = STATE_VIS_TRANSMISSION_MEASURE,
+    .alternate_state = STATE_UV_TRANSMISSION_DISPLAY,
     .densitometer = NULL,
-    .display_title = "Transmission",
+    .display_title = "VIS Trans.",
     .display_mode = DISPLAY_MODE_TRANSMISSION
 };
 
-state_t *state_reflection_display()
+static state_display_t state_uv_transmission_display_data = {
+    .base = {
+        .state_entry = state_transmission_display_entry,
+        .state_process = state_display_process,
+        .state_exit = NULL
+    },
+    .vis_uv = false,
+    .display_dirty = true,
+    .light_dirty = true,
+    .is_detect_prev = false,
+    .light_idle_on = false,
+    .light_idle_timeout = 0,
+    .light_idle_off_ticks = 0,
+    .menu_pending = false,
+    .up_repeat = 0,
+    .down_repeat = 0,
+    .measure_state = STATE_UV_TRANSMISSION_MEASURE,
+    .alternate_state = STATE_VIS_REFLECTION_DISPLAY,
+    .densitometer = NULL,
+    .display_title = "UV Trans.",
+    .display_mode = DISPLAY_MODE_TRANSMISSION
+};
+
+state_t *state_vis_reflection_display()
 {
-    return (state_t *)&state_reflection_display_data;
+    return (state_t *)&state_vis_reflection_display_data;
 }
 
-state_t *state_transmission_display()
+state_t *state_vis_transmission_display()
 {
-    return (state_t *)&state_transmission_display_data;
+    return (state_t *)&state_vis_transmission_display_data;
+}
+
+state_t *state_uv_transmission_display()
+{
+    return (state_t *)&state_uv_transmission_display_data;
 }
 
 void state_display_entry(state_t *state_base, state_controller_t *controller, state_identifier_t prev_state)
@@ -117,9 +148,9 @@ void state_reflection_display_entry(state_t *state_base, state_controller_t *con
     state_display_entry(state_base, controller, prev_state);
 
     state_display_t *state = (state_display_t *)state_base;
-    state->densitometer = densitometer_reflection();
+    state->densitometer = densitometer_vis_reflection();
 
-    if (prev_state == STATE_REFLECTION_MEASURE) {
+    if (prev_state == STATE_VIS_REFLECTION_MEASURE) {
         /* Set idle light state upon entry assuming measurement is similar to detect */
         if (state->light_idle_timeout > 0) {
             state->light_idle_on = true;
@@ -137,9 +168,9 @@ void state_transmission_display_entry(state_t *state_base, state_controller_t *c
     state_display_entry(state_base, controller, prev_state);
 
     state_display_t *state = (state_display_t *)state_base;
-    state->densitometer = densitometer_transmission();
+    state->densitometer = state->vis_uv ? densitometer_vis_transmission() : densitometer_uv_transmission();
 
-    if (prev_state == STATE_TRANSMISSION_MEASURE) {
+    if (prev_state == (state->vis_uv ? STATE_VIS_TRANSMISSION_MEASURE : STATE_UV_TRANSMISSION_MEASURE)) {
         /* Set idle light state upon entry assuming measurement is similar to detect */
         if (state->light_idle_timeout > 0) {
             state->light_idle_on = true;

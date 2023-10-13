@@ -187,22 +187,22 @@ bool settings_get_cal_slope(settings_cal_slope_t *cal_slope);
 bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope);
 
 /**
- * Set the reflection density calibration values.
+ * Set the VIS reflection density calibration values.
  *
  * @param cal_reflection Struct populated with values to save
  * @return True if saved, false on error
  */
-bool settings_set_cal_reflection(const settings_cal_reflection_t *cal_reflection);
+bool settings_set_cal_vis_reflection(const settings_cal_reflection_t *cal_reflection);
 
 /**
- * Get the reflection density calibration values.
+ * Get the VIS reflection density calibration values.
  * If a valid set of values are not available, but the provided struct is
  * usable, it will be initialized to NaN.
  *
  * @param cal_reflection Struct to be populated with saved values
  * @return True if valid values are returned, false otherwise.
  */
-bool settings_get_cal_reflection(settings_cal_reflection_t *cal_reflection);
+bool settings_get_cal_vis_reflection(settings_cal_reflection_t *cal_reflection);
 
 /**
  * Check if the reflection calibration values are valid
@@ -213,22 +213,40 @@ bool settings_get_cal_reflection(settings_cal_reflection_t *cal_reflection);
 bool settings_validate_cal_reflection(const settings_cal_reflection_t *cal_reflection);
 
 /**
- * Set the transmission density calibration values.
+ * Set the VIS transmission density calibration values.
  *
  * @param cal_transmission Struct populated with values to save
  * @return True if saved, false on error
  */
-bool settings_set_cal_transmission(const settings_cal_transmission_t *cal_transmission);
+bool settings_set_cal_vis_transmission(const settings_cal_transmission_t *cal_transmission);
 
 /**
- * Get the transmission density calibration values.
+ * Get the VIS transmission density calibration values.
  * If a valid set of values are not available, but the provided struct is
  * usable, it will be initialized to NaN.
  *
  * @param cal_transmission Struct to be populated with saved values
  * @return True if valid values are returned, false otherwise.
  */
-bool settings_get_cal_transmission(settings_cal_transmission_t *cal_transmission);
+bool settings_get_cal_vis_transmission(settings_cal_transmission_t *cal_transmission);
+
+/**
+ * Set the UV transmission density calibration values.
+ *
+ * @param cal_transmission Struct populated with values to save
+ * @return True if saved, false on error
+ */
+bool settings_set_cal_uv_transmission(const settings_cal_transmission_t *cal_transmission);
+
+/**
+ * Get the UV transmission density calibration values.
+ * If a valid set of values are not available, but the provided struct is
+ * usable, it will be initialized to NaN.
+ *
+ * @param cal_transmission Struct to be populated with saved values
+ * @return True if valid values are returned, false otherwise.
+ */
+bool settings_get_cal_uv_transmission(settings_cal_transmission_t *cal_transmission);
 
 /**
  * Check if the transmission calibration values are valid

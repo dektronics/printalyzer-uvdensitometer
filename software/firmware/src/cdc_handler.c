@@ -506,13 +506,13 @@ bool cdc_process_command_measurement(const cdc_command_t *cmd)
      */
     if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "REFL") == 0) {
         char buf[32];
-        float reading = densitometer_get_display_d(densitometer_reflection());
+        float reading = densitometer_get_display_d(densitometer_vis_reflection());
         encode_f32(buf, reading);
         cdc_send_command_response(cmd, buf);
         return true;
     } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "TRAN") == 0) {
         char buf[32];
-        float reading = densitometer_get_display_d(densitometer_transmission());
+        float reading = densitometer_get_display_d(densitometer_vis_transmission());
         encode_f32(buf, reading);
         cdc_send_command_response(cmd, buf);
         return true;
@@ -710,7 +710,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         settings_cal_reflection_t cal_reflection;
         float refl_val[4] = {0};
 
-        settings_get_cal_reflection(&cal_reflection);
+        settings_get_cal_vis_reflection(&cal_reflection);
         refl_val[0] = cal_reflection.lo_d;
         refl_val[1] = cal_reflection.lo_value;
         refl_val[2] = cal_reflection.hi_d;
@@ -730,7 +730,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
             cal_reflection.hi_d = refl_val[2];
             cal_reflection.hi_value = refl_val[3];
 
-            if (settings_set_cal_reflection(&cal_reflection)) {
+            if (settings_set_cal_vis_reflection(&cal_reflection)) {
                 cdc_send_command_response(cmd, "OK");
             } else {
                 cdc_send_command_response(cmd, "ERR");
@@ -743,7 +743,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         settings_cal_transmission_t cal_transmission;
         float tran_val[4] = {0};
 
-        settings_get_cal_transmission(&cal_transmission);
+        settings_get_cal_vis_transmission(&cal_transmission);
         tran_val[0] = 0.0F;
         tran_val[1] = cal_transmission.zero_value;
         tran_val[2] = cal_transmission.hi_d;
@@ -762,7 +762,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
             cal_transmission.hi_d = tran_val[2];
             cal_transmission.hi_value = tran_val[3];
 
-            if (settings_set_cal_transmission(&cal_transmission)) {
+            if (settings_set_cal_vis_transmission(&cal_transmission)) {
                 cdc_send_command_response(cmd, "OK");
             } else {
                 cdc_send_command_response(cmd, "ERR");

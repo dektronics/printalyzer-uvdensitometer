@@ -27,13 +27,15 @@ void state_controller_init()
 {
     state_controller.current_state = STATE_MAX;
     state_controller.next_state = STATE_HOME;
-    state_controller.home_state = STATE_REFLECTION_DISPLAY;
+    state_controller.home_state = STATE_VIS_REFLECTION_DISPLAY;
 
     state_map[STATE_HOME] = state_home();
-    state_map[STATE_REFLECTION_DISPLAY] = state_reflection_display();
-    state_map[STATE_REFLECTION_MEASURE] = state_reflection_measure();
-    state_map[STATE_TRANSMISSION_DISPLAY] = state_transmission_display();
-    state_map[STATE_TRANSMISSION_MEASURE] = state_transmission_measure();
+    state_map[STATE_VIS_REFLECTION_DISPLAY] = state_vis_reflection_display();
+    state_map[STATE_VIS_REFLECTION_MEASURE] = state_vis_reflection_measure();
+    state_map[STATE_VIS_TRANSMISSION_DISPLAY] = state_vis_transmission_display();
+    state_map[STATE_VIS_TRANSMISSION_MEASURE] = state_vis_transmission_measure();
+    state_map[STATE_UV_TRANSMISSION_DISPLAY] = state_uv_transmission_display();
+    state_map[STATE_UV_TRANSMISSION_MEASURE] = state_uv_transmission_measure();
     state_map[STATE_MAIN_MENU] = state_main_menu();
     state_map[STATE_REMOTE] = state_remote();
     state_map[STATE_SUSPEND] = state_suspend();

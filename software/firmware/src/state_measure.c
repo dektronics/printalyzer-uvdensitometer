@@ -13,6 +13,7 @@
 
 typedef struct {
     state_t base;
+    bool vis_uv;
     bool display_dirty;
     bool take_measurement;
     densitometer_t *densitometer;
@@ -27,44 +28,66 @@ static void state_transmission_measure_entry(state_t *state_base, state_controll
 
 static void state_measure_process(state_t *state_base, state_controller_t *controller);
 
-static state_measure_t state_reflection_measure_data = {
+static state_measure_t state_vis_reflection_measure_data = {
     .base = {
         .state_entry = state_reflection_measure_entry,
         .state_process = state_measure_process,
         .state_exit = NULL
     },
+    .vis_uv = true,
     .display_dirty = true,
     .take_measurement = true,
     .densitometer = NULL,
-    .display_state = STATE_REFLECTION_DISPLAY,
+    .display_state = STATE_VIS_REFLECTION_DISPLAY,
     .display_title = "Reflection",
     .display_mode = DISPLAY_MODE_REFLECTION
 };
 
-static state_measure_t state_transmission_measure_data = {
+static state_measure_t state_vis_transmission_measure_data = {
     .base = {
         .state_entry = state_transmission_measure_entry,
         .state_process = state_measure_process,
         .state_exit = NULL
     },
+    .vis_uv = true,
     .display_dirty = true,
     .take_measurement = true,
     .densitometer = NULL,
-    .display_state = STATE_TRANSMISSION_DISPLAY,
-    .display_title = "Transmission",
+    .display_state = STATE_VIS_TRANSMISSION_DISPLAY,
+    .display_title = "VIS Trans.",
+    .display_mode = DISPLAY_MODE_TRANSMISSION
+};
+
+static state_measure_t state_uv_transmission_measure_data = {
+    .base = {
+        .state_entry = state_transmission_measure_entry,
+        .state_process = state_measure_process,
+        .state_exit = NULL
+    },
+    .vis_uv = false,
+    .display_dirty = true,
+    .take_measurement = true,
+    .densitometer = NULL,
+    .display_state = STATE_UV_TRANSMISSION_DISPLAY,
+    .display_title = "VIS Trans.",
     .display_mode = DISPLAY_MODE_TRANSMISSION
 };
 
 static void sensor_read_callback(void *user_data);
 
-state_t *state_reflection_measure()
+state_t *state_vis_reflection_measure()
 {
-    return (state_t *)&state_reflection_measure_data;
+    return (state_t *)&state_vis_reflection_measure_data;
 }
 
-state_t *state_transmission_measure()
+state_t *state_vis_transmission_measure()
 {
-    return (state_t *)&state_transmission_measure_data;
+    return (state_t *)&state_vis_transmission_measure_data;
+}
+
+state_t *state_uv_transmission_measure()
+{
+    return (state_t *)&state_uv_transmission_measure_data;
 }
 
 void state_measure_entry(state_t *state_base, state_controller_t *controller, state_identifier_t prev_state)
@@ -80,7 +103,7 @@ void state_reflection_measure_entry(state_t *state_base, state_controller_t *con
     state_measure_entry(state_base, controller, prev_state);
 
     state_measure_t *state = (state_measure_t *)state_base;
-    state->densitometer = densitometer_reflection();
+    state->densitometer = densitometer_vis_reflection();
 }
 
 void state_transmission_measure_entry(state_t *state_base, state_controller_t *controller, state_identifier_t prev_state)
@@ -88,7 +111,7 @@ void state_transmission_measure_entry(state_t *state_base, state_controller_t *c
     state_measure_entry(state_base, controller, prev_state);
 
     state_measure_t *state = (state_measure_t *)state_base;
-    state->densitometer = densitometer_transmission();
+    state->densitometer = state->vis_uv ? densitometer_vis_transmission() : densitometer_uv_transmission();
 }
 
 void state_measure_process(state_t *state_base, state_controller_t *controller)
