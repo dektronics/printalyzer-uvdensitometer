@@ -363,10 +363,21 @@
   <tabstop>tranOnPushButton</tabstop>
   <tabstop>tranSpinBox</tabstop>
   <tabstop>tranSetPushButton</tabstop>
+  <tabstop>tranUvOffPushButton</tabstop>
+  <tabstop>tranUvOnPushButton</tabstop>
+  <tabstop>tranUvSpinBox</tabstop>
+  <tabstop>tranUvSetPushButton</tabstop>
   <tabstop>sensorStopPushButton</tabstop>
   <tabstop>sensorStartPushButton</tabstop>
+  <tabstop>modeComboBox</tabstop>
   <tabstop>gainComboBox</tabstop>
   <tabstop>intComboBox</tabstop>
+  <tabstop>agcCheckBox</tabstop>
+  <tabstop>reflReadPushButton</tabstop>
+  <tabstop>tranReadPushButton</tabstop>
+  <tabstop>tranUvReadPushButton</tabstop>
+  <tabstop>ch0LineEdit</tabstop>
+  <tabstop>ch1LineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

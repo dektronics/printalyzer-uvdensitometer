@@ -403,7 +403,7 @@ void RemoteControlDialog::onDiagSensorUvGetReading(unsigned int ch0, int gain, i
     Q_UNUSED(sampleCount)
     updateSensorReading(ch0, 0);
 
-    if (!ui->gainComboBox->isEnabled() && ui->gainComboBox->currentIndex() != gain) {
+    if (ui->gainComboBox->currentIndex() != gain) {
         disconnect(ui->gainComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &RemoteControlDialog::onSensorGainIndexChanged);
         ui->gainComboBox->setCurrentIndex(gain);
         connect(ui->gainComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &RemoteControlDialog::onSensorGainIndexChanged);
