@@ -910,7 +910,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         if (ret != osOK) { break; }
     } while (0);
 
-    if (ret != osOK || reading.gain != gain) {
+    if (ret != osOK || reading.mod0.gain != gain) {
         display_message(
             "Sensor", NULL,
             "initialization\n"
@@ -1027,18 +1027,18 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         if (sensor_get_next_reading(&reading, 1000) == osOK) {
             bool is_detect = keypad_is_detect();
 
-            if (reading.result_status == SENSOR_RESULT_SATURATED_ANALOG) {
+            if (reading.mod0.result == SENSOR_RESULT_SATURATED_ANALOG) {
                 sprintf_(numbuf, "A_SAT");
-            } else if (reading.result_status == SENSOR_RESULT_SATURATED_DIGITAL) {
+            } else if (reading.mod0.result == SENSOR_RESULT_SATURATED_DIGITAL) {
                 sprintf_(numbuf, "D_SAT");
-            } else if (reading.result_status == SENSOR_RESULT_INVALID) {
+            } else if (reading.mod0.result == SENSOR_RESULT_INVALID) {
                 sprintf_(numbuf, "INVALID");
             } else {
                 if (display_mode) {
-                    const float basic_result = sensor_basic_result(&reading);
+                    const float basic_result = sensor_convert_to_basic_counts(&reading, 0);
                     sprintf_(numbuf, "%.5f", basic_result);
                 } else {
-                    sprintf_(numbuf, "%ld", reading.als_data);
+                    sprintf_(numbuf, "%ld", reading.mod0.als_data);
                 }
             }
 
@@ -1047,7 +1047,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
                 "%s\n"
                 "[%X][%d][%c][%c]",
                 numbuf, modebuf,
-                reading.gain,
+                reading.mod0.gain,
                 (int)tsl2585_integration_time_ms(reading.sample_count, reading.sample_time),
                 light_ch,
                 (is_detect ? '*' : ' '));

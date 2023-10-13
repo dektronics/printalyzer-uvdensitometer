@@ -24,7 +24,8 @@ typedef enum {
     SENSOR_CONTROL_STOP = 0,
     SENSOR_CONTROL_START,
     SENSOR_CONTROL_SET_MODE,
-    SENSOR_CONTROL_SET_CONFIG,
+    SENSOR_CONTROL_SET_GAIN,
+    SENSOR_CONTROL_SET_INTEGRATION,
     SENSOR_CONTROL_SET_AGC_ENABLED,
     SENSOR_CONTROL_SET_AGC_DISABLED,
     SENSOR_CONTROL_SET_LIGHT_MODE,
@@ -33,9 +34,13 @@ typedef enum {
 
 typedef struct {
     tsl2585_gain_t gain;
+    tsl2585_modulator_t mod;
+} sensor_control_gain_params_t;
+
+typedef struct {
     uint16_t sample_time;
     uint16_t sample_count;
-} sensor_control_config_params_t;
+} sensor_control_integration_params_t;
 
 typedef struct {
     uint16_t sample_count;
@@ -61,7 +66,8 @@ typedef struct {
     osStatus_t *result;
     union {
         sensor_mode_t sensor_mode;
-        sensor_control_config_params_t config;
+        sensor_control_gain_params_t gain;
+        sensor_control_integration_params_t integration;
         sensor_control_agc_params_t agc;
         sensor_control_light_mode_params_t light_mode;
         sensor_control_interrupt_params_t interrupt;
@@ -73,21 +79,34 @@ typedef struct {
  */
 typedef struct {
     bool running;
+    bool dual_mod;
     uint8_t uv_calibration;
     sensor_mode_t sensor_mode;
-    tsl2585_gain_t gain;
+    tsl2585_gain_t gain[3];
     uint16_t sample_time;
     uint16_t sample_count;
     uint8_t calibration_iteration;
     bool agc_enabled;
     uint16_t agc_sample_count;
     bool mode_pending;
-    bool config_pending;
+    bool gain_pending;
+    bool integration_pending;
     bool agc_pending;
     bool sai_active;
     bool agc_disabled_reset_gain;
     bool discard_next_reading;
 } tsl2585_state_t;
+
+/**
+ * Modulator data read out of the FIFO
+ */
+typedef struct {
+    uint8_t als_status;
+    uint8_t als_status2;
+    uint8_t als_status3;
+    uint32_t als_data0;
+    uint32_t als_data1;
+} tsl2585_fifo_data_t;
 
 /* Global I2C handle for the sensor */
 extern I2C_HandleTypeDef hi2c1;
@@ -134,17 +153,29 @@ static const tsl2585_modulator_t sensor_phd_mod_uv[] = {
     0, 0, 0, TSL2585_MOD0, TSL2585_MOD0, 0
 };
 
+/* Only enable Photopic photodiodes (dual modulators) */
+static const tsl2585_modulator_t sensor_phd_mod_vis_dual[] = {
+    0, TSL2585_MOD0, 0, 0, 0, TSL2585_MOD1
+};
+
+/* Only enable UV-A photodiodes (dual modulators) */
+static const tsl2585_modulator_t sensor_phd_mod_uv_dual[] = {
+    0, 0, 0, TSL2585_MOD0, TSL2585_MOD1, 0
+};
+
 
 /* Sensor control implementation functions */
 static osStatus_t sensor_control_start();
 static osStatus_t sensor_control_stop();
 static osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode);
-static osStatus_t sensor_control_set_config(const sensor_control_config_params_t *params);
+static osStatus_t sensor_control_set_gain(const sensor_control_gain_params_t *params);
+static osStatus_t sensor_control_set_integration(const sensor_control_integration_params_t *params);
 static osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *params);
 static osStatus_t sensor_control_set_agc_disabled();
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
-static HAL_StatusTypeDef sensor_control_read_fifo(uint8_t *als_status, uint8_t *als_status2, uint8_t *als_status3, uint32_t *als_data);
+static HAL_StatusTypeDef sensor_control_read_fifo(tsl2585_fifo_data_t *fifo_data);
+static HAL_StatusTypeDef sensor_control_set_mod_photodiode_smux(sensor_mode_t mode);
 
 void task_sensor_run(void *argument)
 {
@@ -206,7 +237,7 @@ void task_sensor_run(void *argument)
      */
     sensor_state.sample_time = 719;
     sensor_state.sample_count = 99;
-    sensor_state.config_pending = true;
+    sensor_state.integration_pending = true;
 
     /* Release the startup semaphore */
     if (osSemaphoreRelease(task_start_semaphore) != osOK) {
@@ -228,8 +259,11 @@ void task_sensor_run(void *argument)
             case SENSOR_CONTROL_SET_MODE:
                 ret = sensor_control_set_mode(control_event.sensor_mode);
                 break;
-            case SENSOR_CONTROL_SET_CONFIG:
-                ret = sensor_control_set_config(&control_event.config);
+            case SENSOR_CONTROL_SET_GAIN:
+                ret = sensor_control_set_gain(&control_event.gain);
+                break;
+            case SENSOR_CONTROL_SET_INTEGRATION:
+                ret = sensor_control_set_integration(&control_event.integration);
                 break;
             case SENSOR_CONTROL_SET_AGC_ENABLED:
                 ret = sensor_control_set_agc_enabled(&control_event.agc);
@@ -287,15 +321,26 @@ osStatus_t sensor_control_start()
     do {
         sensor_state.running = false;
 
+        /* Check whether we should start in single or dual modulator mode */
+        if (sensor_state.sensor_mode == SENSOR_MODE_VIS_DUAL || sensor_state.sensor_mode == SENSOR_MODE_UV_DUAL) {
+            sensor_state.dual_mod = true;
+        } else {
+            sensor_state.dual_mod = false;
+        }
+
         /* Clear the FIFO */
         ret = tsl2585_clear_fifo(&hi2c1);
         if (ret != HAL_OK) { break; }
 
         /* Query the initial state of the sensor */
-        if (!sensor_state.config_pending) {
-            ret = tsl2585_get_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, &sensor_state.gain);
+        if (!sensor_state.gain_pending) {
+            ret = tsl2585_get_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, &sensor_state.gain[0]);
             if (ret != HAL_OK) { break; }
 
+            ret = tsl2585_get_mod_gain(&hi2c1, TSL2585_MOD1, TSL2585_STEP0, &sensor_state.gain[1]);
+            if (ret != HAL_OK) { break; }
+        }
+        if (!sensor_state.integration_pending) {
             ret = tsl2585_get_sample_time(&hi2c1, &sensor_state.sample_time);
             if (ret != HAL_OK) { break; }
 
@@ -320,10 +365,10 @@ osStatus_t sensor_control_start()
         ret = tsl2585_set_fifo_als_status_write_enable(&hi2c1, true);
         if (ret != HAL_OK) { break; }
 
-        /* Enable writing of just modulator 0 results to the FIFO */
+        /* Enable writing of results to the FIFO */
         ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD0, true);
         if (ret != HAL_OK) { break; }
-        ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD1, false);
+        ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD1, sensor_state.dual_mod);
         if (ret != HAL_OK) { break; }
         ret = tsl2585_set_fifo_data_write_enable(&hi2c1, TSL2585_MOD2, false);
         if (ret != HAL_OK) { break; }
@@ -338,6 +383,9 @@ osStatus_t sensor_control_start()
 
         /* Make sure residuals are enabled */
         ret = tsl2585_set_mod_residual_enable(&hi2c1, TSL2585_MOD0, TSL2585_STEPS_ALL);
+        if (ret != HAL_OK) { break; }
+        ret = tsl2585_set_mod_residual_enable(&hi2c1, TSL2585_MOD1, TSL2585_STEPS_ALL);
+        if (ret != HAL_OK) { break; }
 
         /* Select alternate gain table, which caps gain at 256x but gives us more residual bits */
         ret = tsl2585_set_mod_gain_table_select(&hi2c1, true);
@@ -347,44 +395,36 @@ osStatus_t sensor_control_start()
         ret = tsl2585_set_max_mod_gain(&hi2c1, TSL2585_GAIN_256X);
         if (ret != HAL_OK) { break; }
 
-        /* Enable modulator 0 */
-        ret = tsl2585_enable_modulators(&hi2c1, TSL2585_MOD0);
+        /* Enable modulator(s) */
+        ret = tsl2585_enable_modulators(&hi2c1, TSL2585_MOD0 | (sensor_state.dual_mod ? TSL2585_MOD1 : 0));
         if (ret != HAL_OK) { break; }
 
         /* Apply any startup settings */
         if (sensor_state.mode_pending) {
-            const tsl2585_modulator_t *sensor_phd_mod;
-            switch (sensor_state.sensor_mode) {
-            case SENSOR_MODE_DEFAULT:
-                sensor_phd_mod = sensor_phd_mod_default;
-                break;
-            case SENSOR_MODE_VIS:
-                sensor_phd_mod = sensor_phd_mod_vis;
-                break;
-            case SENSOR_MODE_UV:
-                sensor_phd_mod = sensor_phd_mod_uv;
-                break;
-            default:
-                return osErrorParameter;
-            }
-
-            ret = tsl2585_set_mod_photodiode_smux(&hi2c1, TSL2585_STEP0, sensor_phd_mod);
+            ret = sensor_control_set_mod_photodiode_smux(sensor_state.sensor_mode);
             if (ret != HAL_OK) { break; }
 
             sensor_state.mode_pending = false;
         }
 
-        if (sensor_state.config_pending) {
-            ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain);
+        if (sensor_state.gain_pending) {
+            ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain[0]);
             if (ret != HAL_OK) { break; }
 
+            ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD1, TSL2585_STEP0, sensor_state.gain[1]);
+            if (ret != HAL_OK) { break; }
+
+            sensor_state.gain_pending = false;
+        }
+
+        if (sensor_state.integration_pending) {
             ret = tsl2585_set_sample_time(&hi2c1, sensor_state.sample_time);
             if (ret != HAL_OK) { break; }
 
             ret = tsl2585_set_als_num_samples(&hi2c1, sensor_state.sample_count);
             if (ret != HAL_OK) { break; }
 
-            sensor_state.config_pending = false;
+            sensor_state.integration_pending = false;
         }
 
         if (sensor_state.agc_pending) {
@@ -403,8 +443,10 @@ osStatus_t sensor_control_start()
         /* Log initial state */
         const float als_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count);
         const float agc_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.agc_sample_count);
-        log_d("TSL2585 Initial State: Mode=%d, Gain=%s, ALS_ATIME=%.2fms, AGC_ATIME=%.2fms",
-            sensor_state.sensor_mode, tsl2585_gain_str(sensor_state.gain), als_atime, agc_atime);
+        log_d("TSL2585 Initial State: Mode=%d, Gain=%s,%s, ALS_ATIME=%.2fms, AGC_ATIME=%.2fms",
+            sensor_state.sensor_mode,
+            tsl2585_gain_str(sensor_state.gain[0]), tsl2585_gain_str(sensor_state.gain[1]),
+            als_atime, agc_atime);
 
         /* Clear out any old sensor readings */
         osMessageQueueReset(sensor_reading_queue);
@@ -491,22 +533,7 @@ osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode)
     log_d("sensor_control_set_mode: %d", sensor_mode);
 
     if (sensor_state.running) {
-        const tsl2585_modulator_t *sensor_phd_mod;
-        switch (sensor_mode) {
-        case SENSOR_MODE_DEFAULT:
-            sensor_phd_mod = sensor_phd_mod_default;
-            break;
-        case SENSOR_MODE_VIS:
-            sensor_phd_mod = sensor_phd_mod_vis;
-            break;
-        case SENSOR_MODE_UV:
-            sensor_phd_mod = sensor_phd_mod_uv;
-            break;
-        default:
-            return osErrorParameter;
-        }
-
-        ret = tsl2585_set_mod_photodiode_smux(&hi2c1, TSL2585_STEP0, sensor_phd_mod);
+        ret = sensor_control_set_mod_photodiode_smux(sensor_mode);
         if (ret == HAL_OK) {
             sensor_state.sensor_mode = sensor_mode;
         }
@@ -524,14 +551,80 @@ osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode)
 
 osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t sample_count)
 {
+    osStatus_t result;
+
+    result = sensor_set_gain(gain, TSL2585_MOD0);
+
+    if (result != osOK) { return result; }
+
+    result = sensor_set_integration(sample_time, sample_count);
+
+    return result;
+}
+
+osStatus_t sensor_set_gain(tsl2585_gain_t gain, tsl2585_modulator_t mod)
+{
     if (!sensor_initialized) { return osErrorResource; }
 
     osStatus_t result = osOK;
     sensor_control_event_t control_event = {
-        .event_type = SENSOR_CONTROL_SET_CONFIG,
+        .event_type = SENSOR_CONTROL_SET_GAIN,
         .result = &result,
-        .config = {
+        .gain = {
             .gain = gain,
+            .mod = mod
+        }
+    };
+    osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
+    osSemaphoreAcquire(sensor_control_semaphore, portMAX_DELAY);
+    return result;
+}
+
+osStatus_t sensor_control_set_gain(const sensor_control_gain_params_t *params)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    log_d("sensor_control_set_gain: %d, 0x%02X", params->gain, params->mod);
+
+    uint8_t mod_index;
+    switch (params->mod) {
+    case TSL2585_MOD0:
+        mod_index = 0;
+        break;
+    case TSL2585_MOD1:
+        mod_index = 1;
+        break;
+    case TSL2585_MOD2:
+        mod_index = 2;
+        break;
+    default:
+        return HAL_ERROR;
+    }
+
+    if (sensor_state.running) {
+        ret = tsl2585_set_mod_gain(&hi2c1, params->mod, TSL2585_STEP0, params->gain);
+        if (ret == HAL_OK) {
+            sensor_state.gain[mod_index] = params->gain;
+        }
+
+        sensor_state.discard_next_reading = true;
+        osMessageQueueReset(sensor_reading_queue);
+    } else {
+        sensor_state.gain[mod_index] = params->gain;
+        sensor_state.gain_pending = true;
+    }
+
+    return hal_to_os_status(ret);
+}
+
+osStatus_t sensor_set_integration(uint16_t sample_time, uint16_t sample_count)
+{
+    if (!sensor_initialized) { return osErrorResource; }
+
+    osStatus_t result = osOK;
+    sensor_control_event_t control_event = {
+        .event_type = SENSOR_CONTROL_SET_INTEGRATION,
+        .result = &result,
+        .integration = {
             .sample_time = sample_time,
             .sample_count = sample_count
         }
@@ -541,17 +634,12 @@ osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t
     return result;
 }
 
-osStatus_t sensor_control_set_config(const sensor_control_config_params_t *params)
+osStatus_t sensor_control_set_integration(const sensor_control_integration_params_t *params)
 {
     HAL_StatusTypeDef ret = HAL_OK;
-    log_d("sensor_control_set_config: %d, %d, %d", params->gain, params->sample_time, params->sample_count);
+    log_d("sensor_control_set_integration: %d, %d", params->sample_time, params->sample_count);
 
     if (sensor_state.running) {
-        ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, params->gain);
-        if (ret == HAL_OK) {
-            sensor_state.gain = params->gain;
-        }
-
         ret = tsl2585_set_sample_time(&hi2c1, params->sample_time);
         if (ret == HAL_OK) {
             sensor_state.sample_time = params->sample_time;
@@ -565,10 +653,9 @@ osStatus_t sensor_control_set_config(const sensor_control_config_params_t *param
         sensor_state.discard_next_reading = true;
         osMessageQueueReset(sensor_reading_queue);
     } else {
-        sensor_state.gain = params->gain;
         sensor_state.sample_time = params->sample_time;
         sensor_state.sample_count = params->sample_count;
-        sensor_state.config_pending = true;
+        sensor_state.integration_pending = true;
     }
 
     return hal_to_os_status(ret);
@@ -818,36 +905,55 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
             uint32_t elapsed_ticks = params->sensor_ticks - last_aint_ticks;
             last_aint_ticks = params->sensor_ticks;
 
-            uint8_t als_status = 0;
-            uint8_t als_status2 = 0;
-            uint8_t als_status3 = 0;
-            uint32_t als_data = 0;
+            tsl2585_fifo_data_t fifo_data;
 
-            ret = sensor_control_read_fifo(&als_status, &als_status2, &als_status3, &als_data);
+            ret = sensor_control_read_fifo(&fifo_data);
             if (ret != HAL_OK) { break; }
 
-            if ((als_status & TSL2585_ALS_DATA0_ANALOG_SATURATION_STATUS) != 0) {
-                log_d("TSL2585: [analog saturation]");
-                reading.als_data = UINT32_MAX;
-                reading.gain = sensor_state.gain;
-                reading.result_status = SENSOR_RESULT_SATURATED_ANALOG;
+            if ((fifo_data.als_status & TSL2585_ALS_DATA0_ANALOG_SATURATION_STATUS) != 0) {
+                log_d("TSL2585: [0:analog saturation]");
+                reading.mod0.als_data = UINT32_MAX;
+                reading.mod0.gain = sensor_state.gain[0];
+                reading.mod0.result = SENSOR_RESULT_SATURATED_ANALOG;
             } else {
-                tsl2585_gain_t als_gain = (als_status2 & 0x0F);
+                tsl2585_gain_t als_gain = (fifo_data.als_status2 & 0x0F);
 
                 /* If AGC is enabled, then update the configured gain value */
                 if (sensor_state.agc_enabled) {
-                    sensor_state.gain = als_gain;
+                    sensor_state.gain[0] = als_gain;
                 }
 
-                reading.als_data = als_data;
-                reading.gain = als_gain;
-                reading.result_status = SENSOR_RESULT_VALID;
+                reading.mod0.als_data = fifo_data.als_data0;
+                reading.mod0.gain = als_gain;
+                reading.mod0.result = SENSOR_RESULT_VALID;
 
                 /* If in UV mode, apply the UV calibration value */
                 if (sensor_state.sensor_mode == SENSOR_MODE_UV) {
-                    als_data = lroundf(
-                        (float)als_data
+                    reading.mod0.als_data= lroundf(
+                        (float)reading.mod0.als_data
                         / (1.0F - (((float)sensor_state.uv_calibration - 127.0F) / 100.0F)));
+                }
+            }
+
+            if (sensor_state.dual_mod) {
+                if ((fifo_data.als_status & TSL2585_ALS_DATA1_ANALOG_SATURATION_STATUS) != 0) {
+                    log_d("TSL2585: [1:analog saturation]");
+                    reading.mod1.als_data = UINT32_MAX;
+                    reading.mod1.gain = sensor_state.gain[1];
+                    reading.mod1.result = SENSOR_RESULT_SATURATED_ANALOG;
+                } else {
+                    tsl2585_gain_t als_gain = (fifo_data.als_status2 & 0xF0) >> 4;
+
+                    reading.mod1.als_data = fifo_data.als_data1;
+                    reading.mod1.gain = als_gain;
+                    reading.mod1.result = SENSOR_RESULT_VALID;
+
+                    /* If in UV mode, apply the UV calibration value */
+                    if (sensor_state.sensor_mode == SENSOR_MODE_UV) {
+                        reading.mod1.als_data = lroundf(
+                            (float)reading.mod1.als_data
+                            / (1.0F - (((float)sensor_state.uv_calibration - 127.0F) / 100.0F)));
+                    }
                 }
             }
 
@@ -873,7 +979,7 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
              * the registers to disable AGC does not seem to take.
              */
             if (sensor_state.agc_disabled_reset_gain) {
-                ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain);
+                ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain[0]);
                 if (ret != HAL_OK) { break; }
                 sensor_state.agc_disabled_reset_gain = false;
                 sensor_state.discard_next_reading = true;
@@ -888,10 +994,18 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     vTaskPrioritySet(current_task_handle, current_task_priority);
 
     if (has_reading) {
-        log_d("TSL2585[%d]: MOD0=%ld, Gain=[%s], Time=%.2fms",
-            reading.reading_count,
-            reading.als_data, tsl2585_gain_str(reading.gain),
-            tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count));
+        if (sensor_state.dual_mod) {
+            log_d("TSL2585[%d]: MOD=[%lu,%lu], Gain=[%s,%s], Time=%.2fms",
+                reading.reading_count,
+                reading.mod0.als_data, reading.mod1.als_data,
+                tsl2585_gain_str(reading.mod0.gain), tsl2585_gain_str(reading.mod1.gain),
+                tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count));
+        } else {
+            log_d("TSL2585[%d]: MOD0=%lu, Gain=[%s], Time=%.2fms",
+                reading.reading_count,
+                reading.mod0.als_data, tsl2585_gain_str(reading.mod0.gain),
+                tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count));
+        }
 
         cdc_send_raw_sensor_reading(&reading);
 
@@ -902,11 +1016,12 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     return hal_to_os_status(ret);
 }
 
-HAL_StatusTypeDef sensor_control_read_fifo(uint8_t *als_status, uint8_t *als_status2, uint8_t *als_status3, uint32_t *als_data)
+HAL_StatusTypeDef sensor_control_read_fifo(tsl2585_fifo_data_t *fifo_data)
 {
     HAL_StatusTypeDef ret;
     tsl2585_fifo_status_t fifo_status;
-    uint8_t data[7];
+    uint8_t data[11];
+    const uint8_t data_size = sensor_state.dual_mod ? 11 : 7;
 
     do {
         ret = tsl2585_get_fifo_status(&hi2c1, &fifo_status);
@@ -916,33 +1031,66 @@ HAL_StatusTypeDef sensor_control_read_fifo(uint8_t *als_status, uint8_t *als_sta
         log_d("FIFO_STATUS: OVERFLOW=%d, UNDERFLOW=%d, LEVEL=%d", fifo_status.overflow, fifo_status.underflow, fifo_status.level);
 #endif
 
-        if (fifo_status.level != 7) {
-            log_w("Unexpected size of data in FIFO: %d != 7", fifo_status.level);
+        if (fifo_status.level != data_size) {
+            log_w("Unexpected size of data in FIFO: %d != %d", fifo_status.level, data_size);
             ret = HAL_ERROR;
             break;
         }
 
-        ret = tsl2585_read_fifo(&hi2c1, data, sizeof(data));
+        ret = tsl2585_read_fifo(&hi2c1, data, data_size);
         if (ret != HAL_OK) { break; }
 
-        if (als_status) {
-            *als_status = data[4];
-        }
-        if (als_status2) {
-            *als_status2 = data[5];
-        }
-        if (als_status3) {
-            *als_status3 = data[6];
-        }
-        if (als_data) {
-            *als_data =
+        if (fifo_data) {
+            fifo_data->als_data0 =
                 (uint32_t)data[3] << 24
                 | (uint32_t)data[2] << 16
                 | (uint32_t)data[1] << 8
                 | (uint32_t)data[0];
-        }
 
+            if (sensor_state.dual_mod) {
+                fifo_data->als_data1 =
+                    (uint32_t)data[7] << 24
+                    | (uint32_t)data[6] << 16
+                    | (uint32_t)data[5] << 8
+                    | (uint32_t)data[4];
+                fifo_data->als_status = data[8];
+                fifo_data->als_status2 = data[9];
+                fifo_data->als_status3 = data[10];
+            } else {
+                fifo_data->als_data1 = 0;
+                fifo_data->als_status = data[4];
+                fifo_data->als_status2 = data[5];
+                fifo_data->als_status3 = data[6];
+            }
+        }
     } while (0);
 
     return ret;
+}
+
+HAL_StatusTypeDef sensor_control_set_mod_photodiode_smux(sensor_mode_t mode)
+{
+    const tsl2585_modulator_t *sensor_phd_mod;
+    switch (mode) {
+    case SENSOR_MODE_DEFAULT:
+        sensor_phd_mod = sensor_phd_mod_default;
+        break;
+    case SENSOR_MODE_VIS:
+        sensor_phd_mod = sensor_phd_mod_vis;
+        break;
+    case SENSOR_MODE_UV:
+        sensor_phd_mod = sensor_phd_mod_uv;
+        break;
+    case SENSOR_MODE_VIS_DUAL:
+        sensor_phd_mod = sensor_phd_mod_vis_dual;
+        break;
+    case SENSOR_MODE_UV_DUAL:
+        sensor_phd_mod = sensor_phd_mod_uv_dual;
+        break;
+    default:
+        log_w("Invalid smux setting: %d", mode);
+        return HAL_ERROR;
+    }
+
+    return tsl2585_set_mod_photodiode_smux(&hi2c1, TSL2585_STEP0, sensor_phd_mod);
 }

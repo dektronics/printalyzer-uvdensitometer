@@ -439,7 +439,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         ret = sensor_get_next_reading(&reading, 1000);
         if (ret != osOK) { break; }
 
-        target_read_gain = reading.gain;
+        target_read_gain = reading.mod0.gain;
 
         /* Disable the AGC */
         ret = sensor_set_agc_disabled();
@@ -461,7 +461,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
             double als_basic = 0;
 
             ret = sensor_get_next_reading(&reading, 1000);
-            if (ret != osOK) { log_d("-->Foo1: %d", ret); break; }
+            if (ret != osOK) { break; }
 
             /* Invoke the progress callback */
             if (callback) { callback(user_data); }
@@ -477,13 +477,13 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
 #endif
 
             /* Make sure we didn't unexpectedly saturate or generate an error */
-            if (reading.result_status != SENSOR_RESULT_VALID) {
-                log_e("Unexpected sensor result: %d", reading.result_status);
+            if (reading.mod0.result != SENSOR_RESULT_VALID) {
+                log_e("Unexpected sensor result: %d", reading.mod0.result);
                 ret = osError;
                 break;
             }
 
-            als_basic = sensor_convert_to_basic_counts(&reading);
+            als_basic = sensor_convert_to_basic_counts(&reading, 0);
             als_sum += als_basic;
         }
         if (ret != osOK) { break; }
@@ -571,14 +571,14 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
             }
 
             /* Abort if the sensor is saturated */
-            if (reading.result_status != SENSOR_RESULT_VALID) {
+            if (reading.mod0.result != SENSOR_RESULT_VALID) {
                 log_w("Aborting due to sensor saturation");
                 saturated = true;
                 break;
             }
 
             /* Accumulate the results */
-            als_sum += (double)reading.als_data;
+            als_sum += (double)reading.mod0.als_data;
         }
         if (ret != osOK) { break; }
 
@@ -944,15 +944,24 @@ bool sensor_is_reading_saturated(const sensor_reading_old_t *reading)
     }
 }
 
-double sensor_convert_to_basic_counts(const sensor_reading_t *reading)
+double sensor_convert_to_basic_counts(const sensor_reading_t *reading, uint8_t mod)
 {
     //TODO
+    const sensor_mod_reading_t *mod_reading;
     //settings_cal_gain_t cal_gain;
     double als_gain;
     double atime_ms;
     double als_reading;
 
     if (!reading) {
+        return NAN;
+    }
+
+    if (mod == 0) {
+        mod_reading = &reading->mod0;
+    } else if (mod == 1) {
+        mod_reading = &reading->mod1;
+    } else {
         return NAN;
     }
 
@@ -966,24 +975,12 @@ double sensor_convert_to_basic_counts(const sensor_reading_t *reading)
      */
     atime_ms = tsl2585_integration_time_ms(reading->sample_time, reading->sample_count);
 
-    als_gain = tsl2585_gain_value(reading->gain);
+    als_gain = tsl2585_gain_value(mod_reading->gain);
 
     /* Divide to get numbers in a similar range as previous sensors */
-    als_reading = (double)reading->als_data / 16.0F;
+    als_reading = (double)mod_reading->als_data / 16.0F;
 
     return als_reading / (atime_ms * als_gain);
-}
-
-float sensor_basic_result(const sensor_reading_t *reading)
-{
-    if (!reading) { return NAN; }
-
-    const float atime = tsl2585_integration_time_ms(reading->sample_time, reading->sample_count);
-    const float gain_val = tsl2585_gain_value(reading->gain);
-
-    if (!is_valid_number(atime) || !is_valid_number(gain_val)) { return NAN; }
-
-    return (float)reading->als_data / (atime * gain_val);
 }
 
 float sensor_apply_slope_calibration(float basic_reading)

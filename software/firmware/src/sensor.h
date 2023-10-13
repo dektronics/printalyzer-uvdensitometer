@@ -28,7 +28,9 @@ typedef enum {
 typedef enum {
     SENSOR_MODE_DEFAULT = 0,
     SENSOR_MODE_VIS,
-    SENSOR_MODE_UV
+    SENSOR_MODE_UV,
+    SENSOR_MODE_VIS_DUAL,
+    SENSOR_MODE_UV_DUAL
 } sensor_mode_t;
 
 typedef enum {
@@ -65,8 +67,13 @@ typedef enum {
 
 typedef struct {
     uint32_t als_data;      /*!< Full ALS sensor reading */
-    sensor_result_t result_status; /*!< Sensor result status. */
+    sensor_result_t result; /*!< Sensor result status. */
     tsl2585_gain_t gain;    /*!< Sensor ADC gain */
+} sensor_mod_reading_t;
+
+typedef struct {
+    sensor_mod_reading_t mod0; /*!< Sensor result from modulator 0 */
+    sensor_mod_reading_t mod1; /*!< Sensor result from modulator 1 */
     uint16_t sample_time;   /*!< Sensor integration sample time */
     uint16_t sample_count;  /*!< Sensor integration sample count */
     uint32_t reading_ticks; /*!< Tick time when the integration cycle finished */
@@ -162,20 +169,10 @@ bool sensor_is_reading_saturated(const sensor_reading_old_t *reading);
  * calculations shall be performed in terms of basic counts.
  *
  * @param reading Reading structure with all raw values
+ * @param mod The modulator data to convert, 0 or 1.
  * @return Basic count output for the sensor
  */
-double sensor_convert_to_basic_counts(const sensor_reading_t *reading);
-
-/**
- * Get the result in a gain and integration time adjusted format.
- *
- * This is the number that should be used for all calculations based on
- * a sensor reading, outside of specific diagnostic functions.
- *
- * @param sensor_reading Sensor reading data
- * @return Basic count result value
- */
-float sensor_basic_result(const sensor_reading_t *reading);
+double sensor_convert_to_basic_counts(const sensor_reading_t *reading, uint8_t mod);
 
 /**
  * Apply the configured slope correction formula to a sensor reading.

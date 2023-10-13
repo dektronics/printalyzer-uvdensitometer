@@ -1109,7 +1109,7 @@ void cdc_send_raw_sensor_reading(const sensor_reading_t *reading)
     char buf[64];
 
     sprintf(buf, "%lu,%d,%d,%d",
-        reading->als_data, reading->gain, reading->sample_time, reading->sample_count);
+        reading->mod0.als_data, reading->mod0.gain, reading->sample_time, reading->sample_count);
     cdc_send_command_response(&cmd, buf);
 }
 

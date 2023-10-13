@@ -46,6 +46,9 @@ osStatus_t sensor_set_config_old(tsl2591_gain_t gain, tsl2591_time_t time);
  * This configures the photodiodes on the sensor to determine which
  * elements will contribute to the output.
  *
+ * Note: Switching between single and dual modulator modes must be done
+ * before starting the sensor to fully take effect.
+ *
  * @param mode Sensor spectrum selection
  */
 osStatus_t sensor_set_mode(sensor_mode_t mode);
@@ -53,15 +56,34 @@ osStatus_t sensor_set_mode(sensor_mode_t mode);
 /**
  * Set the sensor's gain and integration time
  *
- * The sample time and count are combined to form the integration time,
- * according to the following formula:
- * TIME(μs) = (sample_count + 1) * (sample_time + 1) * 1.388889μs
+ * This function is a wrapper around 'sensor_set_gain()' and
+ * 'sensor_set_integration()' for the most common use cases.
  *
  * @param gain Sensor ADC gain
  * @param sample_time Duration of each sample in an integration cycle
  * @param sample_count Number of samples in an integration cycle
  */
 osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t sample_count);
+
+/**
+ * Set the sensor's gain
+ *
+ * @param gain Sensor ADC gain
+ * @param mod Modulator to apply the gain setting to
+ */
+osStatus_t sensor_set_gain(tsl2585_gain_t gain, tsl2585_modulator_t mod);
+
+/**
+ * Set the sensor's integration time
+ *
+ * The sample time and count are combined to form the integration time,
+ * according to the following formula:
+ * TIME(μs) = (sample_count + 1) * (sample_time + 1) * 1.388889μs
+ *
+ * @param sample_time Duration of each sample in an integration cycle
+ * @param sample_count Number of samples in an integration cycle
+ */
+osStatus_t sensor_set_integration(uint16_t sample_time, uint16_t sample_count);
 
 /**
  * Enable the sensor's automatic gain control
