@@ -10,7 +10,6 @@
 
 #include "stm32l0xx_hal.h"
 #include "settings.h"
-#include "tsl2591.h" //XXX
 #include "tsl2585.h"
 #include "sensor.h"
 #include "light.h"
@@ -505,13 +504,6 @@ osStatus_t sensor_control_stop()
     return hal_to_os_status(ret);
 }
 
-osStatus_t sensor_set_config_old(tsl2591_gain_t gain, tsl2591_time_t time)
-{
-    //FIXME Remove this function
-    log_w("Deprecated sensor_set_config");
-    return osOK;
-}
-
 osStatus_t sensor_set_mode(sensor_mode_t mode)
 {
     if (!sensor_initialized) { return osErrorResource; }
@@ -823,13 +815,6 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
     return osOK;
 }
 
-osStatus_t sensor_get_next_reading_old(sensor_reading_old_t *reading, uint32_t timeout)
-{
-    //FIXME Remove this function
-    log_w("Deprecated sensor_set_config");
-    return osOK;
-}
-
 osStatus_t sensor_get_next_reading(sensor_reading_t *reading, uint32_t timeout)
 {
     if (!sensor_initialized) { return osErrorResource; }
@@ -911,7 +896,9 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
             if (ret != HAL_OK) { break; }
 
             if ((fifo_data.als_status & TSL2585_ALS_DATA0_ANALOG_SATURATION_STATUS) != 0) {
+#if 0
                 log_d("TSL2585: [0:analog saturation]");
+#endif
                 reading.mod0.als_data = UINT32_MAX;
                 reading.mod0.gain = sensor_state.gain[0];
                 reading.mod0.result = SENSOR_RESULT_SATURATED_ANALOG;
@@ -937,7 +924,9 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
 
             if (sensor_state.dual_mod) {
                 if ((fifo_data.als_status & TSL2585_ALS_DATA1_ANALOG_SATURATION_STATUS) != 0) {
+#if 0
                     log_d("TSL2585: [1:analog saturation]");
+#endif
                     reading.mod1.als_data = UINT32_MAX;
                     reading.mod1.gain = sensor_state.gain[1];
                     reading.mod1.result = SENSOR_RESULT_SATURATED_ANALOG;
@@ -994,6 +983,7 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     vTaskPrioritySet(current_task_handle, current_task_priority);
 
     if (has_reading) {
+#if 0
         if (sensor_state.dual_mod) {
             log_d("TSL2585[%d]: MOD=[%lu,%lu], Gain=[%s,%s], Time=%.2fms",
                 reading.reading_count,
@@ -1006,7 +996,7 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
                 reading.mod0.als_data, tsl2585_gain_str(reading.mod0.gain),
                 tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count));
         }
-
+#endif
         cdc_send_raw_sensor_reading(&reading);
 
         QueueHandle_t queue = (QueueHandle_t)sensor_reading_queue;

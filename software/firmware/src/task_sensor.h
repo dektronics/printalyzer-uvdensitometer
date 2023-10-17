@@ -9,7 +9,6 @@
 #include <cmsis_os.h>
 
 #include "stm32l0xx_hal.h"
-#include "tsl2591.h" //XXX
 #include "tsl2585.h"
 #include "sensor.h"
 
@@ -34,11 +33,6 @@ osStatus_t sensor_start();
  * Disable the sensor.
  */
 osStatus_t sensor_stop();
-
-/**
- * FIXME Remove all uses of this function
- */
-osStatus_t sensor_set_config_old(tsl2591_gain_t gain, tsl2591_time_t time);
 
 /**
  * Set the sensor's spectrum measurement mode
@@ -111,11 +105,6 @@ osStatus_t sensor_set_agc_disabled();
  * @param value Value to set when making the change
  */
 osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t value);
-
-/**
- * FIXME Remove all uses of this function
- */
-osStatus_t sensor_get_next_reading_old(sensor_reading_old_t *reading, uint32_t timeout);
 
 /**
  * Get the next reading from the sensor.

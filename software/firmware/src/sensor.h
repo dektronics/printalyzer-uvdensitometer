@@ -9,7 +9,6 @@
 #include <cmsis_os.h>
 
 #include "stm32l0xx_hal.h"
-#include "tsl2591.h" //XXX
 #include "tsl2585.h"
 
 /**
@@ -43,20 +42,6 @@ typedef enum {
     SENSOR_GAIN_CALIBRATION_STATUS_COOLDOWN,
     SENSOR_GAIN_CALIBRATION_STATUS_DONE
 } sensor_gain_calibration_status_t;
-
-/**
- * Sensor reading data structure.
- * FIXME This is leftover from the old sensor
- */
-typedef struct {
-    uint16_t ch0_val;       /*!< CH0 light reading */
-    uint16_t ch1_val;       /*!< CH1 light reading */
-    tsl2591_gain_t gain;    /*!< Sensor ADC gain */
-    tsl2591_time_t time;    /*!< Sensor ADC integration time */
-    uint32_t reading_ticks; /*!< Tick time when the integration cycle finished */
-    uint32_t light_ticks;   /*!< Tick time when the light state last changed */
-    uint32_t reading_count; /*!< Number of integration cycles since the sensor was enabled */
-} sensor_reading_old_t;
 
 typedef enum {
     SENSOR_RESULT_INVALID = 0,
@@ -151,14 +136,6 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
     sensor_mode_t mode, tsl2585_gain_t gain,
     uint16_t sample_time, uint16_t sample_count,
     uint32_t *als_reading);
-
-/**
- * Check the sensor reading to see if the sensor is saturated.
- *
- * @param reading Reading to check
- * @return True if saturated, false otherwise
- */
-bool sensor_is_reading_saturated(const sensor_reading_old_t *reading);
 
 /**
  * Convert sensor readings from raw counts to basic counts.

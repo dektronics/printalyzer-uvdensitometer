@@ -24,7 +24,6 @@
 #include "task_sensor.h"
 #include "adc_handler.h"
 #include "mcp9808.h"
-#include "tsl2591.h"
 #include "densitometer.h"
 #include "app_descriptor.h"
 #include "util.h"
@@ -644,12 +643,13 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
 
         gain_val[0] = 1.0F;
         gain_val[1] = 1.0F;
-        gain_val[2] = cal_gain.ch0_medium;
-        gain_val[3] = cal_gain.ch1_medium;
-        gain_val[4] = cal_gain.ch0_high;
-        gain_val[5] = cal_gain.ch1_high;
-        gain_val[6] = cal_gain.ch0_maximum;
-        gain_val[7] = cal_gain.ch1_maximum;
+        //FIXME
+//        gain_val[2] = cal_gain.ch0_medium;
+//        gain_val[3] = cal_gain.ch1_medium;
+//        gain_val[4] = cal_gain.ch0_high;
+//        gain_val[5] = cal_gain.ch1_high;
+//        gain_val[6] = cal_gain.ch0_maximum;
+//        gain_val[7] = cal_gain.ch1_maximum;
 
         encode_f32_array_response(buf, gain_val, 8);
 
@@ -660,12 +660,13 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         size_t n = decode_f32_array_args(cmd->args, gain_val, 8);
         if (n == 6) {
             settings_cal_gain_t cal_gain = {0};
-            cal_gain.ch0_medium = gain_val[0];
-            cal_gain.ch1_medium = gain_val[1];
-            cal_gain.ch0_high = gain_val[2];
-            cal_gain.ch1_high = gain_val[3];
-            cal_gain.ch0_maximum = gain_val[4];
-            cal_gain.ch1_maximum = gain_val[5];
+            //FIXME
+//            cal_gain.ch0_medium = gain_val[0];
+//            cal_gain.ch1_medium = gain_val[1];
+//            cal_gain.ch0_high = gain_val[2];
+//            cal_gain.ch1_high = gain_val[3];
+//            cal_gain.ch0_maximum = gain_val[4];
+//            cal_gain.ch1_maximum = gain_val[5];
 
             if (settings_set_cal_gain(&cal_gain)) {
                 cdc_send_command_response(cmd, "OK");

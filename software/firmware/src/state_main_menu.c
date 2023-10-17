@@ -547,6 +547,9 @@ void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controlle
     settings_get_cal_light(&cal_light);
     settings_get_cal_gain(&cal_gain);
 
+    //FIXME show new gain values
+    sprintf_(buf, "");
+#if 0
     sprintf_(buf,
         "LR=%d  LT=%d\n"
         "L0 = %.1fx\n"
@@ -562,6 +565,7 @@ void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controlle
         cal_gain.ch0_medium, cal_gain.ch1_medium,
         cal_gain.ch0_high, cal_gain.ch1_high,
         cal_gain.ch0_maximum, cal_gain.ch1_maximum);
+#endif
 
     char sep = settings_get_decimal_separator();
     if (sep != '.') {

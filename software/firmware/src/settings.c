@@ -74,12 +74,12 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define PAGE_CAL_SENSOR_VERSION     1UL
 
 #define CONFIG_CAL_GAIN             (PAGE_CAL_SENSOR + 4U)
-#define CONFIG_CAL_GAIN_SIZE        (28U)
+#define CONFIG_CAL_GAIN_SIZE        (44U)
 
-#define CONFIG_CAL_SLOPE            (PAGE_CAL_SENSOR + 32U)
+#define CONFIG_CAL_SLOPE            (PAGE_CAL_SENSOR + 48U)
 #define CONFIG_CAL_SLOPE_SIZE       (16U)
 
-#define CONFIG_CAL_LIGHT            (PAGE_CAL_SENSOR + 48U)
+#define CONFIG_CAL_LIGHT            (PAGE_CAL_SENSOR + 64U)
 #define CONFIG_CAL_LIGHT_SIZE       (12U)
 
 /*
@@ -576,29 +576,25 @@ void settings_set_cal_gain_defaults(settings_cal_gain_t *cal_gain)
 {
     if (!cal_gain) { return; }
     memset(cal_gain, 0, sizeof(settings_cal_gain_t));
-    cal_gain->ch0_medium = TSL2591_GAIN_MEDIUM_TYP;
-    cal_gain->ch1_medium = TSL2591_GAIN_MEDIUM_TYP;
-    cal_gain->ch0_high = TSL2591_GAIN_HIGH_TYP;
-    cal_gain->ch1_high = TSL2591_GAIN_HIGH_TYP;
-    cal_gain->ch0_maximum = TSL2591_GAIN_MAXIMUM_CH0_TYP;
-    cal_gain->ch1_maximum = TSL2591_GAIN_MAXIMUM_CH1_TYP;
+    for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
+        cal_gain->values[i] = tsl2585_gain_value(i);
+    }
 }
 
 bool settings_set_cal_gain(const settings_cal_gain_t *cal_gain)
 {
     HAL_StatusTypeDef ret = HAL_OK;
+    size_t offset = 0;
     if (!cal_gain) { return false; }
 
     uint8_t buf[CONFIG_CAL_GAIN_SIZE];
-    copy_from_f32(&buf[0], cal_gain->ch0_medium);
-    copy_from_f32(&buf[4], cal_gain->ch1_medium);
-    copy_from_f32(&buf[8], cal_gain->ch0_high);
-    copy_from_f32(&buf[12], cal_gain->ch1_high);
-    copy_from_f32(&buf[16], cal_gain->ch0_maximum);
-    copy_from_f32(&buf[20], cal_gain->ch1_maximum);
+    for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
+        copy_from_f32(&buf[offset], cal_gain->values[i]);
+        offset += 4;
+    }
 
-    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 6);
-    copy_from_u32(&buf[24], crc);
+    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 10);
+    copy_from_u32(&buf[40], crc);
 
     ret = settings_write_buffer(CONFIG_CAL_GAIN, buf, sizeof(buf));
 
@@ -618,19 +614,19 @@ bool settings_load_cal_gain()
         return false;
     }
 
-    uint32_t crc = copy_to_u32(&buf[24]);
-    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 6);
+    uint32_t crc = copy_to_u32(&buf[40]);
+    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 10);
 
     if (crc != calculated_crc) {
         log_w("Invalid cal gain CRC: %08X != %08X", crc, calculated_crc);
         return false;
     } else {
-        setting_cal_gain.ch0_medium = copy_to_f32(&buf[0]);
-        setting_cal_gain.ch1_medium = copy_to_f32(&buf[4]);
-        setting_cal_gain.ch0_high = copy_to_f32(&buf[8]);
-        setting_cal_gain.ch1_high = copy_to_f32(&buf[12]);
-        setting_cal_gain.ch0_maximum = copy_to_f32(&buf[16]);
-        setting_cal_gain.ch1_maximum = copy_to_f32(&buf[20]);
+        size_t offset = 0;
+        for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
+            setting_cal_gain.values[i] = copy_to_f32(&buf[offset]);
+            offset += 4;
+        }
+
         return true;
     }
 }
@@ -651,33 +647,22 @@ bool settings_get_cal_gain(settings_cal_gain_t *cal_gain)
     }
 }
 
-void settings_get_cal_gain_fields(const settings_cal_gain_t *cal_gain, tsl2591_gain_t gain, float *ch0_gain, float *ch1_gain)
+float settings_get_cal_gain_value(const settings_cal_gain_t *cal_gain, tsl2585_gain_t gain)
 {
-    float ch0_value = 1.0F;
-    float ch1_value = 1.0F;
+    float result = NAN;
 
-    if (!cal_gain) { return; }
+    if (!cal_gain) { return result; }
 
-    if (gain == TSL2591_GAIN_LOW) {
-        ch0_value = 1.0F;
-        ch1_value = 1.0F;
-    } else if (gain == TSL2591_GAIN_MEDIUM) {
-        ch0_value = cal_gain->ch0_medium;
-        ch1_value = cal_gain->ch1_medium;
-    } else if (gain == TSL2591_GAIN_HIGH) {
-        ch0_value = cal_gain->ch0_high;
-        ch1_value = cal_gain->ch1_high;
-    } else if (gain == TSL2591_GAIN_MAXIMUM) {
-        ch0_value = cal_gain->ch0_maximum;
-        ch1_value = cal_gain->ch1_maximum;
+    if (gain >= TSL2585_GAIN_0_5X && gain <= TSL2585_GAIN_256X) {
+        result = cal_gain->values[gain];
+        if (isnanf(result)) {
+            result = tsl2585_gain_value(gain);
+        }
+    } else {
+        result = tsl2585_gain_value(gain);
     }
 
-    if (ch0_gain) {
-        *ch0_gain = ch0_value;
-    }
-    if (ch1_gain) {
-        *ch1_gain = ch1_value;
-    }
+    return result;
 }
 
 bool settings_validate_cal_gain(const settings_cal_gain_t *cal_gain)
@@ -685,31 +670,17 @@ bool settings_validate_cal_gain(const settings_cal_gain_t *cal_gain)
     if (!cal_gain) { return false; }
 
     /* Validate field numeric properties */
-    if (isnanf(cal_gain->ch0_medium) || isinff(cal_gain->ch0_medium)
-        || isnanf(cal_gain->ch1_medium) || isinff(cal_gain->ch1_medium)) {
-        return false;
-    }
-    if (isnanf(cal_gain->ch0_high) || isinff(cal_gain->ch0_high)
-        || isnanf(cal_gain->ch1_high) || isinff(cal_gain->ch1_high)) {
-        return false;
-    }
-    if (isnanf(cal_gain->ch0_maximum) || isinff(cal_gain->ch0_maximum)
-        || isnanf(cal_gain->ch1_maximum) || isinff(cal_gain->ch1_maximum)) {
-        return false;
+    for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
+        if (isnanf(cal_gain->values[i])) {
+            return false;
+        }
     }
 
     /* Validate field values */
-    if (cal_gain->ch0_medium < TSL2591_GAIN_MEDIUM_MIN || cal_gain->ch0_medium > TSL2591_GAIN_MEDIUM_MAX
-        || cal_gain->ch1_medium < TSL2591_GAIN_MEDIUM_MIN || cal_gain->ch1_medium > TSL2591_GAIN_MEDIUM_MAX) {
-        return false;
-    }
-    if (cal_gain->ch0_high < TSL2591_GAIN_HIGH_MIN || cal_gain->ch0_high > TSL2591_GAIN_HIGH_MAX
-        || cal_gain->ch1_high < TSL2591_GAIN_HIGH_MIN || cal_gain->ch1_high > TSL2591_GAIN_HIGH_MAX) {
-        return false;
-    }
-    if (cal_gain->ch0_maximum < TSL2591_GAIN_MAXIMUM_CH0_MIN || cal_gain->ch0_maximum > TSL2591_GAIN_MAXIMUM_CH0_MAX
-        || cal_gain->ch1_maximum < TSL2591_GAIN_MAXIMUM_CH1_MIN || cal_gain->ch1_maximum > TSL2591_GAIN_MAXIMUM_CH1_MAX) {
-        return false;
+    for (size_t i = 1; i <= TSL2585_GAIN_256X; i++) {
+        if (cal_gain->values[i] <= cal_gain->values[i - 1]) {
+            return false;
+        }
     }
 
     return true;

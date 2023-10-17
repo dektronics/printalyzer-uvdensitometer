@@ -5,7 +5,7 @@
 
 #include <stdbool.h>
 
-#include "tsl2591.h"
+#include "tsl2585.h"
 
 /*
  * Selections and defaults for the idle light user settings
@@ -27,12 +27,7 @@ typedef struct {
 } settings_cal_light_t;
 
 typedef struct {
-    float ch0_medium;
-    float ch1_medium;
-    float ch0_high;
-    float ch1_high;
-    float ch0_maximum;
-    float ch1_maximum;
+    float values[TSL2585_GAIN_256X + 1];
 } settings_cal_gain_t;
 
 typedef struct {
@@ -150,7 +145,7 @@ bool settings_get_cal_gain(settings_cal_gain_t *cal_gain);
  * Convenience function to get gain calibration fields for a particular
  * gain setting.
  */
-void settings_get_cal_gain_fields(const settings_cal_gain_t *cal_gain, tsl2591_gain_t gain, float *ch0_gain, float *ch1_gain);
+float settings_get_cal_gain_value(const settings_cal_gain_t *cal_gain, tsl2585_gain_t gain);
 
 /**
  * Check if the gain calibration values are valid
