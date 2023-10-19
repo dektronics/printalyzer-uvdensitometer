@@ -197,7 +197,13 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     }
 
     /* Combine and correct the basic reading */
-    float corr_value = sensor_apply_slope_calibration(als_basic);
+    float corr_value;
+    if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
+        /* Not applying slope calibration to UV readings right now */
+        corr_value = als_basic;
+    } else {
+        corr_value = sensor_apply_slope_calibration(als_basic);
+    }
 
     if (use_target_cal) {
         /* Calculate the measured CAL-HI density relative to the zero value */
@@ -251,7 +257,12 @@ densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float
     }
 
     /* Combine and correct the basic reading */
-    float corr_value = sensor_apply_slope_calibration(als_basic);
+    float corr_value;
+    if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
+        corr_value = als_basic;
+    } else {
+        corr_value = sensor_apply_slope_calibration(als_basic);
+    }
 
     if (als_basic < 0.0001F || corr_value < 0.0001F) {
         return DENSITOMETER_CAL_ERROR;

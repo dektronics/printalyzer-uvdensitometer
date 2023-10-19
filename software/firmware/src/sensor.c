@@ -33,14 +33,12 @@
 
 static osStatus_t sensor_gain_calibration_segment(
     tsl2585_gain_t low_gain, tsl2585_gain_t high_gain,
-    uint8_t low_brightness, uint8_t high_brightness,
     float *gain_readings,
     sensor_gain_calibration_callback_t callback, void *user_data);
 
 static osStatus_t sensor_raw_read_loop(uint8_t count, float *als_avg);
 static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
     tsl2585_gain_t gain,
-    uint8_t start_brightness, uint8_t end_brightness,
     float target_factor,
     sensor_gain_calibration_callback_t callback, void *user_data);
 static bool gain_status_callback(
@@ -76,15 +74,15 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
         if (ret != osOK) { break; }
 
         /* Measure a segments of gain settings, ordered by LED brightness increase */
-        ret = sensor_gain_calibration_segment(TSL2585_GAIN_32X, TSL2585_GAIN_256X, 1, 4, gain_readings + 8,
+        ret = sensor_gain_calibration_segment(TSL2585_GAIN_32X, TSL2585_GAIN_256X, gain_readings + 8,
             callback, user_data);
         if (ret != osOK) { break; }
 
-        ret = sensor_gain_calibration_segment(TSL2585_GAIN_4X, TSL2585_GAIN_32X, 1, 8, gain_readings + 4,
+        ret = sensor_gain_calibration_segment(TSL2585_GAIN_4X, TSL2585_GAIN_32X, gain_readings + 4,
             callback, user_data);
         if (ret != osOK) { break; }
 
-        ret = sensor_gain_calibration_segment(TSL2585_GAIN_0_5X, TSL2585_GAIN_4X, 20, 64, gain_readings,
+        ret = sensor_gain_calibration_segment(TSL2585_GAIN_0_5X, TSL2585_GAIN_4X, gain_readings,
             callback, user_data);
         if (ret != osOK) { break; }
 
@@ -130,7 +128,6 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
 
 osStatus_t sensor_gain_calibration_segment(
     tsl2585_gain_t low_gain, tsl2585_gain_t high_gain,
-    uint8_t low_brightness, uint8_t high_brightness,
     float *gain_readings,
     sensor_gain_calibration_callback_t callback, void *user_data)
 {
@@ -139,11 +136,9 @@ osStatus_t sensor_gain_calibration_segment(
     float gain_avg;
     size_t i = 0;
     if (low_gain >= high_gain) { return osErrorParameter; }
-    if (low_brightness > high_brightness) { return osErrorParameter; }
 
     ret = sensor_find_gain_brightness(&led_brightness, high_gain,
-        low_brightness, high_brightness, GAIN_CAL_TARGET_FACTOR,
-        callback, user_data);
+        GAIN_CAL_TARGET_FACTOR, callback, user_data);
     if (ret != osOK) { return ret; }
 
     //TODO Update callback to report status in here
@@ -621,24 +616,22 @@ bool gain_status_callback(
  *
  * @param gain Measurement gain setting
  * @param led_brightness Brightness to use for further measurements
- * @param start_brightness Starting brightness value, inclusive
- * @param end_brightness Ending brightness value, inclusive
  * @param target_factor Multiplier to determine how close to saturation is allowed
  */
 static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
     tsl2585_gain_t gain,
-    uint8_t start_brightness, uint8_t end_brightness,
     float target_factor,
     sensor_gain_calibration_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
+    uint8_t start_brightness = 0;
+    uint8_t end_brightness = 0;
     uint8_t sat_brightness = 0;
     sensor_reading_t reading;
     uint8_t closest_led = 0;
 
     /* Basic parameter validation */
-    if (start_brightness == 0 || start_brightness == end_brightness
-        || isnanf(target_factor) || target_factor < 0.1F || target_factor > 1.0F) {
+    if (isnanf(target_factor) || target_factor < 0.1F || target_factor > 1.0F) {
         return osErrorParameter;
     }
 
@@ -646,7 +639,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
 
     do {
         /* Enable the light at the starting value */
-        sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, start_brightness);
+        sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, 128);
 
         /* Set both modulators to the measurement gain */
         ret = sensor_set_gain(gain, TSL2585_MOD0);
@@ -658,12 +651,45 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
         ret = sensor_get_next_reading(&reading, 2000);
         if (ret != osOK) { break; }
 
-        if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, start_brightness, user_data)) { return osError; }
+        /* Start at max brightness and use multiplicative decrease to find a rough saturation threshold */
+        for (uint8_t i = 128; i >= 1; i >>= 1) {
+            if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, i, user_data)) { return osError; }
 
-        /* Count upward to find the saturation point */
-        log_d("Finding analog saturation point");
-        for (uint8_t i = start_brightness; i <= end_brightness; i++) {
-            log_d("Testing brightness: %d", i);
+            /* Set the LED to target brightness on the next cycle */
+            sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, i);
+
+            /* Wait for two readings, discarding the first */
+            ret = sensor_get_next_reading(&reading, 2000);
+            if (ret != osOK) { break; }
+            ret = sensor_get_next_reading(&reading, 2000);
+            if (ret != osOK) { break; }
+
+            if (reading.mod0.result == SENSOR_RESULT_VALID && reading.mod1.result == SENSOR_RESULT_VALID) {
+                if (i == 128) {
+                    start_brightness = i;
+                    end_brightness = i;
+                } else {
+                    start_brightness = i;
+                    end_brightness = i * 2;
+                }
+                break;
+            } else if (reading.mod0.result != SENSOR_RESULT_SATURATED_ANALOG && reading.mod1.result != SENSOR_RESULT_SATURATED_ANALOG) {
+                log_w("Sensor reading error: %d %d", reading.mod0.result, reading.mod1.result);
+                ret = osError;
+                break;
+            }
+        }
+        if (ret != osOK) { break; }
+
+        /* Check if we're never going to saturate */
+        if (start_brightness > 0 && start_brightness == end_brightness) {
+            log_d("Does not saturate at max brightness");
+            break;
+        }
+
+        /* Use additive increase to find the actual saturation point */
+        for (uint8_t i = start_brightness; i < end_brightness; i++) {
+            if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, i, user_data)) { return osError; }
 
             /* Set the LED to target brightness on the next cycle */
             sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, /*next_cycle*/true, i);
@@ -678,7 +704,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
             if (reading.mod0.result == SENSOR_RESULT_SATURATED_ANALOG || reading.mod1.result == SENSOR_RESULT_SATURATED_ANALOG) {
                 if (i == start_brightness) {
                     log_w("Saturated at start brightness %d, adjust parameters", start_brightness);
-                    ret = osErrorParameter;
+                    ret = osError;
                     break;
                 } else {
                     log_d("Saturated at brightness: %d", i);
@@ -693,22 +719,23 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
         }
         if (ret != osOK) { break; }
 
-        if (sat_brightness == 0) {
-            log_w("Could not find saturation brightness, setting to end value: %d", end_brightness);
-            sat_brightness = end_brightness;
-        }
-
-        /* Select a value that's the saturation brightness scaled by the target factor */
-        closest_led = lroundf((float)sat_brightness * target_factor);
-
-        /* Prevent zero */
-        if (closest_led < 1) {
-            closest_led = 1;
-        }
     } while (0);
 
     /* Turn off the LED */
     sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
+
+    if (sat_brightness == 0) {
+        closest_led = end_brightness;
+    } else {
+        /* Select a value that's the saturation brightness scaled by the target factor */
+        //XXX closest_led = lroundf((float)sat_brightness * target_factor);
+        closest_led = sat_brightness - 1;
+    }
+
+    /* Prevent zero */
+    if (closest_led < 1) {
+        closest_led = 1;
+    }
 
     if (ret == osOK) {
         if (led_brightness) {
