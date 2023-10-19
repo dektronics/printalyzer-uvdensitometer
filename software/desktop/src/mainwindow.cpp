@@ -85,9 +85,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->max1LineEdit, &QLineEdit::textChanged, this, &MainWindow::onCalGainTextChanged);
 
     // Calibration (slope) field validation
+    ui->zLineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
     ui->b0LineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
     ui->b1LineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
     ui->b2LineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
+    connect(ui->zLineEdit, &QLineEdit::textChanged, this, &MainWindow::onCalSlopeTextChanged);
     connect(ui->b0LineEdit, &QLineEdit::textChanged, this, &MainWindow::onCalSlopeTextChanged);
     connect(ui->b1LineEdit, &QLineEdit::textChanged, this, &MainWindow::onCalSlopeTextChanged);
     connect(ui->b2LineEdit, &QLineEdit::textChanged, this, &MainWindow::onCalSlopeTextChanged);
@@ -392,8 +394,12 @@ void MainWindow::configureForDeviceType()
 
     if (deviceType == DensInterface::DeviceUvVis) {
         ui->sensorTempLabel->setVisible(true);
+        ui->zLabel->setVisible(true);
+        ui->zLineEdit->setVisible(true);
     } else {
         ui->sensorTempLabel->setVisible(false);
+        ui->zLabel->setVisible(false);
+        ui->zLineEdit->setVisible(false);
     }
 }
 
@@ -461,6 +467,7 @@ void MainWindow::refreshButtonState()
     ui->max0LineEdit->setReadOnly(!connected);
     ui->max1LineEdit->setReadOnly(!connected);
 
+    ui->zLineEdit->setReadOnly(!connected);
     ui->b0LineEdit->setReadOnly(!connected);
     ui->b1LineEdit->setReadOnly(!connected);
     ui->b2LineEdit->setReadOnly(!connected);
@@ -562,6 +569,7 @@ void MainWindow::onConnectionOpened()
     ui->max0LineEdit->clear();
     ui->max1LineEdit->clear();
 
+    ui->zLineEdit->clear();
     ui->b0LineEdit->clear();
     ui->b1LineEdit->clear();
     ui->b2LineEdit->clear();
@@ -1055,6 +1063,9 @@ void MainWindow::onCalSlopeSetClicked()
     DensCalSlope calSlope;
     bool ok;
 
+    calSlope.setZ(ui->zLineEdit->text().toFloat(&ok));
+    if (!ok) { return; }
+
     calSlope.setB0(ui->b0LineEdit->text().toFloat(&ok));
     if (!ok) { return; }
 
@@ -1148,16 +1159,19 @@ void MainWindow::onCalGainTextChanged()
 
 void MainWindow::onCalSlopeTextChanged()
 {
+    const bool hasZ = (densInterface_->deviceType() == DensInterface::DeviceUvVis);
     if (densInterface_->connected()
-            && ui->b0LineEdit->hasAcceptableInput()
-            && ui->b1LineEdit->hasAcceptableInput()
-            && ui->b2LineEdit->hasAcceptableInput()) {
+        && (ui->zLineEdit->hasAcceptableInput() || !hasZ)
+        && ui->b0LineEdit->hasAcceptableInput()
+        && ui->b1LineEdit->hasAcceptableInput()
+        && ui->b2LineEdit->hasAcceptableInput()) {
         ui->slopeSetPushButton->setEnabled(true);
     } else {
         ui->slopeSetPushButton->setEnabled(false);
     }
 
     const DensCalSlope calSlope = densInterface_->calSlope();
+    updateLineEditDirtyState(ui->zLineEdit, calSlope.z(), 6);
     updateLineEditDirtyState(ui->b0LineEdit, calSlope.b0(), 6);
     updateLineEditDirtyState(ui->b1LineEdit, calSlope.b1(), 6);
     updateLineEditDirtyState(ui->b2LineEdit, calSlope.b2(), 6);
@@ -1323,6 +1337,7 @@ void MainWindow::onCalSlopeResponse()
 {
     const DensCalSlope calSlope = densInterface_->calSlope();
 
+    ui->zLineEdit->setText(QString::number(calSlope.z(), 'f'));
     ui->b0LineEdit->setText(QString::number(calSlope.b0(), 'f'));
     ui->b1LineEdit->setText(QString::number(calSlope.b1(), 'f'));
     ui->b2LineEdit->setText(QString::number(calSlope.b2(), 'f'));
@@ -1378,6 +1393,11 @@ void MainWindow::onSlopeCalibrationTool()
 {
     SlopeCalibrationDialog *dialog = new SlopeCalibrationDialog(densInterface_, this);
     connect(dialog, &QDialog::finished, this, &MainWindow::onSlopeCalibrationToolFinished);
+
+    if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
+        dialog->setCalculateZeroAdjustment(true);
+    }
+
     dialog->show();
 }
 
@@ -1387,6 +1407,12 @@ void MainWindow::onSlopeCalibrationToolFinished(int result)
     dialog->deleteLater();
 
     if (result == QDialog::Accepted) {
+        if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
+            ui->zLineEdit->setText(QString::number(dialog->zeroAdjustment(), 'f'));
+        } else {
+            ui->zLineEdit->setText(QString());
+        }
+
         auto result = dialog->calValues();
         ui->b0LineEdit->setText(QString::number(std::get<0>(result), 'f'));
         ui->b1LineEdit->setText(QString::number(std::get<1>(result), 'f'));

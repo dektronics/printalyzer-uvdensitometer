@@ -74,6 +74,9 @@ public:
     DensCalSlope &operator=(const DensCalSlope &);
     ~DensCalSlope();
 
+    void setZ(float z);
+    float z() const;
+
     void setB0(float b0);
     float b0() const;
 

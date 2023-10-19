@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>592</width>
-    <height>691</height>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -819,47 +819,72 @@
              </item>
              <item>
               <layout class="QFormLayout" name="formLayout">
-               <item row="0" column="0">
+               <property name="labelAlignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <item row="2" column="0">
                 <widget class="QLabel" name="b0Label">
                  <property name="text">
                   <string>B0 =</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
+               <item row="2" column="1">
                 <widget class="QLineEdit" name="b0LineEdit">
                  <property name="readOnly">
                   <bool>false</bool>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="3" column="0">
                 <widget class="QLabel" name="b1Label">
                  <property name="text">
                   <string>B1 =</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="4" column="0">
                 <widget class="QLabel" name="b2Label">
                  <property name="text">
                   <string>B2 =</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="3" column="1">
                 <widget class="QLineEdit" name="b1LineEdit">
                  <property name="readOnly">
                   <bool>false</bool>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
+               <item row="4" column="1">
                 <widget class="QLineEdit" name="b2LineEdit">
                  <property name="readOnly">
                   <bool>false</bool>
                  </property>
                 </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="zLabel">
+                 <property name="text">
+                  <string notr="true">Z =</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="zLineEdit"/>
                </item>
               </layout>
              </item>

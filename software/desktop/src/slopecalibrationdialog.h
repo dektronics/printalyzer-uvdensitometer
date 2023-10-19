@@ -20,7 +20,10 @@ public:
     explicit SlopeCalibrationDialog(DensInterface *densInterface, QWidget *parent = nullptr);
     ~SlopeCalibrationDialog();
 
+    void setCalculateZeroAdjustment(bool enable);
+
     std::tuple<float, float, float> calValues() const;
+    float zeroAdjustment() const;
 
 private slots:
     void onDensityReading(DensInterface::DensityType type, float dValue, float dZero, float rawValue, float corrValue);
@@ -40,7 +43,9 @@ private:
     Ui::SlopeCalibrationDialog *ui;
     QStandardItemModel *model_;
     DensInterface *densInterface_;
+    bool enableZeroAdj_;
     std::tuple<float, float, float> calValues_;
+    float zeroAdj_;
 };
 
 #endif // SLOPECALIBRATIONDIALOG_H

@@ -23,6 +23,7 @@ public:
 class DensCalSlopeData : public QSharedData
 {
 public:
+    float z = qSNaN();
     float b0 = qSNaN();
     float b1 = qSNaN();
     float b2 = qSNaN();
@@ -173,6 +174,9 @@ DensCalSlope::~DensCalSlope()
 {
 }
 
+void DensCalSlope::setZ(float z) { data->z = z; }
+float DensCalSlope::z() const { return data->z; }
+
 void DensCalSlope::setB0(float b0) { data->b0 = b0; }
 float DensCalSlope::b0() const { return data->b0; }
 
@@ -184,7 +188,7 @@ float DensCalSlope::b2() const { return data->b2; }
 
 bool DensCalSlope::isValid() const
 {
-    // Invalid if any values are NaN
+    // Invalid if any values (except Z) are NaN
     if (qIsNaN(data->b0) || qIsNaN(data->b1) || qIsNaN(data->b2)) {
         return false;
     }
