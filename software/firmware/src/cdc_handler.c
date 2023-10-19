@@ -680,24 +680,26 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
     else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "SLOPE") == 0) {
         char buf[64];
         settings_cal_slope_t cal_slope;
-        float slope_val[3] = {0};
+        float slope_val[4] = {0};
 
         settings_get_cal_slope(&cal_slope);
         slope_val[0] = cal_slope.b0;
         slope_val[1] = cal_slope.b1;
         slope_val[2] = cal_slope.b2;
-        encode_f32_array_response(buf, slope_val, 3);
+        slope_val[3] = cal_slope.z;
+        encode_f32_array_response(buf, slope_val, 4);
 
         cdc_send_command_response(cmd, buf);
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "SLOPE") == 0) {
-        float slope_val[3] = {0};
-        size_t n = decode_f32_array_args(cmd->args, slope_val, 3);
-        if (n == 3) {
+        float slope_val[4] = {0};
+        size_t n = decode_f32_array_args(cmd->args, slope_val, 4);
+        if (n == 4) {
             settings_cal_slope_t cal_slope = {0};
             cal_slope.b0 = slope_val[0];
             cal_slope.b1 = slope_val[1];
             cal_slope.b2 = slope_val[2];
+            cal_slope.z = slope_val[3];
 
             if (settings_set_cal_slope(&cal_slope)) {
                 cdc_send_command_response(cmd, "OK");

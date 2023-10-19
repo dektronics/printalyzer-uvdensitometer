@@ -783,7 +783,28 @@ double sensor_convert_to_basic_counts(const sensor_reading_t *reading, uint8_t m
     return als_reading / (atime_ms * als_gain);
 }
 
-float sensor_apply_slope_calibration(float basic_reading)
+float sensor_apply_zero_correction(float basic_reading)
+{
+    settings_cal_slope_t cal_slope;
+
+    bool valid = settings_get_cal_slope(&cal_slope);
+
+    if (isnanf(basic_reading) || isinff(basic_reading) || basic_reading <= 0.0F) {
+        log_w("Cannot apply zero correction to invalid reading: %f", basic_reading);
+        return basic_reading;
+    }
+
+    if (!valid) {
+        log_w("Invalid slope calibration values");
+        return basic_reading;
+    }
+
+    float corr_value = basic_reading * powf(10.0F, cal_slope.z);
+
+    return corr_value;
+}
+
+float sensor_apply_slope_correction(float basic_reading)
 {
     settings_cal_slope_t cal_slope;
 

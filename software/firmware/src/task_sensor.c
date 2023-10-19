@@ -439,6 +439,9 @@ osStatus_t sensor_control_start()
             sensor_state.agc_pending = false;
         }
 
+        ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 1); //XXX This seems to help noise
+        if (ret != HAL_OK) { break; }
+
         /* Log initial state */
         const float als_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count);
         const float agc_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.agc_sample_count);
@@ -725,8 +728,8 @@ osStatus_t sensor_control_set_agc_disabled()
             ret = tsl2585_set_agc_calibration(&hi2c1, false);
             if (ret != HAL_OK) { break; }
 
-            ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 0);
-            if (ret != HAL_OK) { break; }
+//            ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 0);
+//            if (ret != HAL_OK) { break; }
 
             ret = tsl2585_set_agc_num_samples(&hi2c1, 0);
             if (ret != HAL_OK) { break; }
@@ -983,7 +986,7 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     vTaskPrioritySet(current_task_handle, current_task_priority);
 
     if (has_reading) {
-#if 0
+#if 1
         if (sensor_state.dual_mod) {
             log_d("TSL2585[%d]: MOD=[%lu,%lu], Gain=[%s,%s], Time=%.2fms",
                 reading.reading_count,

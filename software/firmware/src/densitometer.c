@@ -127,7 +127,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     }
 
     /* Combine and correct the basic reading */
-    float corr_value = sensor_apply_slope_calibration(als_basic);
+    float corr_value = sensor_apply_slope_correction(als_basic);
 
     if (use_target_cal) {
         /* Convert all values into log units */
@@ -202,7 +202,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
         /* Not applying slope calibration to UV readings right now */
         corr_value = als_basic;
     } else {
-        corr_value = sensor_apply_slope_calibration(als_basic);
+        corr_value = sensor_apply_slope_correction(als_basic);
     }
 
     if (use_target_cal) {
@@ -245,7 +245,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     return DENSITOMETER_OK;
 }
 
-densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float *cal_value, sensor_read_callback_t callback, void *user_data)
+densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float *cal_value, bool is_zero, sensor_read_callback_t callback, void *user_data)
 {
     if (!densitometer) { return DENSITOMETER_CAL_ERROR; }
 
@@ -258,10 +258,15 @@ densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float
 
     /* Combine and correct the basic reading */
     float corr_value;
-    if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
-        corr_value = als_basic;
+    if (is_zero) {
+        corr_value = sensor_apply_zero_correction(als_basic);
     } else {
-        corr_value = sensor_apply_slope_calibration(als_basic);
+        if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
+            /* Not currently slope-correcting normal UV measurements */
+            corr_value = als_basic;
+        } else {
+            corr_value = sensor_apply_slope_correction(als_basic);
+        }
     }
 
     if (als_basic < 0.0001F || corr_value < 0.0001F) {

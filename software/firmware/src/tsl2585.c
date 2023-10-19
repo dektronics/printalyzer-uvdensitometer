@@ -682,6 +682,15 @@ HAL_StatusTypeDef tsl2585_get_uv_calibration(I2C_HandleTypeDef *hi2c, uint8_t *v
     return ret;
 }
 
+HAL_StatusTypeDef tsl2585_set_mod_idac_range(I2C_HandleTypeDef *hi2c, uint8_t value)
+{
+    uint8_t data = (value & 0x03) << 6;
+    HAL_StatusTypeDef ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS,
+        TSL2585_MOD_COMP_CFG1, I2C_MEMADD_SIZE_8BIT,
+        &data, 1, HAL_MAX_DELAY);
+    return ret;
+}
+
 HAL_StatusTypeDef tsl2585_get_calibration_nth_iteration(I2C_HandleTypeDef *hi2c, uint8_t *iteration)
 {
     HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS,

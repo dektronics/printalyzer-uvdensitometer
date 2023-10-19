@@ -67,10 +67,11 @@ densitometer_result_t densitometer_measure(densitometer_t *densitometer, sensor_
  * targets to populate the settings_cal_transmission_t structure.
  *
  * @param cal_value Adjusted raw measurement to save as a calibration value
+ * @param is_zero True if this is a zero (no film) measurement
  * @param callback Called periodically during the measurement loop
  * @return Result code for the measurement process
  */
-densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float *cal_value, sensor_read_callback_t callback, void *user_data);
+densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float *cal_value, bool is_zero, sensor_read_callback_t callback, void *user_data);
 
 /**
  * Control the idle light for the densitometer mode.

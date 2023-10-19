@@ -31,6 +31,7 @@ typedef struct {
 } settings_cal_gain_t;
 
 typedef struct {
+    float z;
     float b0;
     float b1;
     float b2;

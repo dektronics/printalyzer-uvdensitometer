@@ -77,9 +77,9 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define CONFIG_CAL_GAIN_SIZE        (44U)
 
 #define CONFIG_CAL_SLOPE            (PAGE_CAL_SENSOR + 48U)
-#define CONFIG_CAL_SLOPE_SIZE       (16U)
+#define CONFIG_CAL_SLOPE_SIZE       (20U)
 
-#define CONFIG_CAL_LIGHT            (PAGE_CAL_SENSOR + 64U)
+#define CONFIG_CAL_LIGHT            (PAGE_CAL_SENSOR + 68U)
 #define CONFIG_CAL_LIGHT_SIZE       (12U)
 
 /*
@@ -690,6 +690,7 @@ void settings_set_cal_slope_defaults(settings_cal_slope_t *cal_slope)
 {
     if (!cal_slope) { return; }
     memset(cal_slope, 0, sizeof(settings_cal_slope_t));
+    cal_slope->z = NAN;
     cal_slope->b0 = NAN;
     cal_slope->b1 = NAN;
     cal_slope->b2 = NAN;
@@ -704,9 +705,10 @@ bool settings_set_cal_slope(const settings_cal_slope_t *cal_slope)
     copy_from_f32(&buf[0], cal_slope->b0);
     copy_from_f32(&buf[4], cal_slope->b1);
     copy_from_f32(&buf[8], cal_slope->b2);
+    copy_from_f32(&buf[12], cal_slope->z);
 
-    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 3);
-    copy_from_u32(&buf[12], crc);
+    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 4);
+    copy_from_u32(&buf[16], crc);
 
     ret = settings_write_buffer(CONFIG_CAL_SLOPE, buf, sizeof(buf));
 
@@ -726,8 +728,8 @@ bool settings_load_cal_slope()
         return false;
     }
 
-    uint32_t crc = copy_to_u32(&buf[12]);
-    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 3);
+    uint32_t crc = copy_to_u32(&buf[16]);
+    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 4);
 
     if (crc != calculated_crc) {
         log_w("Invalid cal slope CRC: %08X != %08X", crc, calculated_crc);
@@ -736,6 +738,7 @@ bool settings_load_cal_slope()
         setting_cal_slope.b0 = copy_to_f32(&buf[0]);
         setting_cal_slope.b1 = copy_to_f32(&buf[4]);
         setting_cal_slope.b2 = copy_to_f32(&buf[8]);
+        setting_cal_slope.z = copy_to_f32(&buf[12]);
         return true;
     }
 }
@@ -768,6 +771,9 @@ bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope)
         return false;
     }
     if (isnanf(cal_slope->b2) || isinff(cal_slope->b2)) {
+        return false;
+    }
+    if (isnanf(cal_slope->z) || isinff(cal_slope->z)) {
         return false;
     }
 

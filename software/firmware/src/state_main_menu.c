@@ -288,7 +288,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                     elements.density100 = lroundf(cal_reflection.lo_d * 100);
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
-                    meas_result = densitometer_calibrate(densitometer, &(cal_reflection.lo_value), sensor_read_callback, &elements);
+                    meas_result = densitometer_calibrate(densitometer, &(cal_reflection.lo_value), false, sensor_read_callback, &elements);
                 } else {
                     break;
                 }
@@ -310,7 +310,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                     elements.density100 = lroundf(cal_reflection.hi_d * 100);
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
-                    meas_result = densitometer_calibrate(densitometer, &(cal_reflection.hi_value), sensor_read_callback, &elements);
+                    meas_result = densitometer_calibrate(densitometer, &(cal_reflection.hi_value), false, sensor_read_callback, &elements);
                 } else {
                     break;
                 }
@@ -453,7 +453,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                     elements.density100 = 0;
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
-                    meas_result = densitometer_calibrate(densitometer, &(cal_transmission.zero_value), sensor_read_callback, &elements);
+                    meas_result = densitometer_calibrate(densitometer, &(cal_transmission.zero_value), true, sensor_read_callback, &elements);
                 } else {
                     break;
                 }
@@ -474,7 +474,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                     elements.density100 = lroundf(cal_transmission.hi_d * 100);
                     elements.frame = 0;
                     display_draw_main_elements(&elements);
-                    meas_result = densitometer_calibrate(densitometer, &(cal_transmission.hi_value), sensor_read_callback, &elements);
+                    meas_result = densitometer_calibrate(densitometer, &(cal_transmission.hi_value), false, sensor_read_callback, &elements);
                 } else {
                     break;
                 }
