@@ -84,7 +84,6 @@ typedef struct {
     tsl2585_gain_t gain[3];
     uint16_t sample_time;
     uint16_t sample_count;
-    uint8_t calibration_iteration;
     bool agc_enabled;
     uint16_t agc_sample_count;
     bool mode_pending;
@@ -351,9 +350,6 @@ osStatus_t sensor_control_start()
             ret = tsl2585_get_agc_num_samples(&hi2c1, &sensor_state.agc_sample_count);
             if (ret != HAL_OK) { break; }
 
-            ret = tsl2585_get_calibration_nth_iteration(&hi2c1, &sensor_state.calibration_iteration);
-            if (ret != HAL_OK) { break; }
-
             ret = tsl2585_get_agc_calibration(&hi2c1, &sensor_state.agc_enabled);
             if (ret != HAL_OK) { break; }
         }
@@ -398,6 +394,10 @@ osStatus_t sensor_control_start()
         ret = tsl2585_enable_modulators(&hi2c1, TSL2585_MOD0 | (sensor_state.dual_mod ? TSL2585_MOD1 : 0));
         if (ret != HAL_OK) { break; }
 
+        /* Enable internal calibration on every sequencer round */
+        ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 1);
+        if (ret != HAL_OK) { break; }
+
         /* Apply any startup settings */
         if (sensor_state.mode_pending) {
             ret = sensor_control_set_mod_photodiode_smux(sensor_state.sensor_mode);
@@ -430,17 +430,11 @@ osStatus_t sensor_control_start()
             ret = tsl2585_set_agc_num_samples(&hi2c1, sensor_state.agc_sample_count);
             if (ret != HAL_OK) { break; }
 
-            ret = tsl2585_set_calibration_nth_iteration(&hi2c1, sensor_state.calibration_iteration);
-            if (ret != HAL_OK) { break; }
-
             ret = tsl2585_set_agc_calibration(&hi2c1, sensor_state.agc_enabled);
             if (ret != HAL_OK) { break; }
 
             sensor_state.agc_pending = false;
         }
-
-        ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 1); //XXX This seems to help noise
-        if (ret != HAL_OK) { break; }
 
         /* Log initial state */
         const float als_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count);
@@ -684,11 +678,6 @@ osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *par
             sensor_state.agc_sample_count = sensor_state.sample_count;
         }
 
-        ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 1);
-        if (ret == HAL_OK) {
-            sensor_state.calibration_iteration = 1;
-        }
-
         ret = tsl2585_set_agc_calibration(&hi2c1, true);
         if (ret == HAL_OK) {
             sensor_state.agc_enabled = true;
@@ -696,7 +685,6 @@ osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *par
     } else {
         sensor_state.agc_enabled = true;
         sensor_state.agc_sample_count = params->sample_count;
-        sensor_state.calibration_iteration = 1;
         sensor_state.agc_pending = true;
     }
 
@@ -728,9 +716,6 @@ osStatus_t sensor_control_set_agc_disabled()
             ret = tsl2585_set_agc_calibration(&hi2c1, false);
             if (ret != HAL_OK) { break; }
 
-//            ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 0);
-//            if (ret != HAL_OK) { break; }
-
             ret = tsl2585_set_agc_num_samples(&hi2c1, 0);
             if (ret != HAL_OK) { break; }
         } while (0);
@@ -741,7 +726,6 @@ osStatus_t sensor_control_set_agc_disabled()
         }
     } else {
         sensor_state.agc_enabled = false;
-        sensor_state.calibration_iteration = 0;
         sensor_state.agc_pending = true;
     }
 
