@@ -434,7 +434,7 @@
     ]
   },
   "meta": {
-    "filename": "trans-led-al-board.kicad_pro",
+    "filename": "trans-led-board.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -470,7 +470,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "trans-led-al-board.step",
+      "step": "trans-led-board.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""

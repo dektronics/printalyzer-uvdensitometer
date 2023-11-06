@@ -494,7 +494,7 @@
     (pin "1" (uuid 6bc13000-e3bd-45b8-bd9d-a7a7ca4bfb75))
     (pin "2" (uuid 9275dc46-4b85-4fb6-9d33-70b81c641a80))
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "D1") (unit 1)
         )
@@ -518,7 +518,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "H1") (unit 1)
         )
@@ -542,7 +542,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "H2") (unit 1)
         )
@@ -566,7 +566,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "FID1") (unit 1)
         )
@@ -590,7 +590,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "FID2") (unit 1)
         )
@@ -614,7 +614,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "FID3") (unit 1)
         )
@@ -658,7 +658,7 @@
     (pin "4" (uuid bff007ae-786e-4b95-a89d-34f53e90f70c))
     (pin "MP" (uuid b7c0477a-624f-419b-93e3-44cf374ceea9))
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "J1") (unit 1)
         )
@@ -698,7 +698,7 @@
     )
     (pin "1" (uuid b45748d4-3c9d-4b34-88e7-be9e7f14b4bc))
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "#FLG01") (unit 1)
         )
@@ -739,7 +739,7 @@
     (pin "1" (uuid 1200dfc8-3700-4172-a1b0-8a8b7b8eefef))
     (pin "2" (uuid 90ed085a-35b2-4028-96a1-d9f420079c8a))
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "D3") (unit 1)
         )
@@ -780,7 +780,7 @@
     (pin "1" (uuid de9dbd93-d4e2-4ec6-875a-05113438bfd7))
     (pin "2" (uuid 2a855b91-b3d6-4cd0-b289-c0b9d0322fa9))
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "D2") (unit 1)
         )
@@ -805,7 +805,7 @@
     )
     (pin "1" (uuid e25f2a29-6efb-4b48-b168-33ccee7abff7))
     (instances
-      (project "trans-led-al-board"
+      (project "trans-led-board"
         (path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
           (reference "#PWR01") (unit 1)
         )
