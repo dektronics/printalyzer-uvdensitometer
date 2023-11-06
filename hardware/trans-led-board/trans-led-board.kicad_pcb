@@ -6,9 +6,9 @@
 
   (paper "USLetter")
   (title_block
-    (title "Printalyzer UV/VIS Densitometer - Transmission LED Al Board")
-    (date "2023-10-08")
-    (rev "A")
+    (title "Printalyzer UV/VIS Densitometer - Transmission LED Board")
+    (date "2023-11-06")
+    (rev "B")
     (company "Dektronics, Inc.")
     (comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
   )
@@ -564,6 +564,9 @@
   )
   (gr_text "V" (at 119.5 64.25) (layer "F.SilkS") (tstamp eba7b510-0b1b-4463-980b-966d14f2ecfd)
     (effects (font (size 0.8128 0.8128) (thickness 0.1524) bold) (justify bottom mirror))
+  )
+  (gr_text "Note: This board is designed for an Aluminum substrate,\nand thus needs to be single-layer." (at 112 107) (layer "Cmts.User") (tstamp 616c56b9-1a61-4a2c-9fd1-dfd1507634c1)
+    (effects (font (size 1 1) (thickness 0.15) italic) (justify left bottom))
   )
   (dimension (type aligned) (layer "Cmts.User") (tstamp 78cbdd6c-4878-4cc5-9a58-0e506478e37d)
     (pts (xy 128 87.5) (xy 128 90))

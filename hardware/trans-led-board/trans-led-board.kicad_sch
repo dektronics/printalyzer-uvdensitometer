@@ -5,9 +5,9 @@
   (paper "USLetter")
 
   (title_block
-    (title "Printalyzer UV/VIS Densitometer - Transmission LED Al Board")
-    (date "2023-10-08")
-    (rev "A")
+    (title "Printalyzer UV/VIS Densitometer - Transmission LED Board")
+    (date "2023-11-06")
+    (rev "B")
     (company "Dektronics, Inc.")
     (comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
   )
@@ -438,10 +438,10 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 9762c9ed-64d8-4f3e-baf6-f6ba6effc919)
   )
-  (text "Note: Pinout is different from FR4 version, for routing reasons.\nMake sure to update main board in next revision, as this is likely\na cleaner pinout to route regardless."
-    (at 36.83 83.82 0)
+  (text "Note: This board is designed for an Aluminum substrate,\nwhich requires a single-layer PCB layout.\nZero-ohm resistors may be added to the schematic\nas jumpers where necessary."
+    (at 36.83 91.44 0)
     (effects (font (size 1.27 1.27) italic) (justify left bottom))
-    (uuid f4cf1d40-0071-4887-a032-000c4389bae9)
+    (uuid bd9813bf-3e29-4bb6-86b8-0d24e640021b)
   )
 
   (label "LED_A" (at 48.895 46.355 0) (fields_autoplaced)
