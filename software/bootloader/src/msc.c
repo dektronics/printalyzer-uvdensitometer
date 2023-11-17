@@ -50,7 +50,7 @@ void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16
 {
   (void) lun;
 
-  const char vid[] = "Dektronics";
+  const char vid[] = "Dektroni";
   const char pid[] = "UF2 Bootloader";
   const char rev[] = "1.0";
 
