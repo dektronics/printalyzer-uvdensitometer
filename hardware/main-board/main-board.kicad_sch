@@ -6,7 +6,7 @@
 
   (title_block
     (title "Printalyzer UV/VIS Densitometer - Main Board")
-    (date "2023-09-21")
+    (date "2023-11-27")
     (rev "B")
     (company "Dektronics, Inc.")
     (comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
@@ -4229,8 +4229,8 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid d5110597-4766-42b7-9ca2-d421adf46ccf)
   )
-  (text "TULED_EN may need a 10K pull-down\nto overpower the MCU pull-up when\nin bootloader mode."
-    (at 63.5 103.505 0)
+  (text "TULED_EN needs a 10K pull-down to overpower\nthe MCU pull-up when in bootloader mode."
+    (at 62.865 94.615 0)
     (effects (font (size 1.27 1.27) italic) (justify left bottom))
     (uuid d84dc0d7-d364-43f4-a8cc-e1aa1acdbed8)
   )

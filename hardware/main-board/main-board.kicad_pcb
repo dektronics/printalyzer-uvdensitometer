@@ -4886,6 +4886,7 @@
     (property "ki_description" "Light sensor with UVA detection, I2C interface, 1.8V, FN")
     (property "ki_keywords" "opto light sensor")
     (path "/c8b73868-8104-4347-9a77-2c53e0c17d0e")
+    (solder_paste_margin -0.025)
     (attr smd)
     (fp_text reference "U1" (at 0 -2 90) (layer "F.SilkS")
         (effects (font (size 1 1) (thickness 0.15)))
