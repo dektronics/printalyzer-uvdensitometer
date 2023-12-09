@@ -10,7 +10,7 @@
  ******************************************************************************
  * @attention
  *
- * Copyright (c) 2021 STMicroelectronics.
+ * Copyright (c) 2020-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -24,12 +24,18 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <stdio.h>
 #include <signal.h>
 #include <time.h>
 #include <sys/time.h>
 #include <sys/times.h>
 
 #include "stm32l0xx_hal.h"
+
+#ifdef USE_SEGGER_RTT
+#include <reent.h>
+#include "SEGGER_RTT.h"
+#endif
 
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
@@ -41,7 +47,9 @@ extern int __io_getchar(void) __attribute__((weak));
 char *__env[1] = { 0 };
 char **environ = __env;
 
+#ifndef USE_SEGGER_RTT
 extern UART_HandleTypeDef huart1;
+#endif
 
 /* Functions */
 void initialise_monitor_handles()
@@ -55,6 +63,8 @@ int _getpid(void)
 
 int _kill(int pid, int sig)
 {
+    (void)pid;
+    (void)sig;
     errno = EINVAL;
     return -1;
 }
@@ -67,6 +77,7 @@ void _exit (int status)
 
 __attribute__((weak)) int _read(int file, char *ptr, int len)
 {
+    (void)file;
     int DataIdx;
 
     for (DataIdx = 0; DataIdx < len; DataIdx++)
@@ -77,10 +88,26 @@ __attribute__((weak)) int _read(int file, char *ptr, int len)
     return len;
 }
 
+#ifdef USE_SEGGER_RTT
+__attribute__((weak)) int _write(int file, char *ptr, int len)
+{
+    (void)file;
+    SEGGER_RTT_Write(0, ptr, len);
+    return len;
+}
+
+__attribute__((weak)) int _write_r(struct _reent *r, int file, const void *ptr, size_t len)
+{
+    (void)r;
+    (void)file;
+    SEGGER_RTT_Write(0, ptr, len);
+    return len;
+}
+#else
 __attribute__((weak)) int _write(int file, char *ptr, int len)
 {
     if (file == STDOUT_FILENO || file == STDERR_FILENO) {
-        HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, 0xFFFF);
+        HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
         if (status == HAL_OK) {
             return len;
         } else {
@@ -92,59 +119,74 @@ __attribute__((weak)) int _write(int file, char *ptr, int len)
         return -1;
     }
 }
+#endif
 
 int _close(int file)
 {
+    (void)file;
     return -1;
 }
 
 int _fstat(int file, struct stat *st)
 {
+    (void)file;
     st->st_mode = S_IFCHR;
     return 0;
 }
 
 int _isatty(int file)
 {
+    (void)file;
     return 1;
 }
 
 int _lseek(int file, int ptr, int dir)
 {
+    (void)file;
+    (void)ptr;
+    (void)dir;
     return 0;
 }
 
 int _open(char *path, int flags, ...)
 {
+    (void)path;
+    (void)flags;
     /* Pretend like we always fail */
     return -1;
 }
 
 int _wait(int *status)
 {
+    (void)status;
     errno = ECHILD;
     return -1;
 }
 
 int _unlink(char *name)
 {
+    (void)name;
     errno = ENOENT;
     return -1;
 }
 
 int _times(struct tms *buf)
 {
+    (void)buf;
     return -1;
 }
 
 int _stat(char *file, struct stat *st)
 {
+    (void)file;
     st->st_mode = S_IFCHR;
     return 0;
 }
 
 int _link(char *old, char *new)
 {
+    (void)old;
+    (void)new;
     errno = EMLINK;
     return -1;
 }
@@ -157,12 +199,23 @@ int _fork(void)
 
 int _execve(char *name, char **argv, char **env)
 {
+    (void)name;
+    (void)argv;
+    (void)env;
     errno = ENOMEM;
     return -1;
 }
 
+#ifdef USE_SEGGER_RTT
+__attribute__((weak)) int __io_putchar(int ch)
+{
+    SEGGER_RTT_PutChar(0, ch);
+    return ch;
+}
+#else
 __attribute__((weak)) int __io_putchar(int ch)
 {
     HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
     return (status == HAL_OK ? ch : 0);
 }
+#endif

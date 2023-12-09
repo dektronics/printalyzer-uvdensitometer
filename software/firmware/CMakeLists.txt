@@ -10,6 +10,9 @@ find_package(Git REQUIRED)
 find_package(Perl REQUIRED)
 find_package(Python REQUIRED)
 
+# Build configuration options
+option(USE_SEGGER_RTT "Enable logging via SEGGER RTT" OFF)
+
 # Specify cross-compilers and tools
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
@@ -58,7 +61,8 @@ set(MCU_MODEL STM32L072xx)
 set(CPU_PARAMETERS
     -mcpu=cortex-m0plus
     -mthumb
-    -mfloat-abi=soft)
+    -mfloat-abi=soft
+)
 
 set(STARTUP_SCRIPT ${PROJECT_DIR}/system/startup_stm32l072kztx.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32L072KZTX_FLASH.ld)
@@ -91,7 +95,9 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # Headers
 set(PROJECT_INCLUDE_DIRECTORIES
     ${PROJECT_DIR}
-    ${PROJECT_DIR}/system)
+    ${PROJECT_DIR}/system
+)
+
 set(EXTERNAL_INCLUDE_DIRECTORIES
     ${EXTERNAL_DIR}/drivers/stm32l0xx/include
     ${EXTERNAL_DIR}/drivers/stm32l0xx/include/Legacy
@@ -102,7 +108,9 @@ set(EXTERNAL_INCLUDE_DIRECTORIES
     ${EXTERNAL_DIR}/printf
     ${EXTERNAL_DIR}/easylogger/include
     ${EXTERNAL_DIR}/u8g2/csrc
-    ${EXTERNAL_DIR}/tinyusb/src)
+    ${EXTERNAL_DIR}/tinyusb/src
+    ${EXTERNAL_DIR}/RTT/include
+)
 
 # Sources
 file(GLOB_RECURSE PROJECT_SOURCES FOLLOW_SYMLINKS
@@ -113,13 +121,23 @@ file(GLOB_RECURSE EXTERNAL_SOURCES
     ${EXTERNAL_DIR}/freertos/*.c
     ${EXTERNAL_DIR}/printf/*.c
     ${EXTERNAL_DIR}/tinyusb/src/*.c
-    ${EXTERNAL_DIR}/u8g2/csrc/*.c)
+    ${EXTERNAL_DIR}/u8g2/csrc/*.c
+)
+if(USE_SEGGER_RTT)
+    set(RTT_SOURCES
+        ${EXTERNAL_DIR}/RTT/src/SEGGER_RTT_ASM_ARMv7M.S
+        ${EXTERNAL_DIR}/RTT/src/SEGGER_RTT.c
+        ${EXTERNAL_DIR}/RTT/src/SEGGER_RTT_printf.c
+    )
+endif()
 
 # Executable files
 add_executable(${EXECUTABLE}
     ${EXTERNAL_SOURCES}
+    ${RTT_SOURCES}
     ${PROJECT_SOURCES}
-    ${STARTUP_SCRIPT})
+    ${STARTUP_SCRIPT}
+)
 
 # Embedded macros(defines)
 target_compile_definitions(${EXECUTABLE} PRIVATE
@@ -128,12 +146,20 @@ target_compile_definitions(${EXECUTABLE} PRIVATE
     STM32_THREAD_SAFE_STRATEGY=4
     $<$<CONFIG:DEBUG>:DEBUG>
     APP_BUILD_DATE="${BUILD_DATE}"
-    APP_BUILD_DESCRIBE="${BUILD_DESCRIBE}")
+    APP_BUILD_DESCRIBE="${BUILD_DESCRIBE}"
+)
+if(USE_SEGGER_RTT)
+    target_compile_definitions(${EXECUTABLE} PRIVATE
+        USE_SEGGER_RTT
+        BUFFER_SIZE_UP=512
+    )
+endif()
 
 # Add header directories (AFTER add_executable)
 target_include_directories(${EXECUTABLE} PRIVATE
     ${EXTERNAL_INCLUDE_DIRECTORIES}
-    ${PROJECT_INCLUDE_DIRECTORIES})
+    ${PROJECT_INCLUDE_DIRECTORIES}
+)
 
 # Compiler and linker options
 target_compile_options(${EXECUTABLE} PRIVATE
@@ -151,7 +177,8 @@ target_compile_options(${EXECUTABLE} PRIVATE
         -Wuseless-cast
         -Wsuggest-override>
     $<$<CONFIG:Debug>:-Os -g3 -ggdb>
-    $<$<CONFIG:Release>:-Os -g0>)
+    $<$<CONFIG:Release>:-Os -g0>
+)
 
 target_link_libraries(${EXECUTABLE} PRIVATE
     -T${MCU_LINKER_SCRIPT}
@@ -165,10 +192,12 @@ target_link_libraries(${EXECUTABLE} PRIVATE
     -lc
     -lm
     -Wl,--end-group
-    -Wl,--print-memory-usage)
+    -Wl,--print-memory-usage
+)
 
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
-    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/codesize.pl -s ${CMAKE_SIZE} $<TARGET_FILE:${EXECUTABLE}>)
+    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/codesize.pl -s ${CMAKE_SIZE} $<TARGET_FILE:${EXECUTABLE}>
+)
 
 # Post-build commands to embed the checksum
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD

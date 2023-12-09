@@ -1,6 +1,10 @@
 #include "main.h"
 #include "stm32l0xx_hal.h"
 
+#ifdef USE_SEGGER_RTT
+#include "SEGGER_RTT.h"
+#endif
+
 #define LOG_TAG "main"
 #include <elog.h>
 
@@ -30,14 +34,18 @@ DMA_HandleTypeDef hdma_adc;
 I2C_HandleTypeDef hi2c1;
 SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim2;
+#ifndef USE_SEGGER_RTT
 UART_HandleTypeDef huart1;
+#endif
 
 static uint32_t startup_bkp0r = 0;
 
 static void read_startup_flags(void);
 static void iwdg_init(void);
 static void rtc_init(void);
+#ifndef USE_SEGGER_RTT
 static void usart1_uart_init(void);
+#endif
 static void logger_init(void);
 static void gpio_init(void);
 static void i2c1_init(void);
@@ -152,6 +160,7 @@ void rtc_init(void)
     }
 }
 
+#ifndef USE_SEGGER_RTT
 void usart1_uart_init(void)
 {
     huart1.Instance = USART1;
@@ -168,6 +177,7 @@ void usart1_uart_init(void)
         error_handler();
     }
 }
+#endif
 
 void logger_init(void)
 {
@@ -545,8 +555,13 @@ int main(void)
     /* Initialize the watchdog */
     iwdg_init();
 
+#ifdef USE_SEGGER_RTT
+    /* Initialize the RTT interface */
+    SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_SKIP);
+#else
     /* Initialize the debug UART */
     usart1_uart_init();
+#endif
 
     /* Initialize the rest of the configured peripherals */
     gpio_init();
