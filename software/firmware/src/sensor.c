@@ -90,7 +90,7 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
         j = 0;
         for (i = 0; i <= TSL2585_GAIN_256X; i++) {
             if (i == 0) {
-                cal_gain.values[i] =  tsl2585_gain_value(TSL2585_GAIN_0_5X);
+                cal_gain.values[i] = tsl2585_gain_value(TSL2585_GAIN_0_5X);
             } else {
                 cal_gain.values[i] = cal_gain.values[i - 1] * (gain_readings[j] / gain_readings[j - 1]);
             }
@@ -155,11 +155,14 @@ osStatus_t sensor_gain_calibration_segment(
 
     for (tsl2585_gain_t gain = low_gain; gain <= high_gain; gain++) {
         /* Short delay between measurements for better LED average grouping */
-        osDelay(2000);
+        osDelay(1000);
 
         /* Set modulator 0 to the measurement gain */
         ret = sensor_set_gain(gain, TSL2585_MOD0);
         if (ret != osOK) { break; }
+
+        /* Split the delay across the gain change to make sure its fully taken effect */
+        osDelay(1000);
 
         /* Measure the gain setting */
         ret = sensor_raw_read_loop(SENSOR_GAIN_CAL_READ_ITERATIONS, &gain_avg);

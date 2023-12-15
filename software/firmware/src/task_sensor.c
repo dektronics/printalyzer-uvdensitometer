@@ -586,7 +586,7 @@ osStatus_t sensor_control_set_gain(const sensor_control_gain_params_t *params)
         mod_index = 2;
         break;
     default:
-        return HAL_ERROR;
+        return osErrorParameter;
     }
 
     if (sensor_state.running) {
@@ -847,9 +847,8 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
     sensor_reading_t reading = {0};
     bool has_reading = false;
 
-    TaskHandle_t current_task_handle = xTaskGetCurrentTaskHandle();
-    UBaseType_t current_task_priority = uxTaskPriorityGet(current_task_handle);
-    vTaskPrioritySet(current_task_handle, osPriorityRealtime);
+    /* Prevent task switching to ensure fast processing of incoming sensor data */
+    vTaskSuspendAll();
 
 #if 0
     log_d("sensor_control_interrupt");
@@ -967,7 +966,8 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
         if (ret != HAL_OK) { break; }
     } while (0);
 
-    vTaskPrioritySet(current_task_handle, current_task_priority);
+    /* Resume normal task switching */
+    xTaskResumeAll();
 
     if (has_reading) {
 #if 1
