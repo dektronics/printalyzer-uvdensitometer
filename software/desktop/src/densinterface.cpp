@@ -802,7 +802,11 @@ void DensInterface::readCalibrationResponse(const DensCommand &response)
         calSlope_.setB0(util::decode_f32(response.args().at(0)));
         calSlope_.setB1(util::decode_f32(response.args().at(1)));
         calSlope_.setB2(util::decode_f32(response.args().at(2)));
-        calSlope_.setZ(util::decode_f32(response.args().at(3)));
+        if (response.args().length() > 3) {
+            calSlope_.setZ(util::decode_f32(response.args().at(3)));
+        } else {
+            calSlope_.setZ(qSNaN());
+        }
         emit calSlopeResponse();
     } else if (isResponseSetOk(response, QLatin1String("SLOPE"))) {
         emit calSlopeSetComplete();
