@@ -58,6 +58,7 @@ SOURCES += \
     src/denscalvalues.cpp \
     src/denscommand.cpp \
     src/densinterface.cpp \
+    src/diagnosticstab.cpp \
     src/floatitemdelegate.cpp \
     src/gaincalibrationdialog.cpp \
     src/headlesstask.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
     src/denscalvalues.h \
     src/denscommand.h \
     src/densinterface.h \
+    src/diagnosticstab.h \
     src/floatitemdelegate.h \
     src/gaincalibrationdialog.h \
     src/headlesstask.h \
@@ -93,6 +95,7 @@ HEADERS += \
 
 FORMS += \
     src/connectdialog.ui \
+    src/diagnosticstab.ui \
     src/gaincalibrationdialog.ui \
     src/logwindow.ui \
     src/mainwindow.ui \

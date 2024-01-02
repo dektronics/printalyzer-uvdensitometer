@@ -15,7 +15,7 @@
 
 #include "connectdialog.h"
 #include "densinterface.h"
-#include "remotecontroldialog.h"
+#include "diagnosticstab.h"
 #include "gaincalibrationdialog.h"
 #include "slopecalibrationdialog.h"
 #include "logwindow.h"
@@ -37,8 +37,12 @@ MainWindow::MainWindow(QWidget *parent)
     , densInterface_(new DensInterface(this))
     , logWindow_(new LogWindow(this))
 {
-    // Setup initial state of menu items
     ui->setupUi(this);
+
+    diagnosticsTab_ = new DiagnosticsTab(densInterface_);
+    ui->tabDiagnosticsLayout->replaceWidget(ui->tabDiagnosticsWidget, diagnosticsTab_);
+
+    // Setup initial state of menu items
     ui->actionConnect->setEnabled(true);
     ui->actionDisconnect->setEnabled(false);
     ui->actionConfigure->setEnabled(true);
@@ -46,9 +50,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->actionImportSettings->setEnabled(false);
     ui->actionExportSettings->setEnabled(false);
-
-    ui->refreshSensorsPushButton->setEnabled(false);
-    ui->screenshotButton->setEnabled(false);
 
     ui->statusBar->addWidget(statusLabel_);
 
@@ -136,11 +137,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->copyTablePushButton, &QPushButton::clicked, this, &MainWindow::onCopyTableClicked);
     connect(ui->clearTablePushButton, &QPushButton::clicked, this, &MainWindow::onClearTableClicked);
 
-    // Diagnostics UI signals
-    connect(ui->refreshSensorsPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetSystemInternalSensors);
-    connect(ui->screenshotButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetDiagDisplayScreenshot);
-    connect(ui->remotePushButton, &QPushButton::clicked, this, &MainWindow::onRemoteControl);
-
     // Calibration UI signals
     connect(ui->calGetAllPushButton, &QPushButton::clicked, this, &MainWindow::onCalGetAllValues);
     connect(ui->lightGetPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetCalLight);
@@ -161,12 +157,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(densInterface_, &DensInterface::connectionClosed, this, &MainWindow::onConnectionClosed);
     connect(densInterface_, &DensInterface::connectionError, this, &MainWindow::onConnectionError);
     connect(densInterface_, &DensInterface::densityReading, this, &MainWindow::onDensityReading);
-    connect(densInterface_, &DensInterface::systemVersionResponse, this, &MainWindow::onSystemVersionResponse);
-    connect(densInterface_, &DensInterface::systemBuildResponse, this, &MainWindow::onSystemBuildResponse);
-    connect(densInterface_, &DensInterface::systemDeviceResponse, this, &MainWindow::onSystemDeviceResponse);
-    connect(densInterface_, &DensInterface::systemUniqueId, this, &MainWindow::onSystemUniqueId);
-    connect(densInterface_, &DensInterface::systemInternalSensors, this, &MainWindow::onSystemInternalSensors);
-    connect(densInterface_, &DensInterface::diagDisplayScreenshot, this, &MainWindow::onDiagDisplayScreenshot);
     connect(densInterface_, &DensInterface::diagLogLine, logWindow_, &LogWindow::appendLogLine);
     connect(densInterface_, &DensInterface::calLightResponse, this, &MainWindow::onCalLightResponse);
     connect(densInterface_, &DensInterface::calGainResponse, this, &MainWindow::onCalGainResponse);
@@ -214,13 +204,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->addReadingPushButton->setEnabled(false);
 
     configureForDeviceType();
-
-    // Initialize all fields with blank values
-    onSystemVersionResponse();
-    onSystemBuildResponse();
-    onSystemDeviceResponse();
-    onSystemUniqueId();
-    onSystemInternalSensors();
 
     refreshButtonState();
 }
@@ -393,11 +376,9 @@ void MainWindow::configureForDeviceType()
     }
 
     if (deviceType == DensInterface::DeviceUvVis) {
-        ui->sensorTempLabel->setVisible(true);
         ui->zLabel->setVisible(true);
         ui->zLineEdit->setVisible(true);
     } else {
-        ui->sensorTempLabel->setVisible(false);
         ui->zLabel->setVisible(false);
         ui->zLineEdit->setVisible(false);
     }
@@ -409,9 +390,6 @@ void MainWindow::refreshButtonState()
     if (connected) {
         ui->actionImportSettings->setEnabled(true);
         ui->actionExportSettings->setEnabled(true);
-        ui->refreshSensorsPushButton->setEnabled(true);
-        ui->screenshotButton->setEnabled(true);
-        ui->remotePushButton->setEnabled(true);
         ui->calGetAllPushButton->setEnabled(true);
         ui->lightGetPushButton->setEnabled(true);
         ui->gainCalPushButton->setEnabled(true);
@@ -444,9 +422,6 @@ void MainWindow::refreshButtonState()
     } else {
         ui->actionImportSettings->setEnabled(false);
         ui->actionExportSettings->setEnabled(false);
-        ui->refreshSensorsPushButton->setEnabled(false);
-        ui->screenshotButton->setEnabled(false);
-        ui->remotePushButton->setEnabled(false);
         ui->calGetAllPushButton->setEnabled(false);
         ui->lightGetPushButton->setEnabled(false);
         ui->gainCalPushButton->setEnabled(false);
@@ -609,10 +584,6 @@ void MainWindow::onConnectionClosed()
         QMessageBox::critical(this, tr("Error"), tr("Unrecognized device"));
     } else {
         statusLabel_->setText(tr("Disconnected"));
-    }
-
-    if (remoteDialog_) {
-        remoteDialog_->close();
     }
 }
 
@@ -1005,7 +976,7 @@ void MainWindow::onCalLightSetClicked()
 
 void MainWindow::onCalGainCalClicked()
 {
-    if (remoteDialog_) {
+    if (diagnosticsTab_->isRemoteOpen()) {
         qWarning() << "Cannot start gain galibration with remote control dialog open";
         return;
     }
@@ -1238,72 +1209,6 @@ void MainWindow::updateLineEditDirtyState(QLineEdit *lineEdit, float value, int 
     }
 }
 
-void MainWindow::onSystemVersionResponse()
-{
-    if (densInterface_->projectName().isEmpty()) {
-        ui->nameLabel->setText("Printalyzer Densitometer");
-    } else {
-        ui->nameLabel->setText(QString("<b>%1</b>").arg(densInterface_->projectName()));
-    }
-    ui->versionLabel->setText(tr("Version: %1").arg(densInterface_->version()));
-}
-
-void MainWindow::onSystemBuildResponse()
-{
-    ui->buildDateLabel->setText(tr("Date: %1").arg(densInterface_->buildDate().toString("yyyy-MM-dd hh:mm")));
-    ui->buildDescribeLabel->setText(tr("Commit: %1").arg(densInterface_->buildDescribe()));
-    if (densInterface_->buildChecksum() == 0) {
-        ui->checksumLabel->setText(tr("Checksum: %1").arg(""));
-    } else {
-        ui->checksumLabel->setText(tr("Checksum: %1").arg(densInterface_->buildChecksum(), 0, 16));
-    }
-}
-
-void MainWindow::onSystemDeviceResponse()
-{
-    ui->halVersionLabel->setText(tr("HAL Version: %1").arg(densInterface_->halVersion()));
-    ui->mcuDevIdLabel->setText(tr("MCU Device ID: %1").arg(densInterface_->mcuDeviceId()));
-    ui->mcuRevIdLabel->setText(tr("MCU Revision ID: %1").arg(densInterface_->mcuRevisionId()));
-    ui->mcuSysClockLabel->setText(tr("MCU SysClock: %1").arg(densInterface_->mcuSysClock()));
-}
-
-void MainWindow::onSystemUniqueId()
-{
-    ui->uniqueIdLabel->setText(tr("UID: %1").arg(densInterface_->uniqueId()));
-}
-
-void MainWindow::onSystemInternalSensors()
-{
-    ui->mcuVddaLabel->setText(tr("Vdda: %1").arg(densInterface_->mcuVdda()));
-    if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
-        ui->mcuTempLabel->setText(tr("MCU Temperature: %1").arg(densInterface_->mcuTemp()));
-        ui->sensorTempLabel->setText(tr("Sensor Temperature: %1").arg(densInterface_->sensorTemp()));
-    } else {
-        ui->mcuTempLabel->setText(tr("Temperature: %1").arg(densInterface_->mcuTemp()));
-    }
-}
-
-void MainWindow::onDiagDisplayScreenshot(const QByteArray &data)
-{
-    qDebug() << "Got screenshot:" << data.size();
-    QImage image = QImage::fromData(data, "XBM");
-    if (!image.isNull()) {
-        image = image.mirrored(true, true);
-        image.invertPixels();
-
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Screenshot"),
-                                   "screenshot.png",
-                                   tr("Images (*.png *.jpg)"));
-        if (!fileName.isEmpty()) {
-            if (image.save(fileName)) {
-                qDebug() << "Saved screenshot to:" << fileName;
-            } else {
-                qDebug() << "Error saving screenshot to:" << fileName;
-            }
-        }
-    }
-}
-
 void MainWindow::onCalLightResponse()
 {
     const DensCalLight calLight = densInterface_->calLight();
@@ -1367,26 +1272,6 @@ void MainWindow::onCalTransmissionResponse()
     ui->tranHiReadingLineEdit->setText(QString::number(calTransmission.hiReading(), 'f', 6));
 
     onCalTransmissionTextChanged();
-}
-
-void MainWindow::onRemoteControl()
-{
-    if (!densInterface_->connected()) {
-        return;
-    }
-    if (remoteDialog_) {
-        remoteDialog_->setFocus();
-        return;
-    }
-    remoteDialog_ = new RemoteControlDialog(densInterface_, this);
-    connect(remoteDialog_, &QDialog::finished, this, &MainWindow::onRemoteControlFinished);
-    remoteDialog_->show();
-}
-
-void MainWindow::onRemoteControlFinished()
-{
-    remoteDialog_->deleteLater();
-    remoteDialog_ = nullptr;
 }
 
 void MainWindow::onSlopeCalibrationTool()

@@ -16,6 +16,7 @@ class QStandardItemModel;
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+class DiagnosticsTab;
 class LogWindow;
 class RemoteControlDialog;
 
@@ -71,22 +72,11 @@ private slots:
     void onCalReflectionTextChanged();
     void onCalTransmissionTextChanged();
 
-    void onSystemVersionResponse();
-    void onSystemBuildResponse();
-    void onSystemDeviceResponse();
-    void onSystemUniqueId();
-    void onSystemInternalSensors();
-
-    void onDiagDisplayScreenshot(const QByteArray &data);
-
     void onCalLightResponse();
     void onCalGainResponse();
     void onCalSlopeResponse();
     void onCalReflectionResponse();
     void onCalTransmissionResponse();
-
-    void onRemoteControl();
-    void onRemoteControlFinished();
 
     void onSlopeCalibrationTool();
     void onSlopeCalibrationToolFinished(int result);
@@ -108,9 +98,9 @@ private:
     QLabel *statusLabel_ = nullptr;
     QSerialPort *serialPort_ = nullptr;
     DensInterface *densInterface_ = nullptr;
+    DiagnosticsTab *diagnosticsTab_ = nullptr;
     LogWindow *logWindow_ = nullptr;
     QStandardItemModel *measModel_ = nullptr;
-    RemoteControlDialog *remoteDialog_ = nullptr;
     DensInterface::DensityType lastReadingType_ = DensInterface::DensityUnknown;
     float lastReadingDensity_ = qSNaN();
     float lastReadingOffset_ = qSNaN();

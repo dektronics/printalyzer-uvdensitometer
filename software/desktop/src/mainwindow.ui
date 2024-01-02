@@ -299,187 +299,9 @@
        <attribute name="title">
         <string>Diagnostics</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,1" columnstretch="1,0">
+       <layout class="QGridLayout" name="tabDiagnosticsLayout">
         <item row="0" column="0">
-         <widget class="QGroupBox" name="firmwareGroupBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="title">
-           <string>Firmware Info</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QLabel" name="nameLabel">
-             <property name="text">
-              <string notr="true">&lt;Device Name&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="versionLabel">
-             <property name="text">
-              <string notr="true">&lt;Version&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="buildDateLabel">
-             <property name="text">
-              <string notr="true">&lt;Build Date&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="buildDescribeLabel">
-             <property name="text">
-              <string notr="true">&lt;Build Describe&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="checksumLabel">
-             <property name="text">
-              <string>&lt;Checksum&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QGroupBox" name="deviceGroupBox">
-          <property name="title">
-           <string>Device Info</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QLabel" name="halVersionLabel">
-             <property name="text">
-              <string notr="true">&lt;HAL Version&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="mcuDevIdLabel">
-             <property name="text">
-              <string notr="true">&lt;MCU Device ID&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="mcuRevIdLabel">
-             <property name="text">
-              <string notr="true">&lt;MCU Revision ID&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="mcuSysClockLabel">
-             <property name="text">
-              <string notr="true">&lt;MCU SysClock&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="uniqueIdLabel">
-             <property name="text">
-              <string notr="true">&lt;Unique ID&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="mcuVddaLabel">
-             <property name="text">
-              <string notr="true">&lt;MCU Vdda&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="mcuTempLabel">
-             <property name="text">
-              <string notr="true">&lt;MCU Temp&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="sensorTempLabel">
-             <property name="text">
-              <string>&lt;Sensor Temp&gt;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QGroupBox" name="commandGroupBox">
-          <property name="title">
-           <string>Commands</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <widget class="QPushButton" name="screenshotButton">
-             <property name="text">
-              <string>Take Screenshot</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="refreshSensorsPushButton">
-             <property name="text">
-              <string>Refresh Info</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="remotePushButton">
-             <property name="text">
-              <string>Remote Control</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
+         <widget class="QWidget" name="tabDiagnosticsWidget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -1253,8 +1075,7 @@
   </widget>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="help-about"/>
    </property>
    <property name="text">
     <string>&amp;About</string>
@@ -1389,8 +1210,7 @@
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset theme="edit-delete">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="edit-delete"/>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -1399,7 +1219,6 @@
  </widget>
  <tabstops>
   <tabstop>readingValueLineEdit</tabstop>
-  <tabstop>screenshotButton</tabstop>
   <tabstop>low0LineEdit</tabstop>
   <tabstop>low1LineEdit</tabstop>
   <tabstop>med0LineEdit</tabstop>
