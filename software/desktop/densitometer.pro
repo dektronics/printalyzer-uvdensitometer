@@ -55,6 +55,8 @@ linux:!android {
 
 SOURCES += \
     src/calibrationbaselinetab.cpp \
+    src/calibrationuvvistab.cpp \
+    src/calibrationtab.cpp \
     src/connectdialog.cpp \
     src/denscalvalues.cpp \
     src/denscommand.cpp \
@@ -76,6 +78,8 @@ SOURCES += \
 
 HEADERS += \
     src/calibrationbaselinetab.h \
+    src/calibrationuvvistab.h \
+    src/calibrationtab.h \
     src/connectdialog.h \
     src/denscalvalues.h \
     src/denscommand.h \
@@ -97,6 +101,7 @@ HEADERS += \
 
 FORMS += \
     src/calibrationbaselinetab.ui \
+    src/calibrationuvvistab.ui \
     src/connectdialog.ui \
     src/diagnosticstab.ui \
     src/gaincalibrationdialog.ui \

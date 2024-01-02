@@ -1,5 +1,5 @@
-#include "calibrationbaselinetab.h"
-#include "ui_calibrationbaselinetab.h"
+#include "calibrationuvvistab.h"
+#include "ui_calibrationuvvistab.h"
 
 #include <QtWidgets/QMessageBox>
 #include <QDebug>
@@ -8,42 +8,33 @@
 #include "slopecalibrationdialog.h"
 #include "util.h"
 
-CalibrationBaselineTab::CalibrationBaselineTab(DensInterface *densInterface, QWidget *parent)
+CalibrationUvVisTab::CalibrationUvVisTab(DensInterface *densInterface, QWidget *parent)
     : CalibrationTab(densInterface, parent)
-    , ui(new Ui::CalibrationBaselineTab)
+    , ui(new Ui::CalibrationUvVisTab)
 {
     ui->setupUi(this);
 
     // Densitometer interface update signals
-    connect(densInterface_, &DensInterface::connectionOpened, this, &CalibrationBaselineTab::onConnectionOpened);
-    connect(densInterface_, &DensInterface::connectionClosed, this, &CalibrationBaselineTab::onConnectionClosed);
-    connect(densInterface_, &DensInterface::densityReading, this, &CalibrationBaselineTab::onDensityReading);
-    connect(densInterface_, &DensInterface::calLightResponse, this, &CalibrationBaselineTab::onCalLightResponse);
-    connect(densInterface_, &DensInterface::calGainResponse, this, &CalibrationBaselineTab::onCalGainResponse);
-    connect(densInterface_, &DensInterface::calSlopeResponse, this, &CalibrationBaselineTab::onCalSlopeResponse);
-    connect(densInterface_, &DensInterface::calReflectionResponse, this, &CalibrationBaselineTab::onCalReflectionResponse);
-    connect(densInterface_, &DensInterface::calTransmissionResponse, this, &CalibrationBaselineTab::onCalTransmissionResponse);
+    connect(densInterface_, &DensInterface::connectionOpened, this, &CalibrationUvVisTab::onConnectionOpened);
+    connect(densInterface_, &DensInterface::connectionClosed, this, &CalibrationUvVisTab::onConnectionClosed);
+    connect(densInterface_, &DensInterface::densityReading, this, &CalibrationUvVisTab::onDensityReading);
+    connect(densInterface_, &DensInterface::calGainResponse, this, &CalibrationUvVisTab::onCalGainResponse);
+    connect(densInterface_, &DensInterface::calSlopeResponse, this, &CalibrationUvVisTab::onCalSlopeResponse);
+    connect(densInterface_, &DensInterface::calReflectionResponse, this, &CalibrationUvVisTab::onCalReflectionResponse);
+    connect(densInterface_, &DensInterface::calTransmissionResponse, this, &CalibrationUvVisTab::onCalTransmissionResponse);
 
     // Calibration UI signals
-    connect(ui->calGetAllPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalGetAllValues);
-    connect(ui->lightGetPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetCalLight);
-    connect(ui->lightSetPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalLightSetClicked);
-    connect(ui->gainCalPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalGainCalClicked);
+    connect(ui->calGetAllPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onCalGetAllValues);
+    connect(ui->gainCalPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onCalGainCalClicked);
     connect(ui->gainGetPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetCalGain);
-    connect(ui->gainSetPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalGainSetClicked);
+    connect(ui->gainSetPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onCalGainSetClicked);
     connect(ui->slopeGetPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetCalSlope);
-    connect(ui->slopeSetPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalSlopeSetClicked);
+    connect(ui->slopeSetPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onCalSlopeSetClicked);
     connect(ui->reflGetPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetCalReflection);
-    connect(ui->reflSetPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalReflectionSetClicked);
+    connect(ui->reflSetPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onCalReflectionSetClicked);
     connect(ui->tranGetPushButton, &QPushButton::clicked, densInterface_, &DensInterface::sendGetCalTransmission);
-    connect(ui->tranSetPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onCalTransmissionSetClicked);
-    connect(ui->slopeCalPushButton, &QPushButton::clicked, this, &CalibrationBaselineTab::onSlopeCalibrationTool);
-
-    // Calibration (measurement light) field validation
-    ui->reflLightLineEdit->setValidator(util::createIntValidator(1, 128, this));
-    ui->tranLightLineEdit->setValidator(util::createIntValidator(1, 128, this));
-    connect(ui->reflLightLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalLightTextChanged);
-    connect(ui->tranLightLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalLightTextChanged);
+    connect(ui->tranSetPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onCalTransmissionSetClicked);
+    connect(ui->slopeCalPushButton, &QPushButton::clicked, this, &CalibrationUvVisTab::onSlopeCalibrationTool);
 
     // Calibration (gain) field validation
     ui->med0LineEdit->setValidator(util::createFloatValidator(22.0, 27.0, 6, this));
@@ -52,52 +43,51 @@ CalibrationBaselineTab::CalibrationBaselineTab(DensInterface *densInterface, QWi
     ui->high1LineEdit->setValidator(util::createFloatValidator(360.0, 440.0, 6, this));
     ui->max0LineEdit->setValidator(util::createFloatValidator(8500.0, 9900.0, 6, this));
     ui->max1LineEdit->setValidator(util::createFloatValidator(9100.0, 10700.0, 6, this));
-    connect(ui->med0LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalGainTextChanged);
-    connect(ui->med1LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalGainTextChanged);
-    connect(ui->high0LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalGainTextChanged);
-    connect(ui->high1LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalGainTextChanged);
-    connect(ui->max0LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalGainTextChanged);
-    connect(ui->max1LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalGainTextChanged);
+    connect(ui->med0LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalGainTextChanged);
+    connect(ui->med1LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalGainTextChanged);
+    connect(ui->high0LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalGainTextChanged);
+    connect(ui->high1LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalGainTextChanged);
+    connect(ui->max0LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalGainTextChanged);
+    connect(ui->max1LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalGainTextChanged);
 
     // Calibration (slope) field validation
+    ui->zLineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
     ui->b0LineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
     ui->b1LineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
     ui->b2LineEdit->setValidator(util::createFloatValidator(-100.0, 100.0, 6, this));
-    connect(ui->b0LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalSlopeTextChanged);
-    connect(ui->b1LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalSlopeTextChanged);
-    connect(ui->b2LineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalSlopeTextChanged);
+    connect(ui->zLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalSlopeTextChanged);
+    connect(ui->b0LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalSlopeTextChanged);
+    connect(ui->b1LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalSlopeTextChanged);
+    connect(ui->b2LineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalSlopeTextChanged);
 
     // Calibration (reflection density) field validation
     ui->reflLoDensityLineEdit->setValidator(util::createFloatValidator(0.0, 2.5, 2, this));
     ui->reflLoReadingLineEdit->setValidator(util::createFloatValidator(0.0, 500.0, 6, this));
     ui->reflHiDensityLineEdit->setValidator(util::createFloatValidator(0.0, 2.5, 2, this));
     ui->reflHiReadingLineEdit->setValidator(util::createFloatValidator(0.0, 500.0, 6, this));
-    connect(ui->reflLoDensityLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalReflectionTextChanged);
-    connect(ui->reflLoReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalReflectionTextChanged);
-    connect(ui->reflHiDensityLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalReflectionTextChanged);
-    connect(ui->reflHiReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalReflectionTextChanged);
+    connect(ui->reflLoDensityLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalReflectionTextChanged);
+    connect(ui->reflLoReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalReflectionTextChanged);
+    connect(ui->reflHiDensityLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalReflectionTextChanged);
+    connect(ui->reflHiReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalReflectionTextChanged);
 
     // Calibration (transmission density) field validation
     ui->tranLoReadingLineEdit->setValidator(util::createFloatValidator(0.0, 500.0, 6, this));
     ui->tranHiDensityLineEdit->setValidator(util::createFloatValidator(0.0, 5.0, 2, this));
     ui->tranHiReadingLineEdit->setValidator(util::createFloatValidator(0.0, 500.0, 6, this));
-    connect(ui->tranLoReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalTransmissionTextChanged);
-    connect(ui->tranHiDensityLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalTransmissionTextChanged);
-    connect(ui->tranHiReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationBaselineTab::onCalTransmissionTextChanged);
+    connect(ui->tranLoReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalTransmissionTextChanged);
+    connect(ui->tranHiDensityLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalTransmissionTextChanged);
+    connect(ui->tranHiReadingLineEdit, &QLineEdit::textChanged, this, &CalibrationUvVisTab::onCalTransmissionTextChanged);
 
     refreshButtonState();
 }
 
-CalibrationBaselineTab::~CalibrationBaselineTab()
+CalibrationUvVisTab::~CalibrationUvVisTab()
 {
     delete ui;
 }
 
-void CalibrationBaselineTab::clear()
+void CalibrationUvVisTab::clear()
 {
-    ui->reflLightLineEdit->clear();
-    ui->tranLightLineEdit->clear();
-
     ui->low0LineEdit->clear();
     ui->low1LineEdit->clear();
     ui->med0LineEdit->clear();
@@ -107,6 +97,7 @@ void CalibrationBaselineTab::clear()
     ui->max0LineEdit->clear();
     ui->max1LineEdit->clear();
 
+    ui->zLineEdit->clear();
     ui->b0LineEdit->clear();
     ui->b1LineEdit->clear();
     ui->b2LineEdit->clear();
@@ -124,28 +115,27 @@ void CalibrationBaselineTab::clear()
     refreshButtonState();
 }
 
-void CalibrationBaselineTab::reloadAll()
+void CalibrationUvVisTab::reloadAll()
 {
     onCalGetAllValues();
 }
 
-void CalibrationBaselineTab::onConnectionOpened()
+void CalibrationUvVisTab::onConnectionOpened()
 {
     // Clear the calibration page since values could have changed
     clear();
 }
 
-void CalibrationBaselineTab::onConnectionClosed()
+void CalibrationUvVisTab::onConnectionClosed()
 {
     refreshButtonState();
 }
 
-void CalibrationBaselineTab::refreshButtonState()
+void CalibrationUvVisTab::refreshButtonState()
 {
     const bool connected = densInterface_->connected();
     if (connected) {
         ui->calGetAllPushButton->setEnabled(true);
-        ui->lightGetPushButton->setEnabled(true);
         ui->gainCalPushButton->setEnabled(true);
         ui->gainGetPushButton->setEnabled(true);
         ui->slopeGetPushButton->setEnabled(true);
@@ -175,7 +165,6 @@ void CalibrationBaselineTab::refreshButtonState()
 
     } else {
         ui->calGetAllPushButton->setEnabled(false);
-        ui->lightGetPushButton->setEnabled(false);
         ui->gainCalPushButton->setEnabled(false);
         ui->gainGetPushButton->setEnabled(false);
         ui->slopeGetPushButton->setEnabled(false);
@@ -184,9 +173,6 @@ void CalibrationBaselineTab::refreshButtonState()
     }
 
     // Make calibration values editable only if connected
-    ui->reflLightLineEdit->setReadOnly(!connected);
-    ui->tranLightLineEdit->setReadOnly(!connected);
-
     ui->med0LineEdit->setReadOnly(!connected);
     ui->med1LineEdit->setReadOnly(!connected);
     ui->high0LineEdit->setReadOnly(!connected);
@@ -194,6 +180,7 @@ void CalibrationBaselineTab::refreshButtonState()
     ui->max0LineEdit->setReadOnly(!connected);
     ui->max1LineEdit->setReadOnly(!connected);
 
+    ui->zLineEdit->setReadOnly(!connected);
     ui->b0LineEdit->setReadOnly(!connected);
     ui->b1LineEdit->setReadOnly(!connected);
     ui->b2LineEdit->setReadOnly(!connected);
@@ -208,7 +195,7 @@ void CalibrationBaselineTab::refreshButtonState()
     ui->tranHiReadingLineEdit->setReadOnly(!connected);
 }
 
-void CalibrationBaselineTab::onDensityReading(DensInterface::DensityType type, float dValue, float dZero, float rawValue, float corrValue)
+void CalibrationUvVisTab::onDensityReading(DensInterface::DensityType type, float dValue, float dZero, float rawValue, float corrValue)
 {
     Q_UNUSED(dValue)
     Q_UNUSED(dZero)
@@ -230,32 +217,15 @@ void CalibrationBaselineTab::onDensityReading(DensInterface::DensityType type, f
     }
 }
 
-void CalibrationBaselineTab::onCalGetAllValues()
+void CalibrationUvVisTab::onCalGetAllValues()
 {
-    densInterface_->sendGetCalLight();
     densInterface_->sendGetCalGain();
     densInterface_->sendGetCalSlope();
     densInterface_->sendGetCalReflection();
     densInterface_->sendGetCalTransmission();
 }
 
-void CalibrationBaselineTab::onCalLightSetClicked()
-{
-    DensCalLight calLight;
-    bool ok;
-
-    calLight.setReflectionValue(ui->reflLightLineEdit->text().toInt(&ok));
-    if (!ok) { return; }
-
-    calLight.setTransmissionValue(ui->tranLightLineEdit->text().toInt(&ok));
-    if (!ok) { return; }
-
-    if (!calLight.isValid()) { return; }
-
-    densInterface_->sendSetCalLight(calLight);
-}
-
-void CalibrationBaselineTab::onCalGainCalClicked()
+void CalibrationUvVisTab::onCalGainCalClicked()
 {
     if (densInterface_->remoteControlEnabled()) {
         qWarning() << "Cannot start gain calibration while in remote mode";
@@ -281,7 +251,7 @@ void CalibrationBaselineTab::onCalGainCalClicked()
     ui->gainCalPushButton->setEnabled(true);
 }
 
-void CalibrationBaselineTab::onCalGainSetClicked()
+void CalibrationUvVisTab::onCalGainSetClicked()
 {
     DensCalGain calSlope;
     bool ok;
@@ -310,10 +280,13 @@ void CalibrationBaselineTab::onCalGainSetClicked()
     densInterface_->sendSetCalGain(calSlope);
 }
 
-void CalibrationBaselineTab::onCalSlopeSetClicked()
+void CalibrationUvVisTab::onCalSlopeSetClicked()
 {
     DensCalSlope calSlope;
     bool ok;
+
+    calSlope.setZ(ui->zLineEdit->text().toFloat(&ok));
+    if (!ok) { return; }
 
     calSlope.setB0(ui->b0LineEdit->text().toFloat(&ok));
     if (!ok) { return; }
@@ -327,7 +300,7 @@ void CalibrationBaselineTab::onCalSlopeSetClicked()
     densInterface_->sendSetCalSlope(calSlope);
 }
 
-void CalibrationBaselineTab::onCalReflectionSetClicked()
+void CalibrationUvVisTab::onCalReflectionSetClicked()
 {
     DensCalTarget calTarget;
     bool ok;
@@ -347,7 +320,7 @@ void CalibrationBaselineTab::onCalReflectionSetClicked()
     densInterface_->sendSetCalReflection(calTarget);
 }
 
-void CalibrationBaselineTab::onCalTransmissionSetClicked()
+void CalibrationUvVisTab::onCalTransmissionSetClicked()
 {
     DensCalTarget calTarget;
     bool ok;
@@ -366,22 +339,7 @@ void CalibrationBaselineTab::onCalTransmissionSetClicked()
     densInterface_->sendSetCalTransmission(calTarget);
 }
 
-void CalibrationBaselineTab::onCalLightTextChanged()
-{
-    if (densInterface_->connected()
-        && ui->reflLightLineEdit->hasAcceptableInput()
-        && ui->tranLightLineEdit->hasAcceptableInput()) {
-        ui->lightSetPushButton->setEnabled(true);
-    } else {
-        ui->lightSetPushButton->setEnabled(false);
-    }
-
-    const DensCalLight calLight = densInterface_->calLight();
-    updateLineEditDirtyState(ui->reflLightLineEdit, calLight.reflectionValue());
-    updateLineEditDirtyState(ui->tranLightLineEdit, calLight.transmissionValue());
-}
-
-void CalibrationBaselineTab::onCalGainTextChanged()
+void CalibrationUvVisTab::onCalGainTextChanged()
 {
     if (densInterface_->connected()
         && !ui->low0LineEdit->text().isEmpty()
@@ -406,9 +364,11 @@ void CalibrationBaselineTab::onCalGainTextChanged()
     updateLineEditDirtyState(ui->max1LineEdit, calGain.max1(), 6);
 }
 
-void CalibrationBaselineTab::onCalSlopeTextChanged()
+void CalibrationUvVisTab::onCalSlopeTextChanged()
 {
+    const bool hasZ = (densInterface_->deviceType() == DensInterface::DeviceUvVis);
     if (densInterface_->connected()
+        && (ui->zLineEdit->hasAcceptableInput() || !hasZ)
         && ui->b0LineEdit->hasAcceptableInput()
         && ui->b1LineEdit->hasAcceptableInput()
         && ui->b2LineEdit->hasAcceptableInput()) {
@@ -418,12 +378,13 @@ void CalibrationBaselineTab::onCalSlopeTextChanged()
     }
 
     const DensCalSlope calSlope = densInterface_->calSlope();
+    updateLineEditDirtyState(ui->zLineEdit, calSlope.z(), 6);
     updateLineEditDirtyState(ui->b0LineEdit, calSlope.b0(), 6);
     updateLineEditDirtyState(ui->b1LineEdit, calSlope.b1(), 6);
     updateLineEditDirtyState(ui->b2LineEdit, calSlope.b2(), 6);
 }
 
-void CalibrationBaselineTab::onCalReflectionTextChanged()
+void CalibrationUvVisTab::onCalReflectionTextChanged()
 {
     if (densInterface_->connected()
         && ui->reflLoDensityLineEdit->hasAcceptableInput()
@@ -442,7 +403,7 @@ void CalibrationBaselineTab::onCalReflectionTextChanged()
     updateLineEditDirtyState(ui->reflHiReadingLineEdit, calTarget.hiReading(), 6);
 }
 
-void CalibrationBaselineTab::onCalTransmissionTextChanged()
+void CalibrationUvVisTab::onCalTransmissionTextChanged()
 {
     if (densInterface_->connected()
         && !ui->tranLoDensityLineEdit->text().isEmpty()
@@ -460,17 +421,7 @@ void CalibrationBaselineTab::onCalTransmissionTextChanged()
     updateLineEditDirtyState(ui->tranHiReadingLineEdit, calTarget.hiReading(), 6);
 }
 
-void CalibrationBaselineTab::onCalLightResponse()
-{
-    const DensCalLight calLight = densInterface_->calLight();
-
-    ui->reflLightLineEdit->setText(QString::number(calLight.reflectionValue()));
-    ui->tranLightLineEdit->setText(QString::number(calLight.transmissionValue()));
-
-    onCalLightTextChanged();
-}
-
-void CalibrationBaselineTab::onCalGainResponse()
+void CalibrationUvVisTab::onCalGainResponse()
 {
     const DensCalGain calGain = densInterface_->calGain();
 
@@ -489,10 +440,11 @@ void CalibrationBaselineTab::onCalGainResponse()
     onCalGainTextChanged();
 }
 
-void CalibrationBaselineTab::onCalSlopeResponse()
+void CalibrationUvVisTab::onCalSlopeResponse()
 {
     const DensCalSlope calSlope = densInterface_->calSlope();
 
+    ui->zLineEdit->setText(QString::number(calSlope.z(), 'f'));
     ui->b0LineEdit->setText(QString::number(calSlope.b0(), 'f'));
     ui->b1LineEdit->setText(QString::number(calSlope.b1(), 'f'));
     ui->b2LineEdit->setText(QString::number(calSlope.b2(), 'f'));
@@ -500,7 +452,7 @@ void CalibrationBaselineTab::onCalSlopeResponse()
     onCalSlopeTextChanged();
 }
 
-void CalibrationBaselineTab::onCalReflectionResponse()
+void CalibrationUvVisTab::onCalReflectionResponse()
 {
     const DensCalTarget calReflection = densInterface_->calReflection();
 
@@ -512,7 +464,7 @@ void CalibrationBaselineTab::onCalReflectionResponse()
     onCalReflectionTextChanged();
 }
 
-void CalibrationBaselineTab::onCalTransmissionResponse()
+void CalibrationUvVisTab::onCalTransmissionResponse()
 {
     const DensCalTarget calTransmission = densInterface_->calTransmission();
 
@@ -524,20 +476,26 @@ void CalibrationBaselineTab::onCalTransmissionResponse()
     onCalTransmissionTextChanged();
 }
 
-void CalibrationBaselineTab::onSlopeCalibrationTool()
+void CalibrationUvVisTab::onSlopeCalibrationTool()
 {
     SlopeCalibrationDialog *dialog = new SlopeCalibrationDialog(densInterface_, this);
-    connect(dialog, &QDialog::finished, this, &CalibrationBaselineTab::onSlopeCalibrationToolFinished);
-    dialog->setCalculateZeroAdjustment(false);
+    connect(dialog, &QDialog::finished, this, &CalibrationUvVisTab::onSlopeCalibrationToolFinished);
+    dialog->setCalculateZeroAdjustment(true);
     dialog->show();
 }
 
-void CalibrationBaselineTab::onSlopeCalibrationToolFinished(int result)
+void CalibrationUvVisTab::onSlopeCalibrationToolFinished(int result)
 {
     SlopeCalibrationDialog *dialog = dynamic_cast<SlopeCalibrationDialog *>(sender());
     dialog->deleteLater();
 
     if (result == QDialog::Accepted) {
+        if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
+            ui->zLineEdit->setText(QString::number(dialog->zeroAdjustment(), 'f'));
+        } else {
+            ui->zLineEdit->setText(QString());
+        }
+
         auto result = dialog->calValues();
         ui->b0LineEdit->setText(QString::number(std::get<0>(result), 'f'));
         ui->b1LineEdit->setText(QString::number(std::get<1>(result), 'f'));

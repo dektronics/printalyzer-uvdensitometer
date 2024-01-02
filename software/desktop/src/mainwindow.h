@@ -17,7 +17,7 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class DiagnosticsTab;
-class CalibrationBaselineTab;
+class CalibrationTab;
 class LogWindow;
 class RemoteControlDialog;
 
@@ -61,7 +61,6 @@ private slots:
 
 private:
     void openConnectionToPort(const QString &portName);
-    void configureForDeviceType();
     void refreshButtonState();
     void measTableAddReading(DensInterface::DensityType type, float density, float offset);
     void measTableCut();
@@ -75,13 +74,12 @@ private:
     QSerialPort *serialPort_ = nullptr;
     DensInterface *densInterface_ = nullptr;
     DiagnosticsTab *diagnosticsTab_ = nullptr;
-    CalibrationBaselineTab *calibrationTab_ = nullptr;
+    CalibrationTab *calibrationTab_ = nullptr;
     LogWindow *logWindow_ = nullptr;
     QStandardItemModel *measModel_ = nullptr;
     DensInterface::DensityType lastReadingType_ = DensInterface::DensityUnknown;
     float lastReadingDensity_ = qSNaN();
     float lastReadingOffset_ = qSNaN();
-    DensInterface::DeviceType lastDeviceType_ = DensInterface::DeviceBaseline;
 };
 
 #endif // MAINWINDOW_H

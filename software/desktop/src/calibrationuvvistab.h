@@ -1,5 +1,5 @@
-#ifndef CALIBRATIONBASELINETAB_H
-#define CALIBRATIONBASELINETAB_H
+#ifndef CALIBRATIONUVVISTAB_H
+#define CALIBRATIONUVVISTAB_H
 
 #include <QWidget>
 
@@ -9,18 +9,18 @@
 class QLineEdit;
 
 namespace Ui {
-class CalibrationBaselineTab;
+class CalibrationUvVisTab;
 }
 
-class CalibrationBaselineTab : public CalibrationTab
+class CalibrationUvVisTab : public CalibrationTab
 {
     Q_OBJECT
 
 public:
-    explicit CalibrationBaselineTab(DensInterface *densInterface, QWidget *parent = nullptr);
-    ~CalibrationBaselineTab();
+    explicit CalibrationUvVisTab(DensInterface *densInterface, QWidget *parent = nullptr);
+    ~CalibrationUvVisTab();
 
-    virtual DensInterface::DeviceType deviceType() const { return DensInterface::DeviceBaseline; }
+    virtual DensInterface::DeviceType deviceType() const { return DensInterface::DeviceUvVis; }
 
     virtual void clear();
 
@@ -33,20 +33,17 @@ private slots:
     void onDensityReading(DensInterface::DensityType type, float dValue, float dZero, float rawValue, float corrValue);
 
     void onCalGetAllValues();
-    void onCalLightSetClicked();
     void onCalGainCalClicked();
     void onCalGainSetClicked();
     void onCalSlopeSetClicked();
     void onCalReflectionSetClicked();
     void onCalTransmissionSetClicked();
 
-    void onCalLightTextChanged();
     void onCalGainTextChanged();
     void onCalSlopeTextChanged();
     void onCalReflectionTextChanged();
     void onCalTransmissionTextChanged();
 
-    void onCalLightResponse();
     void onCalGainResponse();
     void onCalSlopeResponse();
     void onCalReflectionResponse();
@@ -58,7 +55,7 @@ private slots:
 private:
     void refreshButtonState();
 
-    Ui::CalibrationBaselineTab *ui;
+    Ui::CalibrationUvVisTab *ui;
 };
 
-#endif // CALIBRATIONBASELINETAB_H
+#endif // CALIBRATIONUVVISTAB_H

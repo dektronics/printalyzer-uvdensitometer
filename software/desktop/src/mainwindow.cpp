@@ -16,6 +16,7 @@
 #include "densinterface.h"
 #include "diagnosticstab.h"
 #include "calibrationbaselinetab.h"
+#include "calibrationuvvistab.h"
 #include "logwindow.h"
 #include "settingsexporter.h"
 #include "settingsimportdialog.h"
@@ -134,8 +135,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->autoAddPushButton->setChecked(true);
     ui->addReadingPushButton->setEnabled(false);
-
-    configureForDeviceType();
 
     refreshButtonState();
 }
@@ -297,17 +296,6 @@ void MainWindow::about()
                             QApplication::applicationVersion()));
 }
 
-void MainWindow::configureForDeviceType()
-{
-    DensInterface::DeviceType deviceType;
-    if (densInterface_->connected()) {
-        deviceType = densInterface_->deviceType();
-        lastDeviceType_ = deviceType;
-    } else {
-        deviceType = lastDeviceType_;
-    }
-}
-
 void MainWindow::refreshButtonState()
 {
     const bool connected = densInterface_->connected();
@@ -386,7 +374,22 @@ void MainWindow::onConnectionOpened()
 {
     qDebug() << "Connection opened";
 
-    configureForDeviceType();
+    if (calibrationTab_->deviceType() != densInterface_->deviceType()) {
+        ui->tabCalibrationLayout->replaceWidget(calibrationTab_, ui->tabCalibrationWidget);
+        calibrationTab_->deleteLater();
+        calibrationTab_ = nullptr;
+
+        if (densInterface_->deviceType() == DensInterface::DeviceBaseline) {
+            calibrationTab_ = new CalibrationBaselineTab(densInterface_);
+        } else if (densInterface_->deviceType() == DensInterface::DeviceUvVis) {
+            calibrationTab_ = new CalibrationUvVisTab(densInterface_);
+        }
+
+        if (calibrationTab_) {
+            ui->tabCalibrationLayout->replaceWidget(ui->tabCalibrationWidget, calibrationTab_);
+            calibrationTab_->clear();
+        }
+    }
 
     densInterface_->sendSetMeasurementFormat(DensInterface::FormatExtended);
     densInterface_->sendSetAllowUncalibratedMeasurements(true);
