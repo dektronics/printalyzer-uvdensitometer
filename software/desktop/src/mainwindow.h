@@ -17,6 +17,7 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class DiagnosticsTab;
+class CalibrationBaselineTab;
 class LogWindow;
 class RemoteControlDialog;
 
@@ -58,35 +59,10 @@ private slots:
     void onCopyTableClicked();
     void onClearTableClicked();
 
-    void onCalGetAllValues();
-    void onCalLightSetClicked();
-    void onCalGainCalClicked();
-    void onCalGainSetClicked();
-    void onCalSlopeSetClicked();
-    void onCalReflectionSetClicked();
-    void onCalTransmissionSetClicked();
-
-    void onCalLightTextChanged();
-    void onCalGainTextChanged();
-    void onCalSlopeTextChanged();
-    void onCalReflectionTextChanged();
-    void onCalTransmissionTextChanged();
-
-    void onCalLightResponse();
-    void onCalGainResponse();
-    void onCalSlopeResponse();
-    void onCalReflectionResponse();
-    void onCalTransmissionResponse();
-
-    void onSlopeCalibrationTool();
-    void onSlopeCalibrationToolFinished(int result);
-
 private:
     void openConnectionToPort(const QString &portName);
     void configureForDeviceType();
     void refreshButtonState();
-    void updateLineEditDirtyState(QLineEdit *lineEdit, int value);
-    void updateLineEditDirtyState(QLineEdit *lineEdit, float value, int prec);
     void measTableAddReading(DensInterface::DensityType type, float density, float offset);
     void measTableCut();
     void measTableCopy();
@@ -99,6 +75,7 @@ private:
     QSerialPort *serialPort_ = nullptr;
     DensInterface *densInterface_ = nullptr;
     DiagnosticsTab *diagnosticsTab_ = nullptr;
+    CalibrationBaselineTab *calibrationTab_ = nullptr;
     LogWindow *logWindow_ = nullptr;
     QStandardItemModel *measModel_ = nullptr;
     DensInterface::DensityType lastReadingType_ = DensInterface::DensityUnknown;

@@ -54,6 +54,7 @@ linux:!android {
 #-------------------------------------------------------------------------------
 
 SOURCES += \
+    src/calibrationbaselinetab.cpp \
     src/connectdialog.cpp \
     src/denscalvalues.cpp \
     src/denscommand.cpp \
@@ -74,6 +75,7 @@ SOURCES += \
     src/qsimplesignalaggregator.cpp
 
 HEADERS += \
+    src/calibrationbaselinetab.h \
     src/connectdialog.h \
     src/denscalvalues.h \
     src/denscommand.h \
@@ -94,6 +96,7 @@ HEADERS += \
     src/qsimplesignalaggregator.h
 
 FORMS += \
+    src/calibrationbaselinetab.ui \
     src/connectdialog.ui \
     src/diagnosticstab.ui \
     src/gaincalibrationdialog.ui \
