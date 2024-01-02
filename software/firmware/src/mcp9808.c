@@ -147,7 +147,7 @@ HAL_StatusTypeDef mcp9808_read_temperature(I2C_HandleTypeDef *hi2c, float *temp_
     if ((data[0] & 0x10) == 0x10) {
         /* TA < 0C */
         data[0] &= 0x0F; /* clear sign */
-        *temp_c = 256.0F - ((data[0] * 16.0F) + (data[1] / 16.0F));
+        *temp_c = ((data[0] * 16.0F) + (data[1] / 16.0F)) - 256.0F;
     } else {
         /* TA >= 0C */
         *temp_c = ((data[0] * 16.0F) + (data[1] / 16.0F));
