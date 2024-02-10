@@ -2,6 +2,7 @@
 #define DENSCOMMAND_H
 
 #include <QSharedDataPointer>
+#include <QStringList>
 
 class DensCommandData;
 

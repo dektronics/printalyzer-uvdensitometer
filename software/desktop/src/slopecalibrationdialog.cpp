@@ -6,6 +6,7 @@
 #include <QStyledItemDelegate>
 #include <QThread>
 #include <QSettings>
+#include <QRegularExpression>
 #include <QDebug>
 #include <cmath>
 #include "floatitemdelegate.h"
@@ -69,7 +70,7 @@ SlopeCalibrationDialog::SlopeCalibrationDialog(DensInterface *densInterface, QWi
     QVariantList scaleList = settings.value("slope_calibration/scale").toList();
     if (!scaleList.isEmpty()) {
         int i = 0;
-        for (const QVariant &entry : qAsConst(scaleList)) {
+        for (const QVariant &entry : std::as_const(scaleList)) {
             bool ok;
             const QString entryStr = entry.toString();
             const float entryNum = entryStr.toFloat(&ok);
@@ -151,7 +152,7 @@ void SlopeCalibrationDialog::onActionCopy()
     bool hasCol1 = false;
     bool hasCol2 = false;
 
-    for (const QModelIndex &index : qAsConst(selected)) {
+    for (const QModelIndex &index : std::as_const(selected)) {
         if (curRow != index.row()) {
             if (curRow != -1 && (!num1.isEmpty() || !num2.isEmpty())) {
                 numList.append(qMakePair(num1, num2));
@@ -209,15 +210,18 @@ void SlopeCalibrationDialog::onActionCopy()
 
 void SlopeCalibrationDialog::onActionPaste()
 {
+    static QRegularExpression reLine("\n|\r\n|\r");
+    static QRegularExpression reRow("[,;]\\s*|\\s+");
+
     // Capture and split the text to be pasted
     const QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
     QList<QPair<float,float>> numList;
     if (mimeData->hasText()) {
         const QString text = mimeData->text();
-        const QStringList elements = text.split(QRegExp("\n|\r\n|\r"), Qt::SkipEmptyParts);
+        const QStringList elements = text.split(reLine, Qt::SkipEmptyParts);
         for (const QString& element : elements) {
-            QStringList rowElements = element.split(QRegExp("[,;]\\s*|\\s+"), Qt::SkipEmptyParts);
+            QStringList rowElements = element.split(reRow, Qt::SkipEmptyParts);
             bool ok;
             float num1 = qQNaN();
             float num2 = qQNaN();
@@ -271,7 +275,7 @@ void SlopeCalibrationDialog::onActionPaste()
 void SlopeCalibrationDialog::onActionDelete()
 {
     QModelIndexList selected = ui->tableView->selectionModel()->selectedIndexes();
-    for (const QModelIndex &index : qAsConst(selected)) {
+    for (const QModelIndex &index : std::as_const(selected)) {
         QStandardItem *item = model_->itemFromIndex(index);
         if (item) {
             item->clearData();
@@ -459,7 +463,7 @@ QPair<int, int> SlopeCalibrationDialog::upperLeftActiveIndex() const
     int col = -1;
     QModelIndexList selected = ui->tableView->selectionModel()->selectedIndexes();
     selected.append(ui->tableView->selectionModel()->currentIndex());
-    for (const QModelIndex &index : qAsConst(selected)) {
+    for (const QModelIndex &index : std::as_const(selected)) {
         if (row == -1 || index.row() < row) {
             row = index.row();
         }

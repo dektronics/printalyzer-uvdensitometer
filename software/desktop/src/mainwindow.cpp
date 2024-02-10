@@ -580,7 +580,7 @@ void MainWindow::measTableAddReading(DensInterface::DensityType type, float dens
     int row = -1;
     QModelIndexList selected = ui->measTableView->selectionModel()->selectedIndexes();
     selected.append(ui->measTableView->selectionModel()->currentIndex());
-    for (const QModelIndex &index : qAsConst(selected)) {
+    for (const QModelIndex &index : std::as_const(selected)) {
         if (row == -1 || index.row() < row) {
             row = index.row();
         }
@@ -631,7 +631,7 @@ void MainWindow::measTableCopyList(const QModelIndexList &indexList, bool includ
     QVector<QString> numList;
 
     // Collect the list of populated measurement items in the table
-    for (const QModelIndex &index : qAsConst(indexList)) {
+    for (const QModelIndex &index : std::as_const(indexList)) {
         const QStandardItem *item = measModel_->itemFromIndex(index);
         if (item && item->column() == 1 && (includeEmpty || !item->text().isEmpty())) {
             numList.append(item->text());
@@ -678,13 +678,15 @@ void MainWindow::measTableCopyList(const QModelIndexList &indexList, bool includ
 
 void MainWindow::measTablePaste()
 {
+    static QRegularExpression re("\n|\r\n|\r|\t|[,;]\\s*|\\s+");
+
     // Capture and split the text to be pasted
     const QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
     QList<float> numList;
     if (mimeData->hasText()) {
         const QString text = mimeData->text();
-        const QStringList elements = text.split(QRegExp("\n|\r\n|\r|\t|[,;]\\s*|\\s+"), Qt::SkipEmptyParts);
+        const QStringList elements = text.split(re, Qt::SkipEmptyParts);
         for (const QString& element : elements) {
             bool ok;
             float num = element.toFloat(&ok);
@@ -704,7 +706,7 @@ void MainWindow::measTableDelete()
 {
     QModelIndexList selected = ui->measTableView->selectionModel()->selectedRows(1);
 
-    for (const QModelIndex &index : qAsConst(selected)) {
+    for (const QModelIndex &index : std::as_const(selected)) {
         QStandardItem *item = measModel_->item(index.row(), 0);
         if (item) {
             item->setText(QString());
