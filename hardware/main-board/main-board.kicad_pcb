@@ -251,7 +251,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -263,7 +263,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -275,7 +275,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 90 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -334,7 +334,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060606949")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -507,7 +509,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -519,7 +521,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -531,7 +533,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 121.391 69.094 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -590,7 +592,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060577dd7")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -763,7 +767,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -775,7 +779,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -787,7 +791,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 110.723 69.094 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -846,7 +850,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000605785bd")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -1019,7 +1025,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1031,7 +1037,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1043,7 +1049,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode, filled shape"
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
 			(at 60 45 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1102,7 +1108,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/00000000-0000-0000-0000-00006056d4a2")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(zone_connect 2)
 		(attr smd)
@@ -1328,7 +1336,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1340,7 +1348,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1352,7 +1360,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode, filled shape"
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
 			(at 75 60 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1411,7 +1419,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/00000000-0000-0000-0000-00006056d9b6")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(zone_connect 2)
 		(attr smd)
@@ -1639,7 +1649,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1663,7 +1673,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole without connection"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1675,19 +1685,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "92cc571a-68db-4f78-8aed-72f3ef65a844")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "MountingHole*")
 		(path "/00000000-0000-0000-0000-000060572eab")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -1762,7 +1762,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1786,7 +1786,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole without connection"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1798,19 +1798,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "8d3e9b19-0703-4265-ad46-2f063c3cac73")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "MountingHole*")
 		(path "/00000000-0000-0000-0000-000060573343")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -1885,7 +1875,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1909,7 +1899,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole without connection"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1921,19 +1911,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "f2f239d2-6646-4a98-a9a4-420123d8d846")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "MountingHole*")
 		(path "/00000000-0000-0000-0000-0000605736ba")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -2008,7 +1988,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2032,7 +2012,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole without connection"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2044,19 +2024,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "fa6d5241-11ae-4b80-b1ba-8e0597a1494c")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "MountingHole*")
 		(path "/00000000-0000-0000-0000-0000605739b5")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -2131,7 +2101,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_Pad_Via"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2155,7 +2125,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole with connection"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2167,19 +2137,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "4b5d91ca-418f-44f1-9263-9b77318b2873")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "MountingHole*Pad*")
 		(path "/00000000-0000-0000-0000-000060573be2")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -2346,7 +2306,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_Pad_Via"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2370,7 +2330,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole with connection"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2382,19 +2342,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "9e827f37-32cd-44ad-95b3-ffb27ff2fdf7")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "MountingHole*Pad*")
 		(path "/00000000-0000-0000-0000-000060573eb9")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -2559,7 +2509,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2571,7 +2521,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231410_YAGEO-RC0603JR-07330RL_C105879.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2583,7 +2533,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 330 OHM 5% 1/10W 0603"
 			(at 85 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -2642,7 +2592,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-0000605d25a4")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -2815,7 +2767,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2827,7 +2779,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231410_YAGEO-RC0603JR-07330RL_C105879.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2839,7 +2791,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 330 OHM 5% 1/10W 0603"
 			(at 93 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -2898,7 +2850,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060606eb7")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -3071,7 +3025,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3083,7 +3037,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3095,7 +3049,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 2K OHM 5% 1/10W 0603"
 			(at 113.03 47.244 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -3154,7 +3108,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-0000605a5840")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -3327,7 +3283,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3339,7 +3295,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3351,7 +3307,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 2K OHM 5% 1/10W 0603"
 			(at 113.03 44.196 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -3410,7 +3366,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060572a35")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -3583,7 +3541,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3607,7 +3565,7 @@
 				)
 			)
 		)
-		(property "Description" "test point"
+		(property "Description" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3631,19 +3589,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "73cdc345-b6a9-4dda-a570-44508631ed83")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "Pin* Test*")
 		(path "/00000000-0000-0000-0000-000060670a35")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -3698,7 +3646,7 @@
 		(property "Reference" "U4"
 			(at 2.666 -0.015 90)
 			(layer "F.SilkS")
-			(uuid "86c20648-7c67-4df9-b1a5-c04294141a6e")
+			(uuid "3af2ffa5-ec9e-4280-817f-461052214751")
 			(effects
 				(font
 					(size 1 1)
@@ -3710,7 +3658,7 @@
 			(at 0 2.9 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "1096ced4-ec8e-45f9-af68-16e38d51132c")
+			(uuid "262702c2-7b6c-4db2-a784-28295f9ec4ef")
 			(effects
 				(font
 					(size 1 1)
@@ -3718,35 +3666,35 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "96a713da-cb07-4d5d-94da-e9e8e4fd2cf7")
+			(uuid "2677a614-2993-4bc2-b151-71eb4391bfe0")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "fd5b4ac6-35f8-40b2-830c-734b005b7182")
+			(uuid "877ad8e9-6a03-4549-87c3-654589219000")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+		(property "Description" "TVS DIODE 5.25V 17V SOT23-6"
 			(at 134.874 59.475 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "36ba70a0-44f3-4d10-9226-16a8498e7d49")
+			(uuid "9169cc7b-7f52-48b6-8508-a85eeb7934e5")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3802,7 +3750,6 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-00006056e468")
-		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0 1.56)
@@ -3812,7 +3759,7 @@
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "8df5a4bf-e8d9-4922-bc06-13ac4a02cd82")
+			(uuid "7a9f7097-2372-4d6e-b07f-ed22e1098969")
 		)
 		(fp_line
 			(start 0 1.56)
@@ -3822,7 +3769,7 @@
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "15bd3b4f-c345-49e3-b1fe-3a5e8c308b30")
+			(uuid "17425982-01df-4e62-ac41-38bcbbfb6c93")
 		)
 		(fp_line
 			(start 0 -1.56)
@@ -3832,17 +3779,29 @@
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "c9aa7129-d37b-41aa-8516-e4c4fbcdbdae")
+			(uuid "85765c8d-41f2-4f8f-add7-30a6be19cd8a")
 		)
 		(fp_line
 			(start 0 -1.56)
-			(end -1.8 -1.56)
+			(end -0.8 -1.56)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "89c38918-ddb9-4ff7-b030-c879a051e508")
+			(uuid "5b7ff485-4118-4544-8943-f0bcefa3477b")
+		)
+		(fp_poly
+			(pts
+				(xy -1.3 -1.51) (xy -1.54 -1.84) (xy -1.06 -1.84) (xy -1.3 -1.51)
+			)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(fill solid)
+			(layer "F.SilkS")
+			(uuid "f0a4e981-8afc-47e9-8348-956ca6fc8c11")
 		)
 		(fp_line
 			(start 2.05 1.7)
@@ -3852,7 +3811,7 @@
 				(type solid)
 			)
 			(layer "F.CrtYd")
-			(uuid "fe2ed758-7739-4ef6-a4d9-5b83f1d30f9c")
+			(uuid "132c9aac-f2c9-4d28-b8aa-52ae56f3e990")
 		)
 		(fp_line
 			(start 2.05 -1.7)
@@ -3862,7 +3821,7 @@
 				(type solid)
 			)
 			(layer "F.CrtYd")
-			(uuid "d390780e-bd01-43d0-8efe-4185f613bb5e")
+			(uuid "1318791d-6ce0-4398-b70e-5ccbbe765ae9")
 		)
 		(fp_line
 			(start -2.05 1.7)
@@ -3872,7 +3831,7 @@
 				(type solid)
 			)
 			(layer "F.CrtYd")
-			(uuid "2b69fe46-dbcd-4d6f-94aa-08e422ff2f35")
+			(uuid "2e5d0a1b-7dad-4bcc-b08c-32f6737cbfe5")
 		)
 		(fp_line
 			(start -2.05 -1.7)
@@ -3882,7 +3841,7 @@
 				(type solid)
 			)
 			(layer "F.CrtYd")
-			(uuid "540e4111-7498-447b-9214-dca2a6822f88")
+			(uuid "a3ba3df7-cf26-4cef-b1be-300beb4f4b52")
 		)
 		(fp_line
 			(start 0.8 1.45)
@@ -3892,7 +3851,7 @@
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "79ed7fea-8b50-4d37-8cb9-9a2d0ab6a70f")
+			(uuid "8a1be05f-3f25-45c7-9221-ecfdf8726590")
 		)
 		(fp_line
 			(start 0.8 -1.45)
@@ -3902,7 +3861,7 @@
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "efe58d04-9cfb-4efc-b56a-8b7eb8f95428")
+			(uuid "b725aad7-446a-429e-8654-de4dc6ffb65b")
 		)
 		(fp_line
 			(start -0.4 -1.45)
@@ -3912,7 +3871,7 @@
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "c7f0a246-112a-450e-99a3-40ec01fda76d")
+			(uuid "8ec86d8c-2aa9-429e-9c30-de35840f807f")
 		)
 		(fp_line
 			(start -0.8 1.45)
@@ -3922,7 +3881,7 @@
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "9e9d73a8-95ea-4773-ace6-c8e656ed8bdd")
+			(uuid "3a03694f-70f6-44c6-80ea-a16a576d2ebe")
 		)
 		(fp_line
 			(start -0.8 -1.05)
@@ -3932,12 +3891,12 @@
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "8fd5ab0e-989b-48a9-be80-0e9a823c7b1a")
+			(uuid "9d8fc206-aab3-4853-80ab-bb7da98ef811")
 		)
 		(fp_text user "${REFERENCE}"
 			(at 0 0 90)
 			(layer "F.Fab")
-			(uuid "64b2a471-2a98-4b3d-9562-dbbcfbb5f107")
+			(uuid "3fb8fe80-4e35-4edf-80ec-a122a7530cb3")
 			(effects
 				(font
 					(size 0.5 0.5)
@@ -3953,7 +3912,7 @@
 			(net 31 "/USB_CONN_D-")
 			(pinfunction "I/O1")
 			(pintype "passive")
-			(uuid "c50b0ee1-f427-4c32-82a7-8cee7a901260")
+			(uuid "2823124a-256c-4497-860c-02318aef401c")
 		)
 		(pad "2" smd roundrect
 			(at -1.1375 0 180)
@@ -3963,7 +3922,7 @@
 			(net 1 "GND")
 			(pinfunction "GND")
 			(pintype "passive")
-			(uuid "b885c498-06b0-4349-b11f-bb4dec5e9f1d")
+			(uuid "e47ea4f5-5576-4ba4-bd62-cec345084b89")
 		)
 		(pad "3" smd roundrect
 			(at -1.1375 0.95 180)
@@ -3973,7 +3932,7 @@
 			(net 30 "/USB_CONN_D+")
 			(pinfunction "I/O2")
 			(pintype "passive")
-			(uuid "7e90fbca-cb12-4ace-9ced-a3dcb9b6c209")
+			(uuid "0e3229af-4dec-4258-8935-751bee61d980")
 		)
 		(pad "4" smd roundrect
 			(at 1.1375 0.95 180)
@@ -3983,7 +3942,7 @@
 			(net 27 "/USB_D+")
 			(pinfunction "I/O2")
 			(pintype "passive")
-			(uuid "d3dc7f01-c535-4690-969a-705c55ecd22f")
+			(uuid "44e7971f-2f9e-4a64-abe4-8965d0938c23")
 		)
 		(pad "5" smd roundrect
 			(at 1.1375 0 180)
@@ -3993,7 +3952,7 @@
 			(net 62 "VBUS")
 			(pinfunction "VBUS")
 			(pintype "passive")
-			(uuid "dd4a2135-5ea2-438c-be98-c1d732c22c4a")
+			(uuid "f7fe9d34-b481-4a49-bc1c-89e828644c37")
 		)
 		(pad "6" smd roundrect
 			(at 1.1375 -0.95 180)
@@ -4003,9 +3962,9 @@
 			(net 28 "/USB_D-")
 			(pinfunction "I/O1")
 			(pintype "passive")
-			(uuid "dbd4a888-2ce5-46f0-b216-dbe24487a22a")
+			(uuid "6a223127-f195-4d30-926f-e229cdd05da9")
 		)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-23-6.wrl"
+		(model "${KICAD8_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-23-6.wrl"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -4046,7 +4005,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4058,7 +4017,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4070,7 +4029,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode, filled shape"
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
 			(at 60 75 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4129,7 +4088,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/00000000-0000-0000-0000-00006056c6a5")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(zone_connect 2)
 		(attr smd)
@@ -4355,7 +4316,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4367,7 +4328,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4379,7 +4340,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode, filled shape"
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
 			(at 45 60 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4438,7 +4399,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "LED* LED_SMD:* LED_THT:*")
 		(path "/00000000-0000-0000-0000-00006056ceb5")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(zone_connect 2)
 		(attr smd)
@@ -4664,7 +4627,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4676,7 +4639,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231425_YAGEO-RC0603JR-07100KL_C100048.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4688,7 +4651,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 100K OHM 5% 1/10W 0603"
 			(at 92.5 49 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4747,7 +4710,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-00006060584e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -4920,7 +4885,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4932,7 +4897,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.mouser.com/datasheet/2/585/MLCC-1837944.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4944,7 +4909,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 10000PF 50V X7R 0805"
 			(at 110.469 70.872 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5003,7 +4968,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-00006057632e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
@@ -5177,7 +5144,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5189,7 +5156,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231425_YAGEO-RC0603JR-07100KL_C100048.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5201,7 +5168,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 100K OHM 5% 1/10W 0603"
 			(at 84.5 49 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5260,7 +5227,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-0000605d1a9b")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -5433,7 +5402,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5445,7 +5414,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5457,7 +5426,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 98 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5516,7 +5485,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060c508e4")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -5689,7 +5660,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5701,7 +5672,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5713,7 +5684,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 106 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5772,7 +5743,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060c6f2a0")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -5945,7 +5918,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5957,7 +5930,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/system/files?file=dam/doc/product/emc/emc/beads/catalog/beads_automotive_signal_mmz1608_en.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5969,7 +5942,7 @@
 				)
 			)
 		)
-		(property "Description" "Ferrite bead, small symbol"
+		(property "Description" "FERRITE BEAD 600 OHM 0603 1LN"
 			(at 130.937 64.262 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -6028,7 +6001,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "Inductor_* L_* *Ferrite*")
 		(path "/00000000-0000-0000-0000-000060bfe585")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -6200,7 +6175,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_JST:JST_SH_BM04B-SRSS-TB_1x04-1MP_P1.00mm_Vertical"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6212,7 +6187,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://www.jst-mfg.com/product/pdf/eng/ePH.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6224,7 +6199,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" "CONN HEADER SMD 2POS 1MM"
 			(at 142.999993 70.000012 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -6295,7 +6270,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/fb5256da-16c7-46a3-ad83-404b93103f8e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -6724,7 +6701,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6736,7 +6713,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231425_YAGEO-RC0603JR-07100KL_C100048.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6748,7 +6725,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 100K OHM 5% 1/10W 0603"
 			(at 100.5 49 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -6807,7 +6784,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060c508c6")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -6980,7 +6959,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6992,7 +6971,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231410_YAGEO-RC0603JR-07330RL_C105879.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7004,7 +6983,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 330 OHM 5% 1/10W 0603"
 			(at 109 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7063,7 +7042,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060c6f2af")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -7236,7 +7217,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7248,7 +7229,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231425_YAGEO-RC0603JR-07100KL_C100048.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7260,7 +7241,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 100K OHM 5% 1/10W 0603"
 			(at 108.5 49 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7319,7 +7300,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060c6f282")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -7493,7 +7476,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:CK_KSU213WLFG"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7505,7 +7488,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.ckswitches.com/media/1312/ksu.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7517,7 +7500,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "SWITCH DETECTOR SPST-NO 10MA 50V"
 			(at 143 50.75 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7577,6 +7560,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000060ca5c6c")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -7780,7 +7764,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7792,7 +7776,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7804,7 +7788,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 82 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7863,7 +7847,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000605d366f")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -8036,7 +8022,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8048,7 +8034,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10A475KA8NQNC_Spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8060,7 +8046,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 4.7UF 25V X5R 0603"
 			(at 90.53 69.285 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8119,7 +8105,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000610812b9")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -8292,7 +8280,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8304,7 +8292,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B225KP8NNNC_Spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8316,7 +8304,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 2.2UF 10V X7R 0603"
 			(at 89.006 69.285 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8375,7 +8363,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000610822af")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -8548,7 +8538,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8560,7 +8550,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1811082121_YAGEO-RC0603FR-07390KL_C137735.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8572,7 +8562,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 390K OHM 1% 1/10W 0603"
 			(at 92.054 69.285 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8631,7 +8621,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000061055858")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -8804,7 +8796,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:ER-CON30HT-1"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8816,7 +8808,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.buydisplay.com/download/connector/ER-CON30HT-1.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8876,6 +8868,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000060dda2ca")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
@@ -9294,7 +9287,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:BF_0ZCJ_1206"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9306,7 +9299,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.littelfuse.com/~/media/electronics/datasheets/resettable_ptcs/littelfuse_ptc_1206l_datasheet.pdf.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9318,7 +9311,7 @@
 				)
 			)
 		)
-		(property "Description" "Resettable fuse, polymeric positive temperature coefficient"
+		(property "Description" "PTC RESET FUSE 6V 500MA 1206"
 			(at 133.35 62.357 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9377,7 +9370,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "*polyfuse* *PTC*")
 		(path "/00000000-0000-0000-0000-000060c2f235")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -9548,7 +9543,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9560,7 +9555,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9572,7 +9567,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 118.872 44.196 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9631,7 +9626,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000605806b5")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -9804,7 +9801,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9816,7 +9813,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231410_YAGEO-RC0603JR-07330RL_C105879.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9828,7 +9825,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 330 OHM 5% 1/10W 0603"
 			(at 101 56 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9887,7 +9884,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060c508f3")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -10060,7 +10059,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:SOT323-5L"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10072,7 +10071,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.st.com/content/ccc/resource/technical/document/datasheet/32/30/02/e6/ac/0f/46/c2/CD00002946.pdf/files/CD00002946.pdf/jcr:content/translations/en.CD00002946.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10084,7 +10083,7 @@
 				)
 			)
 		)
-		(property "Description" "Quad transil array for data protection, SOT323-5L"
+		(property "Description" "TVS DIODE 3V SOT323-5"
 			(at 127.302 50.165 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10143,7 +10142,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "SOT?23*")
 		(path "/00000000-0000-0000-0000-0000605ac89e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -10353,7 +10354,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10365,7 +10366,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10377,7 +10378,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 102.362 69.286 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10436,7 +10437,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060dba65d")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -10609,7 +10612,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10621,7 +10624,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10633,7 +10636,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 104.394 69.286 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10692,7 +10695,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060db9b4d")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -10865,7 +10870,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10877,7 +10882,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10889,7 +10894,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 99.822 69.286 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10948,7 +10953,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060e2be66")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -11121,7 +11128,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11133,7 +11140,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11145,7 +11152,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 98.044 69.286 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -11204,7 +11211,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060e2cce8")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -11377,7 +11386,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11389,7 +11398,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11401,7 +11410,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 84.561 50.927 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -11461,6 +11470,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000061322092")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -11704,7 +11714,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11716,7 +11726,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11728,7 +11738,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 100.563 50.927 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -11788,6 +11798,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000061320b14")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -12031,7 +12042,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12043,7 +12054,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12055,7 +12066,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 108.564 50.927 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12115,6 +12126,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-00006131efcd")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -12358,7 +12370,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12370,7 +12382,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12382,7 +12394,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 92.562 50.927 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12442,6 +12454,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000061321b9f")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -12686,7 +12699,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12698,7 +12711,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1811081617_YAGEO-RC0603JR-0710KL_C99198.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12710,7 +12723,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 10K OHM 5% 1/10W 0603"
 			(at 115.189 44.196 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12769,7 +12782,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000061993f5c")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -12941,7 +12956,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12953,7 +12968,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12965,7 +12980,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 125.201 76.333 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13025,6 +13040,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-00006132646e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -13268,7 +13284,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13280,7 +13296,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13292,7 +13308,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 126.4964 44.5485 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13352,6 +13368,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-0000612c1089")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -13598,7 +13615,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Fiducial:Fiducial_1mm_Mask2mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13622,7 +13639,7 @@
 				)
 			)
 		)
-		(property "Description" "Fiducial Marker"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13634,19 +13651,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "cee8a9fa-2384-4357-b287-ef0e27dac2ad")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "Fiducial*")
 		(path "/00000000-0000-0000-0000-0000612fe793")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd exclude_from_bom)
 		(fp_circle
@@ -13722,7 +13729,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Fiducial:Fiducial_1mm_Mask2mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13746,7 +13753,7 @@
 				)
 			)
 		)
-		(property "Description" "Fiducial Marker"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13758,19 +13765,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "9f8b51ff-e072-43cb-8afe-041e3fc04a09")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "Fiducial*")
 		(path "/00000000-0000-0000-0000-0000612ff4c0")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd exclude_from_bom)
 		(fp_circle
@@ -13846,7 +13843,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Fiducial:Fiducial_1mm_Mask2mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13870,7 +13867,7 @@
 				)
 			)
 		)
-		(property "Description" "Fiducial Marker"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13882,19 +13879,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "d337eb43-f787-481d-9470-57849fb513ed")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "Fiducial*")
 		(path "/00000000-0000-0000-0000-000061300036")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd exclude_from_bom)
 		(fp_circle
@@ -13969,7 +13956,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:Panasonic_EVQP7C_EVQP7L"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13981,7 +13968,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/ATK0000/ATK0000C378.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13993,7 +13980,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "SWITCH TACTILE SPST-NO 0.05A 12V"
 			(at 131 77 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14053,6 +14040,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-0000613104ef")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -14317,7 +14305,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14329,7 +14317,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1811081617_YAGEO-RC0603JR-0710KL_C99198.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14341,7 +14329,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 10K OHM 5% 1/10W 0603"
 			(at 125.074 74.809 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14400,7 +14388,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-0000605aad1e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -14573,7 +14563,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14585,7 +14575,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231410_YAGEO-RC0603JR-07330RL_C105879.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14597,7 +14587,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 330 OHM 5% 1/10W 0603"
 			(at 124.82 72.396 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14656,7 +14646,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-00006132643f")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -14829,7 +14821,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14841,7 +14833,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810241812_YAGEO-RC0603JR-075K1L_C14677.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14853,7 +14845,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES 5.1K OHM 5% 1/10W 0603"
 			(at 134.939 64.443 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14912,7 +14904,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000061d3cd6b")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -15086,7 +15080,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:USB_C_Receptacle_GCT_USB4105"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15098,7 +15092,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://gct.co/files/drawings/usb4105.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15110,7 +15104,7 @@
 				)
 			)
 		)
-		(property "Description" "USB 2.0-only Type-C Receptacle connector"
+		(property "Description" "CONN RCP USB2.0 TYP C 24P SMD RA"
 			(at 141.66 60 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15169,7 +15163,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "USB*C*Receptacle*")
 		(path "/00000000-0000-0000-0000-000061a785b0")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
@@ -15572,7 +15568,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15584,7 +15580,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810241812_YAGEO-RC0603JR-075K1L_C14677.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15596,7 +15592,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES 5.1K OHM 5% 1/10W 0603"
 			(at 135.255 56.642 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15655,7 +15651,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000061d3a613")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -15828,7 +15826,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15840,7 +15838,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/system/files?file=dam/doc/product/emc/emc/beads/catalog/beads_automotive_signal_mmz1608_en.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15852,7 +15850,7 @@
 				)
 			)
 		)
-		(property "Description" "Ferrite bead, small symbol"
+		(property "Description" "FERRITE BEAD 600 OHM 0603 1LN"
 			(at 110.871 60.6425 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15911,7 +15909,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "Inductor_* L_* *Ferrite*")
 		(path "/00000000-0000-0000-0000-000060c00550")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -16084,7 +16084,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16096,7 +16096,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16108,7 +16108,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 117.094 53.34 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -16167,7 +16167,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060578203")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -16340,7 +16342,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16352,7 +16354,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16364,7 +16366,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 128.3335 62.611 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -16423,7 +16425,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-00006060a6db")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -16596,7 +16600,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16608,7 +16612,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16620,7 +16624,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 114.8715 58.2295 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -16679,7 +16683,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-00006057751b")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -16852,7 +16858,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16864,7 +16870,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16876,7 +16882,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 113.2205 58.2295 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -16935,7 +16941,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060580956")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -17107,7 +17115,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:ST_LQFP32"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17119,7 +17127,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00141133.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17131,7 +17139,7 @@
 				)
 			)
 		)
-		(property "Description" "STMicroelectronics Arm Cortex-M0+ MCU, 192KB flash, 20KB RAM, 32 MHz, 1.65-3.6V, 25 GPIO, LQFP32"
+		(property "Description" "IC MCU 32BIT 192KB FLASH 32LQFP"
 			(at 122.047 58.674 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -17190,7 +17198,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "LQFP*7x7mm*P0.8mm*")
 		(path "/00000000-0000-0000-0000-0000619429db")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
@@ -17946,7 +17956,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17958,7 +17968,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL_Series_MLCC_ds.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17970,7 +17980,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 10UF 25V X5R 0805"
 			(at 115.062 53.086 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -18029,7 +18039,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-0000605786b2")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
@@ -18203,7 +18215,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18215,7 +18227,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231410_YAGEO-RC0603JR-07330RL_C105879.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18227,7 +18239,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 330 OHM 5% 1/10W 0603"
 			(at 135.8265 53.086 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -18286,7 +18298,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060ca643d")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -18459,7 +18473,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18471,7 +18485,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231425_YAGEO-RC0603JR-07100KL_C100048.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18483,7 +18497,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 100K OHM 5% 1/10W 0603"
 			(at 138.1125 52.324 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -18542,7 +18556,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/00000000-0000-0000-0000-000060ca6410")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -18715,7 +18731,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18727,7 +18743,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B104KA8NNNC_Spec.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18739,7 +18755,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 0.1UF 25V X7R 0603"
 			(at 135.8265 51.562 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -18798,7 +18814,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/00000000-0000-0000-0000-000060ca642e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -18970,7 +18988,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Diode_SMD:D_SOD-523"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18982,7 +19000,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/44000000MCOu/TAxz.g3b9Kc3zALQPNaVYTri83_DHtuxXaYryd8B43M"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18994,7 +19012,7 @@
 				)
 			)
 		)
-		(property "Description" "Single-line TVS diode for ESD and CDE protection of 3.3V lines, SOD-523"
+		(property "Description" "TVS DIODE 5VWM 12.5VC SOD523"
 			(at 139.7 52.5332 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -19054,6 +19072,7 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-0000612e2f92")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -19882,7 +19901,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19894,7 +19913,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1810231323_YAGEO-AC0402JR-0722RL_C144722.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19906,7 +19925,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 22 OHM 5% 1/16W 0402"
 			(at 60.3 62.4 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -19965,7 +19984,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/4ff973de-0a9f-408a-a719-76ce2b35df10")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -20137,7 +20158,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20149,7 +20170,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL05A105KQ5NNNC_Spec.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20161,7 +20182,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 6.3V X5R 0402"
 			(at 60.3 61.4 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -20220,7 +20241,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/54590678-24c2-4b8c-b6fb-4d727e789135")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -20393,7 +20416,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:AMS_TSL2585_OLGA-6_2x1mm_P0.65mm"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20405,7 +20428,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://ams.com/documents/20143/6148289/TSL2585_DS001043_4-00.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20417,7 +20440,7 @@
 				)
 			)
 		)
-		(property "Description" "Light sensor with UVA detection, I2C interface, 1.8V, FN"
+		(property "Description" "AMBIENT LIGHT SENSOR"
 			(at 60.65 60 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -20477,6 +20500,7 @@
 			)
 		)
 		(path "/c8b73868-8104-4347-9a77-2c53e0c17d0e")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_margin -0.025)
 		(attr smd)
@@ -20680,7 +20704,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:Micrel_MSOP-10-1EP_3x3mm_P0.5mm_EP1.73x1.7mm_ThermalVias"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20692,7 +20716,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://ww1.microchip.com/downloads/en/DeviceDoc/mic4812.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20704,7 +20728,7 @@
 				)
 			)
 		)
-		(property "Description" "High Current 6 Channel Linear WLED Driver with DAM and Ultra Fast PWM Control"
+		(property "Description" "IC LED DRVR LIN PWM 100MA 10MSOP"
 			(at 82.529 71.761 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -20763,7 +20787,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "MSOP?10-1EP*3x3mm*P0.5mm*")
 		(path "/87302868-52b6-4139-80ea-947d25f2770c")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(zone_connect 2)
 		(attr smd)
@@ -21144,7 +21170,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21156,7 +21182,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1811081617_YAGEO-RC0603JR-0710KL_C99198.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21168,7 +21194,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 10K OHM 5% 1/10W 0603"
 			(at 106.680991 69.285993 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -21227,7 +21253,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/9910f5da-d613-4123-8769-ff06980a81f9")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -21399,7 +21427,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21411,7 +21439,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=srchrtrv&DocNm=1773200&DocType=DS&DocLang=English"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21423,7 +21451,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 16.5K OHM 1% 1/16W 0603"
 			(at 84.688 68.078 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -21482,7 +21510,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/565170b7-04c9-4c5f-9e75-f75baff4d702")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -21655,7 +21685,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21667,7 +21697,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=srchrtrv&DocNm=1773200&DocType=DS&DocLang=English"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21679,7 +21709,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 200K OHM 1% 1/16W 0603"
 			(at 86.974 69.286 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -21738,7 +21768,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/56b0bf1e-46d6-4077-9adf-253f75aadd09")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -21910,7 +21942,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_SO:MSOP-8_3x3mm_P0.65mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21922,7 +21954,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://ww1.microchip.com/downloads/en/DeviceDoc/21798c.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21934,7 +21966,7 @@
 				)
 			)
 		)
-		(property "Description" "Dual LDO with Microcontroller RESET Function in 8-Pin DFN/MSOP package"
+		(property "Description" "IC REG LIN 3.3V/1.8V/2.63V 8MSOP"
 			(at 116.057 70.11 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -21993,7 +22025,10 @@
 				)
 			)
 		)
+		(property ki_fp_filters "MSOP?8*3x3mm*P0.65mm*")
 		(path "/1bcb16ea-9cf9-478c-a151-c49615eae3e5")
+		(sheetname "Root")
+		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
 		(fp_line
@@ -22269,7 +22304,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22281,7 +22316,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/1811081617_YAGEO-RC0603JR-0710KL_C99198.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22293,7 +22328,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "RES SMD 10K OHM 5% 1/10W 0603"
 			(at 127.106 72.396 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -22352,7 +22387,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "R_*")
 		(path "/2c6c13a9-2c6c-4ce8-a766-b016fc9d5ddc")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -22524,7 +22561,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22548,7 +22585,7 @@
 				)
 			)
 		)
-		(property "Description" "test point"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22572,19 +22609,9 @@
 				)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "47ea2cc1-856e-406f-8ea2-4270085ffb40")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
+		(property ki_fp_filters "Pin* Test*")
 		(path "/c2e7d31f-0234-4c64-ba42-6c6fc87b1ef8")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
@@ -22658,7 +22685,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22670,7 +22697,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B225KP8NNNC_Spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22682,7 +22709,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 2.2UF 10V X7R 0603"
 			(at 82.529 74.555 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -22741,7 +22768,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/07f9542f-c68e-4114-aa0f-5ba8483fc91b")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -22913,7 +22942,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_DFN_QFN:DFN-8-1EP_3x2mm_P0.5mm_EP1.7x1.4mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22925,7 +22954,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/MCP9808-0.5C-Maximum-Accuracy-Digital-Temperature-Sensor-Data-Sheet-DS20005095B.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22937,7 +22966,7 @@
 				)
 			)
 		)
-		(property "Description" "+/-0.25C (+/-0.5C) Typical (Maximum), Digital Temperature Sensor, DFN-8"
+		(property "Description" "SENSOR DIGITAL -40C-125C 8DFN"
 			(at 60.05 55.886 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -22996,7 +23025,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "DFN*1EP*3x2mm*P0.5mm*")
 		(path "/bec784b1-5d5b-493b-9c88-ce613853bf9b")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(solder_paste_ratio -0.05)
 		(attr smd)
@@ -23279,7 +23310,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23291,7 +23322,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10A475KA8NQNC_Spec.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23303,7 +23334,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 4.7UF 25V X5R 0603"
 			(at 130.938 65.84 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -23362,7 +23393,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/004d701c-7e69-4a10-9c95-7de04fa2be20")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -23534,7 +23567,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23546,7 +23579,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL05A105KQ5NNNC_Spec.pdf"
 			(at 0 0 -90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23558,7 +23591,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 6.3V X5R 0402"
 			(at 62.971 56.394 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -23617,7 +23650,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/c288972e-55cd-412a-80bb-033416c7ef78")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -23789,7 +23824,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23801,7 +23836,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL05A475KQ5NRNC_Spec.pdf"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23813,7 +23848,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 4.7UF 6.3V X5R 0402"
 			(at 61.9 61.9 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -23872,7 +23907,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/e9799a8c-c735-4472-8cbc-81385cc36dfe")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -24044,7 +24081,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -24056,7 +24093,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10B105KA8NNNC_spec.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -24068,7 +24105,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAP CER 1UF 25V X7R 0603"
 			(at 121.391 71.126 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -24127,7 +24164,9 @@
 				)
 			)
 		)
+		(property ki_fp_filters "C_*")
 		(path "/9fb2e23a-2219-4759-8b03-37be709c8fa5")
+		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
 		(attr smd)
 		(fp_line
@@ -24304,7 +24343,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:ESwitch_TL1105_6mm_H7.5mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -24316,7 +24355,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://sten-eswitch-13110800-production.s3.amazonaws.com/system/asset/product_line/data_sheet/144/TL1105.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -24328,7 +24367,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "SWITCH TACTILE SPST-NO 0.05A 12V"
 			(at 91 50 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -24392,6 +24431,8 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000060570781")
+		(sheetname "Root")
+		(sheetfile "main-board.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -3.25 -2.25)
@@ -26466,7 +26507,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:ESwitch_TL1105_6mm_H7.5mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -26478,7 +26519,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://sten-eswitch-13110800-production.s3.amazonaws.com/system/asset/product_line/data_sheet/144/TL1105.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -26490,7 +26531,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "SWITCH TACTILE SPST-NO 0.05A 12V"
 			(at 83 50 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -26554,6 +26595,8 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-00006056ffda")
+		(sheetname "Root")
+		(sheetfile "main-board.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -3.25 -2.25)
@@ -26877,7 +26920,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:ESwitch_TL1105_6mm_H7.5mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -26889,7 +26932,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://sten-eswitch-13110800-production.s3.amazonaws.com/system/asset/product_line/data_sheet/144/TL1105.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -26901,7 +26944,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "SWITCH TACTILE SPST-NO 0.05A 12V"
 			(at 99 50 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -26965,6 +27008,8 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000060c5021a")
+		(sheetname "Root")
+		(sheetfile "main-board.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -3.25 -2.25)
@@ -27287,7 +27332,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "lib_fp:ESwitch_TL1105_6mm_H7.5mm"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -27299,7 +27344,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://sten-eswitch-13110800-production.s3.amazonaws.com/system/asset/product_line/data_sheet/144/TL1105.pdf"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -27311,7 +27356,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "SWITCH TACTILE SPST-NO 0.05A 12V"
 			(at 107 50 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -27375,6 +27420,8 @@
 			)
 		)
 		(path "/00000000-0000-0000-0000-000060c6eb5a")
+		(sheetname "Root")
+		(sheetfile "main-board.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -3.25 -2.25)
@@ -27697,7 +27744,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector:Tag-Connect_TC2070-IDC-FP_2x07_P1.27mm_Vertical"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -27709,7 +27756,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.tag-connect.com/wp-content/uploads/bsk-pdf-manager/TC2070-IDC_Datasheet_11.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -27721,7 +27768,7 @@
 				)
 			)
 		)
-		(property "Description" "ST Debug Connector, standard ARM Cortex-M SWD and JTAG interface plus UART"
+		(property "Description" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -27772,20 +27819,9 @@
 				(justify mirror)
 			)
 		)
-		(property "exclude_from_bom" ""
-			(at 0 0 0)
-			(layer "B.Fab")
-			(hide yes)
-			(uuid "b51556c4-40f9-49dc-aed7-1025b4b0bd3a")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-				(justify mirror)
-			)
-		)
 		(path "/00000000-0000-0000-0000-000060586f63")
+		(sheetname "Root")
+		(sheetfile "main-board.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -3.81 -1.27)
