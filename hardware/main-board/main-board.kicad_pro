@@ -6,14 +6,14 @@
         "apply_defaults_to_fp_fields": false,
         "apply_defaults_to_fp_shapes": false,
         "apply_defaults_to_fp_text": false,
-        "board_outline_line_width": 0.038099999999999995,
+        "board_outline_line_width": 0.0381,
         "copper_line_width": 0.254,
         "copper_text_italic": false,
         "copper_text_size_h": 1.524,
         "copper_text_size_v": 1.524,
-        "copper_text_thickness": 0.30479999999999996,
+        "copper_text_thickness": 0.3048,
         "copper_text_upright": false,
-        "courtyard_line_width": 0.049999999999999996,
+        "courtyard_line_width": 0.05,
         "dimension_precision": 4,
         "dimension_units": 3,
         "dimensions": {
@@ -24,13 +24,13 @@
           "text_position": 0,
           "units_format": 1
         },
-        "fab_line_width": 0.09999999999999999,
+        "fab_line_width": 0.1,
         "fab_text_italic": false,
         "fab_text_size_h": 1.0,
         "fab_text_size_v": 1.0,
         "fab_text_thickness": 0.15,
         "fab_text_upright": false,
-        "other_line_width": 0.09999999999999999,
+        "other_line_width": 0.1,
         "other_text_italic": false,
         "other_text_size_h": 1.0,
         "other_text_size_v": 1.0,
@@ -41,15 +41,15 @@
           "height": 1.0,
           "width": 1.0
         },
-        "silk_line_width": 0.15239999999999998,
+        "silk_line_width": 0.1524,
         "silk_text_italic": false,
         "silk_text_size_h": 0.8128,
         "silk_text_size_v": 0.8128,
-        "silk_text_thickness": 0.15239999999999998,
+        "silk_text_thickness": 0.1524,
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": true,
-          "min_clearance": 0.508
+          "min_clearance": 0.25
         }
       },
       "diff_pair_dimensions": [
@@ -65,10 +65,6 @@
         "footprint_type_mismatch|82529000|71761000|27af5e9c-ac22-4888-9556-80e5f96e0c0b|00000000-0000-0000-0000-000000000000",
         "hole_clearance|139710000|57100000|cb8b78f8-6690-4d19-9768-d710677d69f9|6ef2ff3e-a993-4625-8910-3d59e744daa6",
         "hole_clearance|139710000|57100000|cb8b78f8-6690-4d19-9768-d710677d69f9|de383cf4-ce48-433f-b3c2-6cf39d60801a",
-        "hole_clearance|139710000|57300000|cb8b78f8-6690-4d19-9768-d710677d69f9|1c14e065-7e4f-4adb-bf06-302fa751b492",
-        "hole_clearance|139710000|57300000|cb8b78f8-6690-4d19-9768-d710677d69f9|2eeb2dee-f233-4636-aa99-fb54b1935fbe",
-        "hole_clearance|139710000|62700000|dc412832-4102-4e47-9b0a-83091b20fe7a|b124342d-291e-4277-abdb-b08d45228c68",
-        "hole_clearance|139710000|62700000|dc412832-4102-4e47-9b0a-83091b20fe7a|c0c02f8d-faeb-4e80-92ae-01679b1a5367",
         "hole_clearance|139710000|62900000|dc412832-4102-4e47-9b0a-83091b20fe7a|5be8d831-6267-42bb-89af-7e4f9e4fda55",
         "hole_clearance|139710000|62900000|dc412832-4102-4e47-9b0a-83091b20fe7a|ebf47835-11b5-42d7-9306-868378a28899",
         "lib_footprint_mismatch|142999993|70000012|00000000-0000-0000-0000-000060bf2ada|00000000-0000-0000-0000-000000000000",
@@ -97,6 +93,7 @@
         "footprint_type_mismatch": "error",
         "hole_clearance": "error",
         "hole_near_hole": "error",
+        "holes_co_located": "warning",
         "invalid_outline": "error",
         "isolated_copper": "warning",
         "item_on_disabled_layer": "error",
@@ -139,19 +136,19 @@
         "max_error": 0.005,
         "min_clearance": 0.15,
         "min_connection": 0.0,
-        "min_copper_edge_clearance": 0.02,
-        "min_hole_clearance": 0.254,
-        "min_hole_to_hole": 0.254,
-        "min_microvia_diameter": 0.19999999999999998,
-        "min_microvia_drill": 0.09999999999999999,
-        "min_resolved_spokes": 1,
+        "min_copper_edge_clearance": 0.3,
+        "min_hole_clearance": 0.2,
+        "min_hole_to_hole": 0.25,
+        "min_microvia_diameter": 0.2,
+        "min_microvia_drill": 0.1,
+        "min_resolved_spokes": 2,
         "min_silk_clearance": 0.0,
-        "min_text_height": 0.7999999999999999,
+        "min_text_height": 0.8,
         "min_text_thickness": 0.08,
-        "min_through_hole_diameter": 0.19999999999999998,
-        "min_track_width": 0.09,
-        "min_via_annular_width": 0.049999999999999996,
-        "min_via_diameter": 0.44999999999999996,
+        "min_through_hole_diameter": 0.2,
+        "min_track_width": 0.1,
+        "min_via_annular_width": 0.05,
+        "min_via_diameter": 0.45,
         "solder_mask_to_copper_clearance": 0.0,
         "use_height_for_length_calcs": true
       },
@@ -239,20 +236,12 @@
           "drill": 0.0
         },
         {
-          "diameter": 0.6096,
-          "drill": 0.3556
-        },
-        {
-          "diameter": 0.7112,
-          "drill": 0.3048
+          "diameter": 0.7,
+          "drill": 0.3
         },
         {
           "diameter": 0.8,
           "drill": 0.4
-        },
-        {
-          "diameter": 0.889,
-          "drill": 0.381
         }
       ],
       "zones_allow_external_fillets": false,
@@ -536,6 +525,7 @@
   },
   "schematic": {
     "annotate_start_num": 0,
+    "bom_export_filename": "",
     "bom_fmt_presets": [],
     "bom_fmt_settings": {
       "field_delimiter": ",",
@@ -569,7 +559,7 @@
           "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Footprint",
           "name": "Footprint",
           "show": true
@@ -585,11 +575,53 @@
           "label": "DNP",
           "name": "${DNP}",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer",
+          "name": "Manufacturer",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer PN",
+          "name": "Manufacturer PN",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Supplier",
+          "name": "Supplier",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Supplier PN",
+          "name": "Supplier PN",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "User Label",
+          "name": "User Label",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
-      "name": "Grouped By Value",
+      "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
     },
