@@ -137,3 +137,8 @@ this directory's `.gitignore` file.
 ### LED\_2835
 * Status: Included
 * Source: GrabCAD <https://grabcad.com/library/led-smd-2835-1>
+
+### Nexperia\_SOT762-1
+* Status: Included
+* Source: Manufacturer <https://www.nexperia.com/packages/SOT762-1.html>
+* Notes: Re-saved via Fusion 360 to fix STEP color parsing in KiCad
