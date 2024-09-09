@@ -142,3 +142,8 @@ this directory's `.gitignore` file.
 * Status: Included
 * Source: Manufacturer <https://www.nexperia.com/packages/SOT762-1.html>
 * Notes: Re-saved via Fusion 360 to fix STEP color parsing in KiCad
+
+### ECS\_327MVATX-2-CN-TR
+* Status: Included
+* Source: SnapEDA <https://www.snapeda.com/parts/ECS-327MVATX-2-CN-TR/ECS Inc./view-part/>
+* Notes: Model is actually the larger 3.2x2.5mm package, scaling applied in KiCad footprint
