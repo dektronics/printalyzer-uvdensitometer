@@ -678,6 +678,14 @@
     [
       "8d0c1d66-35ef-4a53-a28f-436a11b54f42",
       "Root"
+    ],
+    [
+      "92fda741-d661-4ae8-a135-971352bc72ff",
+      "Sensor Head"
+    ],
+    [
+      "6850f289-c97b-4b82-8193-41a71ab4569e",
+      "Input Buttons"
     ]
   ],
   "text_variables": {}
