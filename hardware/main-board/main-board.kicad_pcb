@@ -104,7 +104,8 @@
 			(copper_finish "ENIG")
 			(dielectric_constraints yes)
 		)
-		(pad_to_mask_clearance 0.05)
+		(pad_to_mask_clearance 0)
+		(pad_to_paste_clearance -0.05)
 		(allow_soldermask_bridges_in_footprints no)
 		(aux_axis_origin 41 79)
 		(grid_origin 41 79)
@@ -9037,7 +9038,7 @@
 		(path "/00000000-0000-0000-0000-000060dda2ca")
 		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
-		(solder_paste_ratio -0.05)
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start -10.033 -1.467)
@@ -11679,6 +11680,7 @@
 		(path "/6850f289-c97b-4b82-8193-41a71ab4569e/6d3de92c-59c3-4efd-a5ee-893f60fa6b46")
 		(sheetname "Input Buttons")
 		(sheetfile "main-board-buttons.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 0.55)
@@ -12012,6 +12014,7 @@
 		(path "/6850f289-c97b-4b82-8193-41a71ab4569e/d7064c86-c74c-494e-a8c9-9eed15d3bdec")
 		(sheetname "Input Buttons")
 		(sheetfile "main-board-buttons.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 0.55)
@@ -12345,6 +12348,7 @@
 		(path "/6850f289-c97b-4b82-8193-41a71ab4569e/834e10f5-b326-484e-8c9c-92d76648a299")
 		(sheetname "Input Buttons")
 		(sheetfile "main-board-buttons.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 0.55)
@@ -12678,6 +12682,7 @@
 		(path "/6850f289-c97b-4b82-8193-41a71ab4569e/f9b15003-c569-432c-aa53-bee2c59eec02")
 		(sheetname "Input Buttons")
 		(sheetfile "main-board-buttons.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 0.55)
@@ -13272,6 +13277,7 @@
 		(path "/6850f289-c97b-4b82-8193-41a71ab4569e/31d9d9aa-c2dc-41b0-87e5-a498dfbcf732")
 		(sheetname "Input Buttons")
 		(sheetfile "main-board-buttons.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 0.55)
@@ -13605,6 +13611,7 @@
 		(path "/496f49f2-40ab-414f-8ffe-4e7856c3470b")
 		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 0.55)
@@ -15052,7 +15059,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R19"
-			(at 0.213 -1.222 0)
+			(at 0 -1.349 0)
 			(layer "F.SilkS")
 			(uuid "0054500a-39cb-4798-9c3d-830c15ed32bf")
 			(effects
@@ -15426,7 +15433,7 @@
 		(path "/00000000-0000-0000-0000-000061a785b0")
 		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
-		(solder_paste_ratio -0.05)
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 4.47 -0.67)
@@ -17482,7 +17489,6 @@
 		(path "/00000000-0000-0000-0000-0000619429db")
 		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
-		(solder_paste_ratio -0.05)
 		(attr smd)
 		(fp_line
 			(start -3.61 -3.61)
@@ -18328,7 +18334,6 @@
 		(path "/00000000-0000-0000-0000-0000605786b2")
 		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
-		(solder_paste_ratio -0.05)
 		(attr smd)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -19373,6 +19378,7 @@
 		(path "/6850f289-c97b-4b82-8193-41a71ab4569e/f5965cd9-65ee-4c5b-91ee-5944c4a199bd")
 		(sheetname "Input Buttons")
 		(sheetfile "main-board-buttons.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start 0.7 -0.55)
@@ -21114,6 +21120,7 @@
 		(path "/92fda741-d661-4ae8-a135-971352bc72ff/9beaa2a2-0d86-40c9-91a5-e720fafa9853")
 		(sheetname "Sensor Head")
 		(sheetfile "main-board-sensor.kicad_sch")
+		(solder_paste_margin -0.025)
 		(zone_connect 2)
 		(attr smd)
 		(fp_line
@@ -23116,7 +23123,6 @@
 		(path "/1bcb16ea-9cf9-478c-a151-c49615eae3e5")
 		(sheetname "Root")
 		(sheetfile "main-board.kicad_sch")
-		(solder_paste_ratio -0.05)
 		(attr smd)
 		(fp_line
 			(start 0 -1.61)
@@ -24446,6 +24452,7 @@
 		(path "/92fda741-d661-4ae8-a135-971352bc72ff/ef7ca610-6e70-404f-8329-b25323e96786")
 		(sheetname "Sensor Head")
 		(sheetfile "main-board-sensor.kicad_sch")
+		(solder_paste_margin -0.025)
 		(attr smd)
 		(fp_line
 			(start -1.5 -1.135)
@@ -31049,7 +31056,7 @@
 	)
 	(gr_line
 		(start 109.71 72.01)
-		(end 80.29 72.01)
+		(end 83.604 72.01)
 		(stroke
 			(width 0.1524)
 			(type solid)
@@ -31179,6 +31186,16 @@
 		)
 		(layer "B.SilkS")
 		(uuid "d3de50b0-1589-4d91-93f2-c442506abfb3")
+	)
+	(gr_line
+		(start 80.29 72.01)
+		(end 81.454 72.015)
+		(stroke
+			(width 0.1524)
+			(type default)
+		)
+		(layer "B.SilkS")
+		(uuid "d5f6fd98-a47f-4bc8-b505-5df276103179")
 	)
 	(gr_circle
 		(center 60 60)
@@ -42553,6 +42570,37 @@
 				(xy 76.724996 61.997166) (xy 76.698638 62) (xy 73.301362 62) (xy 73.234323 61.980315) (xy 73.213681 61.963681)
 				(xy 73.036319 61.786319) (xy 73.002834 61.724996) (xy 73 61.698638) (xy 73 58.301362) (xy 73.019685 58.234323)
 				(xy 73.036319 58.213681) (xy 73.213681 58.036319) (xy 73.275004 58.002834) (xy 73.301362 58) (xy 74.047467 58)
+			)
+		)
+	)
+	(zone
+		(net 1)
+		(net_name "GND")
+		(layer "B.Cu")
+		(uuid "39dba14d-e758-4a62-8f63-0cccea0bf051")
+		(hatch edge 0.5)
+		(priority 8)
+		(connect_pads
+			(clearance 0.25)
+		)
+		(min_thickness 0.25)
+		(filled_areas_thickness no)
+		(fill yes
+			(thermal_gap 0.5)
+			(thermal_bridge_width 0.5)
+		)
+		(polygon
+			(pts
+				(xy 80.624 69.983) (xy 80.624 73.539) (xy 84.434 73.539) (xy 84.434 69.983)
+			)
+		)
+		(filled_polygon
+			(layer "B.Cu")
+			(pts
+				(xy 84.377039 70.002685) (xy 84.422794 70.055489) (xy 84.434 70.107) (xy 84.434 73.415) (xy 84.414315 73.482039)
+				(xy 84.361511 73.527794) (xy 84.31 73.539) (xy 80.748 73.539) (xy 80.680961 73.519315) (xy 80.635206 73.466511)
+				(xy 80.624 73.415) (xy 80.624 70.107) (xy 80.643685 70.039961) (xy 80.696489 69.994206) (xy 80.748 69.983)
+				(xy 84.31 69.983)
 			)
 		)
 	)
