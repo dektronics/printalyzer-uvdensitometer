@@ -11058,7 +11058,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
 			(at 75.565 114.935 0)
 			(effects
 				(font
@@ -11086,6 +11086,42 @@
 			)
 		)
 		(property "User Label" "3.3V"
+			(at 70.485 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 70.485 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" ""
+			(at 70.485 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" ""
+			(at 70.485 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier PN" ""
 			(at 70.485 114.935 0)
 			(effects
 				(font
@@ -15612,7 +15648,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
 			(at 86.995 114.935 0)
 			(effects
 				(font
@@ -15640,6 +15676,42 @@
 			)
 		)
 		(property "User Label" "3.3V"
+			(at 81.915 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 81.915 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" ""
+			(at 81.915 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" ""
+			(at 81.915 114.935 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier PN" ""
 			(at 81.915 114.935 0)
 			(effects
 				(font
