@@ -146,4 +146,3 @@ this directory's `.gitignore` file.
 ### ECS\_327MVATX-2-CN-TR
 * Status: Included
 * Source: SnapEDA <https://www.snapeda.com/parts/ECS-327MVATX-2-CN-TR/ECS Inc./view-part/>
-* Notes: Model is actually the larger 3.2x2.5mm package, scaling applied in KiCad footprint
