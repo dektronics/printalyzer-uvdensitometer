@@ -6,7 +6,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "Printalyzer UV/VIS Densitometer - Main Board")
-		(date "2024-09-04")
+		(date "2024-09-24")
 		(rev "C")
 		(company "Dektronics, Inc.")
 		(comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
@@ -3840,7 +3840,7 @@
 	)
 	(rectangle
 		(start 163.195 14.605)
-		(end 227.965 95.25)
+		(end 229.235 95.25)
 		(stroke
 			(width 0)
 			(type default)

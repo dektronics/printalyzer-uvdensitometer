@@ -6,7 +6,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "Printalyzer UV/VIS Densitometer - Main Board")
-		(date "2024-09-04")
+		(date "2024-09-24")
 		(rev "C")
 		(company "Dektronics, Inc.")
 		(comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
@@ -5437,7 +5437,7 @@
 		(uuid "3e87b259-dfc1-4885-8dcf-7e7ae39674ed")
 	)
 	(junction
-		(at 154.94 162.56)
+		(at 149.86 141.605)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4160bbf7-ffff-4c5c-a647-5ee58ddecf06")
@@ -5593,7 +5593,7 @@
 		(uuid "f736b218-8ebc-4073-990a-db1cc101b784")
 	)
 	(no_connect
-		(at 170.18 142.24)
+		(at 165.1 121.285)
 		(uuid "044dde97-ee2e-473a-9264-ed4dff1893a5")
 	)
 	(no_connect
@@ -5613,7 +5613,7 @@
 		(uuid "52eaf733-5eed-4272-ba42-07b85a580200")
 	)
 	(no_connect
-		(at 170.18 149.86)
+		(at 165.1 128.905)
 		(uuid "661ca2ba-bce5-4308-99a6-de333a625515")
 	)
 	(no_connect
@@ -5621,7 +5621,7 @@
 		(uuid "71a9f036-1f13-462e-ac9e-81caaaa7f807")
 	)
 	(no_connect
-		(at 170.18 144.78)
+		(at 165.1 123.825)
 		(uuid "8ae05d37-86b4-45ea-800f-f1f9fb167857")
 	)
 	(no_connect
@@ -5633,7 +5633,7 @@
 		(uuid "dde4c43d-f33e-48ba-86f3-779fdfce00c2")
 	)
 	(no_connect
-		(at 151.13 162.56)
+		(at 146.05 141.605)
 		(uuid "fb9a832c-737d-49fb-bbb4-29a0ba3e8178")
 	)
 	(wire
@@ -5728,7 +5728,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 157.48) (xy 186.055 157.48)
+			(xy 165.1 136.525) (xy 180.975 136.525)
 		)
 		(stroke
 			(width 0)
@@ -5948,7 +5948,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 137.16) (xy 187.96 137.16)
+			(xy 165.1 116.205) (xy 182.88 116.205)
 		)
 		(stroke
 			(width 0)
@@ -5978,7 +5978,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 154.94) (xy 184.785 154.94)
+			(xy 165.1 133.985) (xy 179.705 133.985)
 		)
 		(stroke
 			(width 0)
@@ -6018,7 +6018,7 @@
 	)
 	(wire
 		(pts
-			(xy 198.12 140.97) (xy 199.39 140.97)
+			(xy 193.04 120.015) (xy 194.31 120.015)
 		)
 		(stroke
 			(width 0)
@@ -6098,7 +6098,7 @@
 	)
 	(wire
 		(pts
-			(xy 186.055 144.78) (xy 187.96 144.78)
+			(xy 180.975 123.825) (xy 182.88 123.825)
 		)
 		(stroke
 			(width 0)
@@ -6188,7 +6188,7 @@
 	)
 	(wire
 		(pts
-			(xy 206.375 139.7) (xy 206.375 142.24)
+			(xy 201.295 118.745) (xy 201.295 121.285)
 		)
 		(stroke
 			(width 0)
@@ -6308,7 +6308,7 @@
 	)
 	(wire
 		(pts
-			(xy 206.375 132.08) (xy 206.375 134.62)
+			(xy 201.295 111.125) (xy 201.295 113.665)
 		)
 		(stroke
 			(width 0)
@@ -6358,7 +6358,7 @@
 	)
 	(wire
 		(pts
-			(xy 199.39 140.97) (xy 199.39 142.24)
+			(xy 194.31 120.015) (xy 194.31 121.285)
 		)
 		(stroke
 			(width 0)
@@ -6378,7 +6378,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 139.7) (xy 187.96 139.7)
+			(xy 165.1 118.745) (xy 182.88 118.745)
 		)
 		(stroke
 			(width 0)
@@ -6398,7 +6398,7 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 162.56) (xy 154.94 162.56)
+			(xy 152.4 141.605) (xy 149.86 141.605)
 		)
 		(stroke
 			(width 0)
@@ -6508,7 +6508,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.785 154.94) (xy 184.785 142.24)
+			(xy 179.705 133.985) (xy 179.705 121.285)
 		)
 		(stroke
 			(width 0)
@@ -6558,7 +6558,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 132.08) (xy 206.375 132.08)
+			(xy 165.1 111.125) (xy 201.295 111.125)
 		)
 		(stroke
 			(width 0)
@@ -6738,7 +6738,7 @@
 	)
 	(wire
 		(pts
-			(xy 186.055 157.48) (xy 186.055 144.78)
+			(xy 180.975 136.525) (xy 180.975 123.825)
 		)
 		(stroke
 			(width 0)
@@ -7168,7 +7168,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.785 142.24) (xy 187.96 142.24)
+			(xy 179.705 121.285) (xy 182.88 121.285)
 		)
 		(stroke
 			(width 0)
@@ -7263,8 +7263,8 @@
 		(uuid 89634ebd-8f08-4d13-b95c-4ee02080843f)
 	)
 	(rectangle
-		(start 137.16 118.11)
-		(end 216.535 169.545)
+		(start 132.08 97.155)
+		(end 211.455 148.59)
 		(stroke
 			(width 0)
 			(type default)
@@ -7288,7 +7288,7 @@
 	)
 	(rectangle
 		(start 14.605 143.51)
-		(end 135.255 201.295)
+		(end 130.175 201.295)
 		(stroke
 			(width 0)
 			(type default)
@@ -7311,7 +7311,7 @@
 	)
 	(text "Tag-Connect 14-pin footprint is\nused for the debug connection"
 		(exclude_from_sim no)
-		(at 161.29 168.275 0)
+		(at 156.21 147.32 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7344,7 +7344,7 @@
 	)
 	(text "Debug Connector"
 		(exclude_from_sim no)
-		(at 138.43 121.285 0)
+		(at 133.35 100.33 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7541,7 +7541,7 @@
 		(uuid "31815860-1ddc-4ad5-8e39-d1a9df1c9601")
 	)
 	(label "SWCLK"
-		(at 173.355 137.16 0)
+		(at 168.275 116.205 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7574,7 +7574,7 @@
 		(uuid "35ef9c4a-35f6-467b-a704-b1d9354880cf")
 	)
 	(label "USART1_TX"
-		(at 173.355 157.48 0)
+		(at 168.275 136.525 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7607,7 +7607,7 @@
 		(uuid "479331ff-c540-41f4-84e6-b48d65171e59")
 	)
 	(label "SWDIO"
-		(at 173.355 139.7 0)
+		(at 168.275 118.745 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7739,7 +7739,7 @@
 		(uuid "9423d8b7-f0ce-4e91-a7d3-13637d21fd5a")
 	)
 	(label "RESET"
-		(at 173.99 132.08 0)
+		(at 168.91 111.125 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7893,7 +7893,7 @@
 		(uuid "e7369115-d491-4ef3-be3d-f5298992c3e8")
 	)
 	(label "USART1_RX"
-		(at 173.355 154.94 0)
+		(at 168.275 133.985 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -9928,7 +9928,7 @@
 	)
 	(symbol
 		(lib_id "Project:Conn_ST_STDC14")
-		(at 157.48 144.78 0)
+		(at 152.4 123.825 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -9936,7 +9936,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-000060586f63")
 		(property "Reference" "J2"
-			(at 146.2278 143.6116 0)
+			(at 141.1478 122.6566 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9945,7 +9945,7 @@
 			)
 		)
 		(property "Value" "DNI"
-			(at 146.05 148.59 0)
+			(at 140.97 127.635 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9954,7 +9954,7 @@
 			)
 		)
 		(property "Footprint" "Connector:Tag-Connect_TC2070-IDC-FP_2x07_P1.27mm_Vertical"
-			(at 157.48 172.72 0)
+			(at 152.4 151.765 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9963,7 +9963,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.tag-connect.com/wp-content/uploads/bsk-pdf-manager/TC2070-IDC_Datasheet_11.pdf"
-			(at 148.59 176.53 90)
+			(at 143.51 155.575 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9972,7 +9972,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 157.48 144.78 0)
+			(at 152.4 123.825 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9981,7 +9981,7 @@
 			)
 		)
 		(property "Manufacturer" "Tag-Connect"
-			(at 157.48 144.78 0)
+			(at 152.4 123.825 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9990,7 +9990,7 @@
 			)
 		)
 		(property "Manufacturer PN" "TC2070-IDC-050"
-			(at 157.48 144.78 0)
+			(at 152.4 123.825 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9999,7 +9999,7 @@
 			)
 		)
 		(property "User Label" "STDC14"
-			(at 142.875 146.05 0)
+			(at 137.795 125.095 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10489,7 +10489,7 @@
 	)
 	(symbol
 		(lib_id "Project:ESDALC6V1W5")
-		(at 193.04 140.97 0)
+		(at 187.96 120.015 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10497,7 +10497,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-0000605ac89e")
 		(property "Reference" "D8"
-			(at 193.04 133.985 0)
+			(at 187.96 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10505,7 +10505,7 @@
 			)
 		)
 		(property "Value" "ESDALC6V1W5"
-			(at 193.04 148.59 0)
+			(at 187.96 127.635 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10513,7 +10513,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:SOT323-5L"
-			(at 193.04 150.495 0)
+			(at 187.96 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10522,7 +10522,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.st.com/content/ccc/resource/technical/document/datasheet/32/30/02/e6/ac/0f/46/c2/CD00002946.pdf/files/CD00002946.pdf/jcr:content/translations/en.CD00002946.pdf"
-			(at 193.04 139.7 0)
+			(at 187.96 118.745 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10531,7 +10531,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3V SOT323-5"
-			(at 193.04 140.97 0)
+			(at 187.96 120.015 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10540,7 +10540,7 @@
 			)
 		)
 		(property "Manufacturer" "STMicroelectronics"
-			(at 193.04 140.97 0)
+			(at 187.96 120.015 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10549,7 +10549,7 @@
 			)
 		)
 		(property "Manufacturer PN" "ESDALC6V1W5"
-			(at 193.04 140.97 0)
+			(at 187.96 120.015 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10558,7 +10558,7 @@
 			)
 		)
 		(property "Supplier" "LCSC"
-			(at 193.04 140.97 0)
+			(at 187.96 120.015 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10567,7 +10567,7 @@
 			)
 		)
 		(property "Supplier PN" "C703691"
-			(at 193.04 140.97 0)
+			(at 187.96 120.015 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10601,7 +10601,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 154.94 162.56 0)
+		(at 149.86 141.605 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10609,7 +10609,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-0000605bcfa5")
 		(property "Reference" "#PWR0121"
-			(at 154.94 168.91 0)
+			(at 149.86 147.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10618,7 +10618,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 154.94 166.37 0)
+			(at 149.86 145.415 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10626,7 +10626,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 154.94 162.56 0)
+			(at 149.86 141.605 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10635,7 +10635,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 154.94 162.56 0)
+			(at 149.86 141.605 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10644,7 +10644,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 154.94 162.56 0)
+			(at 149.86 141.605 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10666,7 +10666,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 199.39 142.24 0)
+		(at 194.31 121.285 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10674,7 +10674,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-0000605bda4d")
 		(property "Reference" "#PWR0122"
-			(at 199.39 148.59 0)
+			(at 194.31 127.635 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10683,7 +10683,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 199.39 146.05 0)
+			(at 194.31 125.095 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10691,7 +10691,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 199.39 142.24 0)
+			(at 194.31 121.285 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10700,7 +10700,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 199.39 142.24 0)
+			(at 194.31 121.285 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10709,7 +10709,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 199.39 142.24 0)
+			(at 194.31 121.285 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10796,7 +10796,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 206.375 142.24 0)
+		(at 201.295 121.285 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10804,7 +10804,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-0000605ca9d5")
 		(property "Reference" "#PWR0127"
-			(at 206.375 148.59 0)
+			(at 201.295 127.635 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10813,7 +10813,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 206.375 146.05 0)
+			(at 201.295 125.095 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10821,7 +10821,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 206.375 142.24 0)
+			(at 201.295 121.285 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10830,7 +10830,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 206.375 142.24 0)
+			(at 201.295 121.285 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10839,7 +10839,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 206.375 142.24 0)
+			(at 201.295 121.285 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11415,7 +11415,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 157.48 127 0)
+		(at 152.4 106.045 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11423,7 +11423,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-000060c839c0")
 		(property "Reference" "#PWR0133"
-			(at 157.48 130.81 0)
+			(at 152.4 109.855 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11432,7 +11432,7 @@
 			)
 		)
 		(property "Value" "+3.3V"
-			(at 157.48 123.444 0)
+			(at 152.4 102.489 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11440,7 +11440,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 157.48 127 0)
+			(at 152.4 106.045 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11449,7 +11449,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 157.48 127 0)
+			(at 152.4 106.045 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11458,7 +11458,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 157.48 127 0)
+			(at 152.4 106.045 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15072,7 +15072,7 @@
 	)
 	(symbol
 		(lib_id "Device:D_Zener_Small")
-		(at 206.375 137.16 270)
+		(at 201.295 116.205 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15080,7 +15080,7 @@
 		(dnp no)
 		(uuid "496f49f2-40ab-414f-8ffe-4e7856c3470b")
 		(property "Reference" "D7"
-			(at 208.28 135.89 90)
+			(at 203.2 114.935 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15089,7 +15089,7 @@
 			)
 		)
 		(property "Value" "ESD321"
-			(at 208.28 138.43 90)
+			(at 203.2 117.475 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15098,7 +15098,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 206.375 137.16 90)
+			(at 201.295 116.205 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15107,7 +15107,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 206.375 137.16 90)
+			(at 201.295 116.205 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15116,7 +15116,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 206.375 137.16 0)
+			(at 201.295 116.205 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15125,7 +15125,7 @@
 			)
 		)
 		(property "Manufacturer" "Texas Instruments"
-			(at 206.375 137.16 0)
+			(at 201.295 116.205 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15134,7 +15134,7 @@
 			)
 		)
 		(property "Manufacturer PN" "ESD321DYAR"
-			(at 206.375 137.16 0)
+			(at 201.295 116.205 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15143,7 +15143,7 @@
 			)
 		)
 		(property "Supplier" "Digi-Key"
-			(at 206.375 137.16 0)
+			(at 201.295 116.205 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15152,7 +15152,7 @@
 			)
 		)
 		(property "Supplier PN" "296-ESD321DYARCT-ND"
-			(at 206.375 137.16 0)
+			(at 201.295 116.205 0)
 			(effects
 				(font
 					(size 1.27 1.27)

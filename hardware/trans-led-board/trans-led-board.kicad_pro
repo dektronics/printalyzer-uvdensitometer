@@ -6,14 +6,14 @@
         "apply_defaults_to_fp_fields": false,
         "apply_defaults_to_fp_shapes": false,
         "apply_defaults_to_fp_text": false,
-        "board_outline_line_width": 0.038099999999999995,
+        "board_outline_line_width": 0.0381,
         "copper_line_width": 0.254,
         "copper_text_italic": false,
         "copper_text_size_h": 1.524,
         "copper_text_size_v": 1.524,
-        "copper_text_thickness": 0.30479999999999996,
+        "copper_text_thickness": 0.3048,
         "copper_text_upright": false,
-        "courtyard_line_width": 0.049999999999999996,
+        "courtyard_line_width": 0.05,
         "dimension_precision": 4,
         "dimension_units": 3,
         "dimensions": {
@@ -24,13 +24,13 @@
           "text_position": 0,
           "units_format": 1
         },
-        "fab_line_width": 0.09999999999999999,
+        "fab_line_width": 0.1,
         "fab_text_italic": false,
         "fab_text_size_h": 1.0,
         "fab_text_size_v": 1.0,
         "fab_text_thickness": 0.15,
         "fab_text_upright": false,
-        "other_line_width": 0.09999999999999999,
+        "other_line_width": 0.1,
         "other_text_italic": false,
         "other_text_size_h": 1.0,
         "other_text_size_v": 1.0,
@@ -38,18 +38,18 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.0,
-          "width": 1.0
+          "height": 1.55,
+          "width": 0.6
         },
-        "silk_line_width": 0.15239999999999998,
+        "silk_line_width": 0.1524,
         "silk_text_italic": false,
         "silk_text_size_h": 0.8128,
         "silk_text_size_v": 0.8128,
-        "silk_text_thickness": 0.15239999999999998,
+        "silk_text_thickness": 0.1524,
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.39999999999999997
+          "min_clearance": 0.25
         }
       },
       "diff_pair_dimensions": [
@@ -60,7 +60,7 @@
         }
       ],
       "drc_exclusions": [
-        "lib_footprint_mismatch|120000000|50500000|6846aff1-225f-4bcb-9cd9-c7bb7bd65c7e|00000000-0000-0000-0000-000000000000"
+        "lib_footprint_mismatch|120000000|50700000|6846aff1-225f-4bcb-9cd9-c7bb7bd65c7e|00000000-0000-0000-0000-000000000000"
       ],
       "meta": {
         "filename": "board_design_settings.json",
@@ -83,6 +83,7 @@
         "footprint_type_mismatch": "error",
         "hole_clearance": "error",
         "hole_near_hole": "error",
+        "holes_co_located": "warning",
         "invalid_outline": "error",
         "isolated_copper": "warning",
         "item_on_disabled_layer": "error",
@@ -123,21 +124,21 @@
         "allow_blind_buried_vias": false,
         "allow_microvias": false,
         "max_error": 0.005,
-        "min_clearance": 0.0,
+        "min_clearance": 0.15,
         "min_connection": 0.0,
-        "min_copper_edge_clearance": 0.019049999999999997,
-        "min_hole_clearance": 0.25,
+        "min_copper_edge_clearance": 0.3,
+        "min_hole_clearance": 0.2,
         "min_hole_to_hole": 0.25,
-        "min_microvia_diameter": 0.19999999999999998,
-        "min_microvia_drill": 0.09999999999999999,
+        "min_microvia_diameter": 0.2,
+        "min_microvia_drill": 0.1,
         "min_resolved_spokes": 2,
         "min_silk_clearance": 0.0,
-        "min_text_height": 0.7999999999999999,
+        "min_text_height": 0.8,
         "min_text_thickness": 0.08,
-        "min_through_hole_diameter": 0.19999999999999998,
-        "min_track_width": 0.08889999999999999,
-        "min_via_annular_width": 0.049999999999999996,
-        "min_via_diameter": 0.44999999999999996,
+        "min_through_hole_diameter": 0.2,
+        "min_track_width": 0.1,
+        "min_via_annular_width": 0.05,
+        "min_via_diameter": 0.45,
         "solder_mask_to_copper_clearance": 0.0,
         "use_height_for_length_calcs": true
       },
@@ -509,7 +510,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "gerber/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "trans-led-board.step",
@@ -520,6 +521,7 @@
   },
   "schematic": {
     "annotate_start_num": 0,
+    "bom_export_filename": "",
     "bom_fmt_presets": [],
     "bom_fmt_settings": {
       "field_delimiter": ",",
