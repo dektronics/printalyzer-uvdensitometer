@@ -1076,7 +1076,7 @@ void main_menu_about(state_main_menu_t *state, state_controller_t *controller)
 
     sprintf(buf,
         "Printalyzer\n"
-        "Densitometer\n"
+        "UV/VIS Dens\n"
         "%s", app_descriptor->version);
 
     uint8_t option = display_message(buf, NULL, NULL, " OK ");
