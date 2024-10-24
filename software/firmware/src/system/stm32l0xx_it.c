@@ -19,6 +19,7 @@
 #include "stm32l0xx_it.h"
 #include <tusb.h>
 
+#include "board_config.h"
 #include "state_suspend.h"
 
 extern DMA_HandleTypeDef hdma_adc;
@@ -147,8 +148,8 @@ void RTC_IRQHandler(void)
  */
 void EXTI0_1_IRQHandler(void)
 {
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+    HAL_GPIO_EXTI_IRQHandler(BTN2_Pin);
+    HAL_GPIO_EXTI_IRQHandler(BTN1_Pin);
 }
 
 /**
@@ -156,10 +157,10 @@ void EXTI0_1_IRQHandler(void)
  */
 void EXTI4_15_IRQHandler(void)
 {
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
+    HAL_GPIO_EXTI_IRQHandler(SENSOR_INT_Pin);
+    HAL_GPIO_EXTI_IRQHandler(BTN5_Pin);
+    HAL_GPIO_EXTI_IRQHandler(BTN4_Pin);
+    HAL_GPIO_EXTI_IRQHandler(BTN3_Pin);
 }
 
 /**
