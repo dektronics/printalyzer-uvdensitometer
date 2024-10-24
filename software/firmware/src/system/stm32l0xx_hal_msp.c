@@ -276,6 +276,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
         HAL_GPIO_Init(TULED_EN_GPIO_Port, &GPIO_InitStruct);
+
         GPIO_InitStruct.Pin = TVLED_EN_Pin;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
