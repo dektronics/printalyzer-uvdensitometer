@@ -35,7 +35,7 @@
   
   MUIF  (Monochrome User Interface Functions)
     n:  A number 0 to 9 without any quotes, e.g.: 5
-    id: Exactly two characters or numbers in doubl quotes, e.g. "G5".
+    id: Exactly two characters or numbers in double quotes, e.g. "G5".
     cb: A callback function with the following prototype: "uint8_t muif_cb(mui_t *ui, uint8_t msg)"
       There are MANY predefined callback functions, see separate list
     var: Address of a variable. 
@@ -154,7 +154,7 @@ struct muif_struct
   muif_cb cb;                        // callback
 } MUI_PROGMEM;
 
-/* assumes that pointers are 16 bit so encapusalte the wread i another ifdef __AVR__ */
+/* assumes that pointers are 16 bit so encapsulate the wread i another ifdef __AVR__ */
 #if defined(__GNUC__) && defined(__AVR__)
 #  define muif_get_id0(muif) mui_pgm_read(&((muif)->id0))
 #  define muif_get_id1(muif) mui_pgm_read(&((muif)->id1))
@@ -219,9 +219,13 @@ struct muif_struct
 
 
 /* must be smaller than or equal to 255 */
+#ifndef MUI_MAX_TEXT_LEN
 #define MUI_MAX_TEXT_LEN 41
+#endif
 
-#define MUI_MENU_CACHE_CNT 2
+#define MUI_MENU_CACHE_CNT 4
+
+#define MUI_MENU_LAST_FORM_STACK_SIZE 4
 
 struct mui_struct
 {
@@ -268,14 +272,16 @@ struct mui_struct
   fds_t *target_fds;     // used by several task functions as a return / result value
   
   /* last form and field, used by mui_SaveForm and mui_RestoreForm */
-  uint8_t last_form_id;
-  uint8_t last_form_cursor_focus_position;
-  fds_t *last_form_fds;           // not used by mui_RestoreForm, but can be used by field functions
+  uint8_t last_form_id[MUI_MENU_LAST_FORM_STACK_SIZE];
+  uint8_t last_form_cursor_focus_position[MUI_MENU_LAST_FORM_STACK_SIZE];
+  fds_t *last_form_fds;           // not used by mui_RestoreForm, but can be used by field functions, warning: this is the FDS of the field, from where the jump started to the child (cursor_focus_fds)
+  int8_t last_form_stack_pos;
   
   /* menu cursor position backup */
+  /* idea is, to restore the cursor position if we jump to that form */
+  uint8_t menu_form_last_added;
   uint8_t menu_form_id[MUI_MENU_CACHE_CNT];
   uint8_t menu_form_cursor_focus_position[MUI_MENU_CACHE_CNT];
-  uint8_t menu_form_last_added;
 } ;
 
 #define mui_IsCursorFocus(mui) ((mui)->dflags & MUIF_DFLAG_IS_CURSOR_FOCUS)
@@ -581,8 +587,9 @@ uint8_t mui_GetSelectableFieldOptionCnt(mui_t *ui, fds_t *fds);
 void mui_EnterForm(mui_t *ui, fds_t *fds, uint8_t initial_cursor_position);
 void mui_LeaveForm(mui_t *ui);
 uint8_t mui_GotoForm(mui_t *ui, uint8_t form_id, uint8_t initial_cursor_position);
+void mui_SaveFormWithCursorPosition(mui_t *ui, uint8_t cursor_pos); /* Save current form with manully provied cursor position, Used together with mui_RestoreForm */
 void mui_SaveForm(mui_t *ui);     /* Save current form+cursor position. Used together with mui_RestoreForm */
-void mui_RestoreForm(mui_t *ui);        /* Restore form and cursor position, previously saved with mui_SaveForm */
+uint8_t mui_RestoreForm(mui_t *ui);        /* Restore form and cursor position, previously saved with mui_SaveForm */
 void mui_SaveCursorPosition(mui_t *ui, uint8_t cursor_position);         /* stores a cursor position for use with mui_GotoFormAutoCursorPosition */
 uint8_t mui_GotoFormAutoCursorPosition(mui_t *ui, uint8_t form_id);
 

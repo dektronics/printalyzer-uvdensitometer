@@ -102,7 +102,7 @@ static uint8_t u8x8_find_first_diff(uint8_t a, uint8_t b)
 
 */
 
-#ifdef __unix__
+#ifdef __unix__xxxxxx_THIS_IS_DISABLED
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -136,7 +136,7 @@ uint8_t u8x8_GetMenuEvent(u8x8_t *u8x8)
 #define U8X8_DEBOUNCE_WAIT 2
 /* do debounce and return a GPIO msg which indicates the event */
 /* returns 0, if there is no event */
-#if defined(__GNUC__) && !defined(__CYGWIN__)
+#if defined(__GNUC__) && !defined(_WIN32)
 # pragma weak  u8x8_GetMenuEvent
 #endif
 uint8_t u8x8_GetMenuEvent(u8x8_t *u8x8)
