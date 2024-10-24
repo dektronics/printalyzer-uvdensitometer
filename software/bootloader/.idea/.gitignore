@@ -14,3 +14,5 @@ inspectionProfiles/
 runConfigurations/
 # Other configuration files
 perl5local.xml
+editor.xml
+misc.xml
