@@ -6,7 +6,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "Printalyzer UV/VIS Densitometer - Main Board")
-		(date "2024-09-24")
+		(date "2024-10-24")
 		(rev "C")
 		(company "Dektronics, Inc.")
 		(comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
@@ -147,151 +147,6 @@
 				)
 			)
 		)
-		(symbol "Device:D_Zener_Small"
-			(pin_numbers hide)
-			(pin_names
-				(offset 0.254) hide)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "D"
-				(at 0 2.286 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "D_Zener_Small"
-				(at 0 -2.286 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Zener diode, small symbol"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "diode"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "D_Zener_Small_0_1"
-				(polyline
-					(pts
-						(xy 0.762 0) (xy -0.762 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.254 1.016) (xy -0.762 1.016) (xy -0.762 -1.016)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.762 1.016) (xy -0.762 0) (xy 0.762 -1.016) (xy 0.762 1.016)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "D_Zener_Small_1_1"
-				(pin passive line
-					(at -2.54 0 0)
-					(length 1.778)
-					(name "K"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 0 180)
-					(length 1.778)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
 		(symbol "Device:R_Small"
 			(pin_numbers hide)
 			(pin_names
@@ -398,6 +253,151 @@
 					(at 0 -2.54 90)
 					(length 0.762)
 					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Project:ESD321DYAR"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0.254) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 2.286 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "ESD321DYAR"
+				(at 0 -2.286 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
+				(at 0 -7.874 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
+				(at 0 -10.414 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
+				(at 0 -5.334 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "ESD321DYAR_0_1"
+				(polyline
+					(pts
+						(xy 0.762 0) (xy -0.762 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.254 1.016) (xy -0.762 1.016) (xy -0.762 -1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 1.016) (xy -0.762 0) (xy 0.762 -1.016) (xy 0.762 1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+			)
+			(symbol "ESD321DYAR_1_1"
+				(pin passive line
+					(at 2.54 0 180)
+					(length 1.778)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -2.54 0 0)
+					(length 1.778)
+					(name "K"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3425,7 +3425,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D_Zener_Small")
+		(lib_id "Project:ESD321DYAR")
 		(at 33.02 148.59 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3452,7 +3452,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 33.02 148.59 90)
+			(at 25.146 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3461,7 +3461,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 33.02 148.59 90)
+			(at 22.606 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3470,7 +3470,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 33.02 148.59 0)
+			(at 27.686 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3803,7 +3803,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D_Zener_Small")
+		(lib_id "Project:ESD321DYAR")
 		(at 41.275 33.02 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3830,7 +3830,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 41.275 33.02 90)
+			(at 33.401 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3839,7 +3839,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 41.275 33.02 90)
+			(at 30.861 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3848,7 +3848,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 41.275 33.02 0)
+			(at 35.941 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4248,7 +4248,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D_Zener_Small")
+		(lib_id "Project:ESD321DYAR")
 		(at 41.275 86.36 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4275,7 +4275,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 41.275 86.36 90)
+			(at 33.401 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4284,7 +4284,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 41.275 86.36 90)
+			(at 30.861 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4293,7 +4293,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 41.275 86.36 0)
+			(at 35.941 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4943,7 +4943,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D_Zener_Small")
+		(lib_id "Project:ESD321DYAR")
 		(at 41.275 68.58 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4970,7 +4970,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 41.275 68.58 90)
+			(at 33.401 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4979,7 +4979,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 41.275 68.58 90)
+			(at 30.861 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4988,7 +4988,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 41.275 68.58 0)
+			(at 35.941 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5493,7 +5493,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D_Zener_Small")
+		(lib_id "Project:ESD321DYAR")
 		(at 41.275 117.475 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5520,7 +5520,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 41.275 117.475 90)
+			(at 33.401 117.475 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5529,7 +5529,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 41.275 117.475 90)
+			(at 30.861 117.475 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5538,7 +5538,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 41.275 117.475 0)
+			(at 35.941 117.475 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5598,7 +5598,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D_Zener_Small")
+		(lib_id "Project:ESD321DYAR")
 		(at 41.275 50.8 270)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5625,7 +5625,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:D_TI_SOD-523_DYA0002A"
-			(at 41.275 50.8 90)
+			(at 33.401 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5634,7 +5634,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd321.pdf"
-			(at 41.275 50.8 90)
+			(at 30.861 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5643,7 +5643,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 3.6VWM 6.3VC SOD523"
-			(at 41.275 50.8 0)
+			(at 35.941 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
