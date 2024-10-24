@@ -141,7 +141,9 @@ static const char *color_output_info[] = {
 #endif /* ELOG_COLOR_ENABLE */
 
 static bool get_fmt_enabled(uint8_t level, size_t set);
-static void elog_set_filter_tag_lvl_default();
+static bool get_fmt_used_and_enabled_u32(uint8_t level, size_t set, uint32_t arg);
+static bool get_fmt_used_and_enabled_ptr(uint8_t level, size_t set, const char* arg);
+static void elog_set_filter_tag_lvl_default(void);
 
 /* EasyLogger assert hook */
 void (*elog_assert_hook)(const char* expr, const char* func, size_t line);
@@ -185,8 +187,8 @@ ElogErrCode elog_init(void) {
     elog.output_is_locked_before_disable = false;
 
 #ifdef ELOG_COLOR_ENABLE
-    /* disable text color by default */
-    elog_set_text_color_enabled(false);
+    /* enable text color by default */
+    elog_set_text_color_enabled(true);
 #endif
 
     /* set level is ELOG_LVL_VERBOSE */
@@ -284,6 +286,8 @@ void elog_set_output_enabled(bool enabled) {
  * @param enabled TRUE: enable FALSE:disable
  */
 void elog_set_text_color_enabled(bool enabled) {
+    ELOG_ASSERT((enabled == false) || (enabled == true));
+
     elog.text_color_enabled = enabled;
 }
 
@@ -389,7 +393,7 @@ void elog_output_unlock(void) {
 /**
  * set log filter's tag level val to default
  */
-static void elog_set_filter_tag_lvl_default()
+static void elog_set_filter_tag_lvl_default(void)
 {
     uint8_t i = 0;
 
@@ -501,7 +505,7 @@ uint8_t elog_get_filter_tag_lvl(const char *tag)
  * @param format output format
  * @param ... args
  */
-void elog_raw(const char *format, ...) {
+void elog_raw_output(const char *format, ...) {
     va_list args;
     size_t log_len = 0;
     int fmt_result;
@@ -630,27 +634,29 @@ void elog_output(uint8_t level, const char *tag, const char *file, const char *f
         log_len += elog_strcpy(log_len, log_buf + log_len, "] ");
     }
     /* package file directory and name, function name and line number info */
-    if (get_fmt_enabled(level, ELOG_FMT_DIR | ELOG_FMT_FUNC | ELOG_FMT_LINE)) {
+    if (get_fmt_used_and_enabled_ptr(level, ELOG_FMT_DIR, file) ||
+            get_fmt_used_and_enabled_ptr(level, ELOG_FMT_FUNC, func) ||
+            get_fmt_used_and_enabled_u32(level, ELOG_FMT_LINE, line)) {
         log_len += elog_strcpy(log_len, log_buf + log_len, "(");
         /* package file info */
-        if (get_fmt_enabled(level, ELOG_FMT_DIR)) {
+        if (get_fmt_used_and_enabled_ptr(level, ELOG_FMT_DIR, file)) {
             log_len += elog_strcpy(log_len, log_buf + log_len, file);
-            if (get_fmt_enabled(level, ELOG_FMT_FUNC)) {
+            if (get_fmt_used_and_enabled_ptr(level, ELOG_FMT_FUNC, func)) {
                 log_len += elog_strcpy(log_len, log_buf + log_len, ":");
-            } else if (get_fmt_enabled(level, ELOG_FMT_LINE)) {
+            } else if (get_fmt_used_and_enabled_u32(level, ELOG_FMT_LINE, line)) {
                 log_len += elog_strcpy(log_len, log_buf + log_len, " ");
             }
         }
         /* package line info */
-        if (get_fmt_enabled(level, ELOG_FMT_LINE)) {
+        if (get_fmt_used_and_enabled_u32(level, ELOG_FMT_LINE, line)) {
             snprintf(line_num, ELOG_LINE_NUM_MAX_LEN, "%ld", line);
             log_len += elog_strcpy(log_len, log_buf + log_len, line_num);
-            if (get_fmt_enabled(level, ELOG_FMT_FUNC)) {
+            if (get_fmt_used_and_enabled_ptr(level, ELOG_FMT_FUNC, func)) {
                 log_len += elog_strcpy(log_len, log_buf + log_len, " ");
             }
         }
         /* package func info */
-        if (get_fmt_enabled(level, ELOG_FMT_FUNC)) {
+        if (get_fmt_used_and_enabled_ptr(level, ELOG_FMT_FUNC, func)) {
             log_len += elog_strcpy(log_len, log_buf + log_len, func);
             
         }
@@ -733,6 +739,13 @@ static bool get_fmt_enabled(uint8_t level, size_t set) {
     } else {
         return false;
     }
+}
+
+static bool get_fmt_used_and_enabled_u32(uint8_t level, size_t set, uint32_t arg) {
+    return arg && get_fmt_enabled(level, set);
+}
+static bool get_fmt_used_and_enabled_ptr(uint8_t level, size_t set, const char* arg) {
+    return arg && get_fmt_enabled(level, set);
 }
 
 /**
@@ -913,7 +926,7 @@ void elog_hexdump(const char *name, uint8_t width, const void *buf, uint16_t siz
         elog_async_output(ELOG_LVL_DEBUG, log_buf, log_len);
 #elif defined(ELOG_BUF_OUTPUT_ENABLE)
         extern void elog_buf_output(const char *log, size_t size);
-    elog_buf_output(log_buf, log_len);
+        elog_buf_output(log_buf, log_len);
 #else
         elog_port_output(log_buf, log_len);
 #endif
