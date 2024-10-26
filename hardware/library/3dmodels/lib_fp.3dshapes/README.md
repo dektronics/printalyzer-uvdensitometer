@@ -146,3 +146,7 @@ this directory's `.gitignore` file.
 ### ECS\_327MVATX-2-CN-TR
 * Status: Included
 * Source: SnapEDA <https://www.snapeda.com/parts/ECS-327MVATX-2-CN-TR/ECS Inc./view-part/>
+
+### Seoul\_Viosys\_Z5\_CUN26A1B
+* Status: Included
+* Source: GrabCAD <https://grabcad.com/library/seoul-viosys-z5-cun26a1b-1>
