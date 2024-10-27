@@ -38,8 +38,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.55,
-          "width": 0.6
+          "height": 3.3,
+          "width": 1.3
         },
         "silk_line_width": 0.1524,
         "silk_text_italic": false,
@@ -60,6 +60,13 @@
         }
       ],
       "drc_exclusions": [
+        "courtyards_overlap|117750001|77750001|00000000-0000-0000-0000-000060c24f45|63a4e5e2-cd84-4505-b3a1-4aee8d9ae11c",
+        "courtyards_overlap|117750001|82204419|00000000-0000-0000-0000-000060c24f45|9c28e493-15b5-4024-aed3-e2872783f4bc",
+        "courtyards_overlap|122204419|77750001|00000000-0000-0000-0000-000060c24f45|7dcd44ba-c073-4c43-bee9-5e4b5216c051",
+        "courtyards_overlap|122249999|82204419|00000000-0000-0000-0000-000060c24f45|d0ee221f-04b7-469b-a26b-09c8f8a21737",
+        "isolated_copper|117892540|53224185|0b3fe595-7472-4e97-9081-7a21a4089542|00000000-0000-0000-0000-000000000000",
+        "isolated_copper|121359312|85497185|0b3fe595-7472-4e97-9081-7a21a4089542|00000000-0000-0000-0000-000000000000",
+        "isolated_copper|122207539|60024185|0b3fe595-7472-4e97-9081-7a21a4089542|00000000-0000-0000-0000-000000000000",
         "lib_footprint_mismatch|120000000|50700000|6846aff1-225f-4bcb-9cd9-c7bb7bd65c7e|00000000-0000-0000-0000-000000000000"
       ],
       "meta": {
@@ -501,7 +508,20 @@
     "meta": {
       "version": 3
     },
-    "net_colors": null,
+    "net_colors": {
+      "/D1_C": "rgb(142, 172, 205)",
+      "/D1_PAD": "rgb(73, 54, 40)",
+      "/D2_C": "rgb(218, 131, 89)",
+      "/D3_C": "rgb(218, 131, 89)",
+      "/D4_C": "rgb(218, 131, 89)",
+      "/D5_C": "rgb(218, 131, 89)",
+      "/UV_LED": "rgb(142, 172, 205)",
+      "/VIS_LED": "rgb(218, 131, 89)",
+      "Earth": "rgb(165, 182, 141)",
+      "GND": "rgb(112, 92, 83)",
+      "Net-(U1-EN)": "rgb(218, 131, 89)",
+      "Net-(U2-EN)": "rgb(142, 172, 205)"
+    },
     "netclass_assignments": null,
     "netclass_patterns": []
   },
@@ -571,11 +591,47 @@
           "label": "DNP",
           "name": "${DNP}",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer",
+          "name": "Manufacturer",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer PN",
+          "name": "Manufacturer PN",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Supplier",
+          "name": "Supplier",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Supplier PN",
+          "name": "Supplier PN",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": true
         }
       ],
       "filter_string": "",
       "group_symbols": true,
-      "name": "Grouped By Value",
+      "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
     },

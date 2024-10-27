@@ -6,8 +6,8 @@
 	(paper "USLetter")
 	(title_block
 		(title "Printalyzer UV/VIS Densitometer - Transmission LED Board")
-		(date "2023-11-27")
-		(rev "B")
+		(date "2024-10-27")
+		(rev "C")
 		(company "Dektronics, Inc.")
 		(comment 1 "Derek Konigsberg <dkonigsberg@dektronics.com>")
 	)
@@ -543,6 +543,216 @@
 						)
 					)
 					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Device:LED_Pad"
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 5.715 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "LED_Pad"
+				(at 0 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Light emitting diode with pad"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "LED diode pad"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "LED* LED_SMD:* LED_THT:*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "LED_Pad_0_1"
+				(polyline
+					(pts
+						(xy -1.27 -1.27) (xy -1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -2.54) (xy 0 -2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -0.508) (xy -2.032 -2.032) (xy 2.032 -2.032) (xy 2.032 -0.508)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.889 1.397) (xy 0.635 2.921) (xy -0.127 2.921) (xy 0.635 2.921) (xy 0.635 2.159)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.381 1.397) (xy 1.905 2.921) (xy 1.143 2.921) (xy 1.905 2.921) (xy 1.905 2.159)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "LED_Pad_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -5.08 90)
+					(length 2.54)
+					(name "PAD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1559,34 +1769,46 @@
 		)
 	)
 	(junction
-		(at 113.03 82.55)
+		(at 113.03 39.37)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "0f85856b-041b-4bcf-aaac-ced7e590fd07")
 	)
 	(junction
-		(at 38.735 19.685)
+		(at 95.885 74.295)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "3459d7e9-6fc1-46d9-89f0-d5d1bfb6ba6a")
+		(uuid "5577b87f-d3cf-4e41-a01e-8f24188fbf6f")
 	)
 	(junction
-		(at 113.03 74.295)
+		(at 33.655 24.13)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "59b4aaaf-9022-49f4-82dd-b93e0bb868b1")
+	)
+	(junction
+		(at 95.885 79.375)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "66f38af7-9cea-4d5e-9096-9ce96447c97e")
+	)
+	(junction
+		(at 113.03 31.115)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6fd0d3f3-c2ab-4ff2-a0a1-38f4a188ad3b")
 	)
 	(junction
-		(at 38.735 34.925)
+		(at 20.32 20.955)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "869b7c72-8857-4541-92d1-ac65e51907ed")
+		(uuid "74536dcf-842b-4331-b46c-b70c9d23a74b")
 	)
 	(junction
-		(at 95.885 31.115)
+		(at 33.655 33.655)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "a4810dfd-b845-4fce-b901-c11e8572a717")
+		(uuid "85a4fd3e-5531-4fcc-afc3-a84752c6a71b")
 	)
 	(junction
 		(at 60.325 34.925)
@@ -1601,13 +1823,13 @@
 		(uuid "d953fc3a-c703-4419-a2b7-7fadac46924b")
 	)
 	(junction
-		(at 26.67 37.465)
+		(at 95.885 76.835)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "da5b914a-b8c7-4122-8c8b-ad7932e773d7")
+		(uuid "e1891ddf-e31b-4a0e-a630-82e74c192432")
 	)
 	(junction
-		(at 113.03 90.805)
+		(at 113.03 47.625)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e75d4ee6-d03c-4f67-a9ee-2050de277b0b")
@@ -1625,28 +1847,20 @@
 		(uuid "f89dcb5c-ff0c-4934-8897-fff2dda57379")
 	)
 	(no_connect
-		(at 93.98 86.995)
+		(at 93.98 43.815)
 		(uuid "1441850d-bdd8-4a0e-a700-6ccbb04183c4")
 	)
 	(no_connect
-		(at 93.98 84.455)
+		(at 93.98 41.275)
 		(uuid "250a7720-2bdb-4bf6-a281-5eb5033fb52b")
 	)
 	(no_connect
-		(at 93.98 43.815)
-		(uuid "a1fb6da1-38e9-4c62-aef9-07abd6df44a0")
+		(at 93.98 86.995)
+		(uuid "a4122259-c856-44ac-bc28-ace47bee2c06")
 	)
 	(no_connect
-		(at 93.98 41.275)
-		(uuid "d021d79a-c536-456d-9b0f-f06023b7a3c6")
-	)
-	(no_connect
-		(at 93.98 38.735)
-		(uuid "ee1c67d7-11d5-4e5a-bedc-deb6d59973b2")
-	)
-	(no_connect
-		(at 93.98 36.195)
-		(uuid "fe212b59-e84e-4f5a-85b0-b01749616ebd")
+		(at 93.98 84.455)
+		(uuid "f2d8ed11-3255-4248-a11f-7a0d64e2ef13")
 	)
 	(wire
 		(pts
@@ -1660,7 +1874,7 @@
 	)
 	(wire
 		(pts
-			(xy 103.505 82.55) (xy 100.965 82.55)
+			(xy 103.505 39.37) (xy 100.965 39.37)
 		)
 		(stroke
 			(width 0)
@@ -1670,7 +1884,7 @@
 	)
 	(wire
 		(pts
-			(xy 31.75 26.67) (xy 40.64 26.67)
+			(xy 31.75 28.575) (xy 40.64 28.575)
 		)
 		(stroke
 			(width 0)
@@ -1680,17 +1894,27 @@
 	)
 	(wire
 		(pts
-			(xy 95.885 31.115) (xy 103.505 31.115)
+			(xy 33.655 26.035) (xy 31.75 26.035)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "137b6fda-9b84-4b31-863c-7c740d0f8bf6")
+		(uuid "15a2a25d-6e91-4bc8-ab6e-5d2bdb2435e9")
 	)
 	(wire
 		(pts
-			(xy 93.98 74.295) (xy 103.505 74.295)
+			(xy 107.315 79.375) (xy 107.315 81.915)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1d1c2bca-0cb0-45bb-aab3-48db5988f09e")
+	)
+	(wire
+		(pts
+			(xy 93.98 31.115) (xy 103.505 31.115)
 		)
 		(stroke
 			(width 0)
@@ -1700,7 +1924,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 79.375) (xy 93.98 79.375)
+			(xy 99.06 36.195) (xy 93.98 36.195)
 		)
 		(stroke
 			(width 0)
@@ -1720,6 +1944,26 @@
 	)
 	(wire
 		(pts
+			(xy 95.885 74.295) (xy 103.505 74.295)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "25573c38-59ae-4c55-b54a-8038d77177d9")
+	)
+	(wire
+		(pts
+			(xy 31.75 33.655) (xy 33.655 33.655)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b5a4fb5-8db8-498b-a6e3-cafc2d7c3588")
+	)
+	(wire
+		(pts
 			(xy 73.66 78.105) (xy 69.85 78.105)
 		)
 		(stroke
@@ -1730,13 +1974,13 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 37.465) (xy 26.67 38.1)
+			(xy 95.885 81.915) (xy 93.98 81.915)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "369ff248-5984-4bba-a878-06788b60e3cb")
+		(uuid "3524d5b0-1bbe-4b03-ace2-bc4772b3cf2d")
 	)
 	(wire
 		(pts
@@ -1750,16 +1994,6 @@
 	)
 	(wire
 		(pts
-			(xy 33.655 34.925) (xy 38.735 34.925)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3ab2bcb5-e51f-49f4-84dc-224dfd2ae25f")
-	)
-	(wire
-		(pts
 			(xy 83.82 22.86) (xy 83.82 26.035)
 		)
 		(stroke
@@ -1770,23 +2004,13 @@
 	)
 	(wire
 		(pts
-			(xy 111.125 82.55) (xy 113.03 82.55)
+			(xy 111.125 39.37) (xy 113.03 39.37)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "3ea52431-2213-4785-85f6-98cadabfaba5")
-	)
-	(wire
-		(pts
-			(xy 95.885 33.655) (xy 93.98 33.655)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "42714091-05e0-44e6-9930-cab877ce375e")
 	)
 	(wire
 		(pts
@@ -1800,6 +2024,16 @@
 	)
 	(wire
 		(pts
+			(xy 95.885 76.835) (xy 95.885 79.375)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4a4f0d79-8e94-40de-8f38-585e1b0b841c")
+	)
+	(wire
+		(pts
 			(xy 73.66 40.005) (xy 68.58 40.005)
 		)
 		(stroke
@@ -1810,27 +2044,7 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 37.465) (xy 27.94 37.465)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "580b0b64-d116-4528-876a-51ca359be15f")
-	)
-	(wire
-		(pts
-			(xy 33.655 24.13) (xy 31.75 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "59e1c329-8979-4fb9-a089-53d4d89a7c7a")
-	)
-	(wire
-		(pts
-			(xy 95.885 31.115) (xy 95.885 33.655)
+			(xy 95.885 74.295) (xy 95.885 76.835)
 		)
 		(stroke
 			(width 0)
@@ -1850,7 +2064,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 82.55) (xy 113.03 74.295)
+			(xy 113.03 39.37) (xy 113.03 31.115)
 		)
 		(stroke
 			(width 0)
@@ -1860,13 +2074,33 @@
 	)
 	(wire
 		(pts
-			(xy 100.965 82.55) (xy 100.965 76.835)
+			(xy 33.655 24.13) (xy 33.655 26.035)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "69753e43-45d8-417f-8a90-88be404fd9f4")
+	)
+	(wire
+		(pts
+			(xy 100.965 39.37) (xy 100.965 33.655)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "6c6d4f35-54d3-409e-a3fb-3ab143999d30")
+	)
+	(wire
+		(pts
+			(xy 93.98 79.375) (xy 95.885 79.375)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d6965db-077f-462b-b703-5f4afbd08d2a")
 	)
 	(wire
 		(pts
@@ -1880,7 +2114,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 90.805) (xy 99.06 79.375)
+			(xy 99.06 47.625) (xy 99.06 36.195)
 		)
 		(stroke
 			(width 0)
@@ -1920,7 +2154,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 74.295) (xy 113.03 72.39)
+			(xy 113.03 31.115) (xy 113.03 29.21)
 		)
 		(stroke
 			(width 0)
@@ -1930,7 +2164,7 @@
 	)
 	(wire
 		(pts
-			(xy 103.505 99.06) (xy 97.155 99.06)
+			(xy 103.505 55.88) (xy 97.155 55.88)
 		)
 		(stroke
 			(width 0)
@@ -1960,7 +2194,7 @@
 	)
 	(wire
 		(pts
-			(xy 103.505 90.805) (xy 99.06 90.805)
+			(xy 103.505 47.625) (xy 99.06 47.625)
 		)
 		(stroke
 			(width 0)
@@ -1970,23 +2204,13 @@
 	)
 	(wire
 		(pts
-			(xy 33.655 31.75) (xy 33.655 34.925)
+			(xy 20.32 20.955) (xy 26.67 20.955)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8fdae5be-9095-4492-8770-199ce9b42026")
-	)
-	(wire
-		(pts
-			(xy 26.67 36.83) (xy 26.67 37.465)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9293c200-db3d-45eb-a22b-e3265231466f")
+		(uuid "91db98bc-1999-4ca2-9eba-84c00fe385b6")
 	)
 	(wire
 		(pts
@@ -2000,17 +2224,7 @@
 	)
 	(wire
 		(pts
-			(xy 33.655 19.685) (xy 38.735 19.685)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9b6e706e-b3c6-449e-881c-c25029dac419")
-	)
-	(wire
-		(pts
-			(xy 97.155 81.915) (xy 93.98 81.915)
+			(xy 97.155 38.735) (xy 93.98 38.735)
 		)
 		(stroke
 			(width 0)
@@ -2020,7 +2234,17 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 99.06) (xy 113.03 90.805)
+			(xy 33.655 33.655) (xy 33.655 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9cc29323-6a98-4fe6-8d59-a2aa7f133a63")
+	)
+	(wire
+		(pts
+			(xy 113.03 55.88) (xy 113.03 47.625)
 		)
 		(stroke
 			(width 0)
@@ -2030,13 +2254,23 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 29.21) (xy 113.03 31.115)
+			(xy 113.03 72.39) (xy 113.03 74.295)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "a544dc41-8405-4f45-b1a9-a00a1a49ef14")
+	)
+	(wire
+		(pts
+			(xy 95.885 79.375) (xy 95.885 81.915)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b135b78b-ef47-4a83-a103-f2c5e2f6254f")
 	)
 	(wire
 		(pts
@@ -2050,7 +2284,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.155 99.06) (xy 97.155 81.915)
+			(xy 97.155 55.88) (xy 97.155 38.735)
 		)
 		(stroke
 			(width 0)
@@ -2060,7 +2294,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.125 74.295) (xy 113.03 74.295)
+			(xy 111.125 31.115) (xy 113.03 31.115)
 		)
 		(stroke
 			(width 0)
@@ -2080,7 +2314,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 90.805) (xy 113.03 82.55)
+			(xy 113.03 47.625) (xy 113.03 39.37)
 		)
 		(stroke
 			(width 0)
@@ -2100,6 +2334,26 @@
 	)
 	(wire
 		(pts
+			(xy 107.315 81.915) (xy 114.935 81.915)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c95e18c1-8efa-43d3-be01-4074636d2161")
+	)
+	(wire
+		(pts
+			(xy 93.98 76.835) (xy 95.885 76.835)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d1b22b5b-e425-4d10-8b40-eb5ba7eb65cf")
+	)
+	(wire
+		(pts
 			(xy 73.66 34.925) (xy 69.85 34.925)
 		)
 		(stroke
@@ -2110,17 +2364,7 @@
 	)
 	(wire
 		(pts
-			(xy 31.75 31.75) (xy 33.655 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e058779a-47c0-4b1b-b1db-0272e209d024")
-	)
-	(wire
-		(pts
-			(xy 111.125 99.06) (xy 113.03 99.06)
+			(xy 111.125 55.88) (xy 113.03 55.88)
 		)
 		(stroke
 			(width 0)
@@ -2130,7 +2374,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.125 90.805) (xy 113.03 90.805)
+			(xy 111.125 47.625) (xy 113.03 47.625)
 		)
 		(stroke
 			(width 0)
@@ -2140,7 +2384,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.965 76.835) (xy 93.98 76.835)
+			(xy 100.965 33.655) (xy 93.98 33.655)
 		)
 		(stroke
 			(width 0)
@@ -2150,23 +2394,23 @@
 	)
 	(wire
 		(pts
-			(xy 95.885 31.115) (xy 93.98 31.115)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ee257833-f9f7-4463-8a2d-5c2c09b97a14")
-	)
-	(wire
-		(pts
-			(xy 31.75 29.21) (xy 40.64 29.21)
+			(xy 31.75 31.115) (xy 40.64 31.115)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "efa2078f-3162-4cbb-bbd7-aad48c7eb4a1")
+	)
+	(wire
+		(pts
+			(xy 20.32 20.955) (xy 20.32 22.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f673f3e7-34ac-4d9a-90ec-8aea1ebf7c6a")
 	)
 	(wire
 		(pts
@@ -2180,23 +2424,23 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 31.115) (xy 111.125 31.115)
+			(xy 93.98 74.295) (xy 95.885 74.295)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7c3c5f1-86fe-44f8-a31b-1195a934c12b")
+	)
+	(wire
+		(pts
+			(xy 113.03 74.295) (xy 111.125 74.295)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "faa900da-d3b3-4559-892e-df777a604330")
-	)
-	(wire
-		(pts
-			(xy 33.655 19.685) (xy 33.655 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ffe394bc-647e-425a-bdb7-16cc4a4661ef")
 	)
 	(rectangle
 		(start 14.605 14.605)
@@ -2290,7 +2534,7 @@
 		)
 		(uuid "bd9813bf-3e29-4bb6-86b8-0d24e640021b")
 	)
-	(text "16.5k => 50mA\n8.25k => 100mA"
+	(text "8.25k => 100mA"
 		(exclude_from_sim no)
 		(at 113.03 110.49 0)
 		(effects
@@ -2301,8 +2545,19 @@
 		)
 		(uuid "c4eca00b-0dbf-48c4-9666-4ed6d4151ab2")
 	)
+	(label "D1_PAD"
+		(at 114.935 81.915 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "0c7de169-9dec-4628-9977-473772d56c1f")
+	)
 	(label "D4_C"
-		(at 93.98 76.835 0)
+		(at 93.98 33.655 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2313,7 +2568,7 @@
 		(uuid "12313789-cccf-4cc0-833c-fadbb39879a7")
 	)
 	(label "VIS_LED"
-		(at 40.64 29.21 180)
+		(at 40.64 28.575 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2335,7 +2590,7 @@
 		(uuid "3212a3d9-4b09-4575-9a45-b947efcb0bab")
 	)
 	(label "D5_C"
-		(at 93.98 74.295 0)
+		(at 93.98 31.115 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2346,7 +2601,7 @@
 		(uuid "5877437d-5b2f-4672-92c4-082746893d98")
 	)
 	(label "D1_C"
-		(at 97.79 31.115 0)
+		(at 97.79 74.295 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2368,7 +2623,7 @@
 		(uuid "a5e0dcb3-8a62-4feb-8665-34d890f53883")
 	)
 	(label "D3_C"
-		(at 93.98 79.375 0)
+		(at 93.98 36.195 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2379,7 +2634,7 @@
 		(uuid "bd41862e-60f9-4b51-b207-3b778a4fd80e")
 	)
 	(label "UV_LED"
-		(at 40.64 26.67 180)
+		(at 40.64 31.115 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2390,7 +2645,7 @@
 		(uuid "f1c01073-f2b3-4c73-9975-124cd5c1ab3e")
 	)
 	(label "D2_C"
-		(at 93.98 81.915 0)
+		(at 93.98 38.735 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2402,15 +2657,15 @@
 	)
 	(symbol
 		(lib_id "Device:LED_Filled")
-		(at 107.315 31.115 0)
+		(at 107.315 55.88 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-0000609352d1")
-		(property "Reference" "D1"
-			(at 107.315 28.575 0)
+		(property "Reference" "D2"
+			(at 107.315 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2418,7 +2673,7 @@
 			)
 		)
 		(property "Value" "VIS LED"
-			(at 107.315 34.925 0)
+			(at 107.315 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2426,7 +2681,7 @@
 			)
 		)
 		(property "Footprint" "lib_fp:SunLike_LED_S1S0_Narrow"
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2435,7 +2690,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2444,7 +2699,7 @@
 			)
 		)
 		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2453,7 +2708,7 @@
 			)
 		)
 		(property "Manufacturer" "Seoul Semiconductor Inc."
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2462,7 +2717,7 @@
 			)
 		)
 		(property "Manufacturer PN" "S1S0-3030309503-0000003S-0P001"
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2471,7 +2726,7 @@
 			)
 		)
 		(property "Supplier" "Digi-Key"
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2480,7 +2735,7 @@
 			)
 		)
 		(property "Supplier PN" "897-S1S0-3030309503-0000003S-0P001CT-ND"
-			(at 107.315 31.115 0)
+			(at 107.315 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2497,7 +2752,7 @@
 		(instances
 			(project "trans-led-board"
 				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
-					(reference "D1")
+					(reference "D2")
 					(unit 1)
 				)
 			)
@@ -2999,109 +3254,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:LED_Filled")
-		(at 107.315 82.55 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0335db72-3e0c-46bb-a445-daa51076d0f3")
-		(property "Reference" "D4"
-			(at 107.315 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "UV LED"
-			(at 107.315 86.36 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "lib_fp:LED_WL-SUTW-2835_Narrow"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/153283387A212.pdf"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "WL-SUTW SMT ULTRAVIOLET TOPLED W 285nm"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "Würth Elektronik"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer PN" "153283387A212"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier" "Digi-Key"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier PN" "732-153283387A212CT-ND"
-			(at 107.315 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c0d5eeee-cb1c-4eaa-9894-41fac24f3909")
-		)
-		(pin "2"
-			(uuid "89a3b3eb-e39c-471c-a177-338b4d51296f")
-		)
-		(instances
-			(project "trans-led-board"
-				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
-					(reference "D4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+5V")
 		(at 83.82 64.135 0)
 		(unit 1)
@@ -3184,7 +3336,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "16.5k"
+		(property "Value" "8.25k"
 			(at 69.85 45.72 0)
 			(effects
 				(font
@@ -3202,7 +3354,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=srchrtrv&DocNm=1773200&DocType=DS&DocLang=English"
+		(property "Datasheet" "https://www.vishay.com/docs/28773/crcwce3.pdf"
 			(at 68.58 44.45 0)
 			(effects
 				(font
@@ -3211,7 +3363,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "RES SMD 16.5K OHM 1% 1/16W 0603"
+		(property "Description" "RES SMD 8.25K OHM 1% 1/16W 0603"
 			(at 68.58 44.45 0)
 			(effects
 				(font
@@ -3220,7 +3372,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "TE Connectivity Passive Product"
+		(property "Manufacturer" "Vishay Dale"
 			(at 68.58 44.45 0)
 			(effects
 				(font
@@ -3229,7 +3381,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer PN" "CPF0603F16K5C1"
+		(property "Manufacturer PN" "CRCW06038K25FKEBC"
 			(at 68.58 44.45 0)
 			(effects
 				(font
@@ -3238,7 +3390,7 @@
 				(hide yes)
 			)
 		)
-		(property "Supplier" "Digi-Key"
+		(property "Supplier" "Mouser"
 			(at 68.58 44.45 0)
 			(effects
 				(font
@@ -3247,7 +3399,7 @@
 				(hide yes)
 			)
 		)
-		(property "Supplier PN" "A102224CT-ND"
+		(property "Supplier PN" "71-CRCW06038K25FKEBC"
 			(at 68.58 44.45 0)
 			(effects
 				(font
@@ -3474,8 +3626,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic_MountingPin:Conn_01x04_MountingPin")
-		(at 26.67 26.67 0)
-		(mirror y)
+		(at 26.67 31.115 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3483,7 +3634,7 @@
 		(dnp no)
 		(uuid "33b091ec-b32e-4812-8cd2-2d5cb1845602")
 		(property "Reference" "J1"
-			(at 24.13 26.67 0)
+			(at 24.13 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3492,7 +3643,7 @@
 			)
 		)
 		(property "Value" "Conn_01x04"
-			(at 32.385 42.545 0)
+			(at 30.48 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3501,7 +3652,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal"
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3510,7 +3661,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3519,7 +3670,7 @@
 			)
 		)
 		(property "Description" "CONN HEADER SMD R/A 4POS 1MM"
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3528,7 +3679,7 @@
 			)
 		)
 		(property "Manufacturer" "JST Sales America Inc."
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3537,7 +3688,7 @@
 			)
 		)
 		(property "Manufacturer PN" "SM04B-SRSS-TB"
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3546,7 +3697,7 @@
 			)
 		)
 		(property "Supplier" "Digi-Key"
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3555,7 +3706,7 @@
 			)
 		)
 		(property "Supplier PN" "455-SM04B-SRSS-TBCT-ND"
-			(at 26.67 26.67 0)
+			(at 26.67 31.115 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3700,7 +3851,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 113.03 72.39 0)
+		(at 113.03 29.21 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3708,7 +3859,7 @@
 		(dnp no)
 		(uuid "3ad33e1b-354e-405b-b63b-1284e9b4e47d")
 		(property "Reference" "#PWR09"
-			(at 113.03 76.2 0)
+			(at 113.03 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3717,7 +3868,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 113.03 68.58 0)
+			(at 113.03 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3725,7 +3876,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 113.03 72.39 0)
+			(at 113.03 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3734,7 +3885,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 113.03 72.39 0)
+			(at 113.03 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3743,7 +3894,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 113.03 72.39 0)
+			(at 113.03 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3963,7 +4114,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 113.03 29.21 0)
+		(at 113.03 72.39 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3971,7 +4122,7 @@
 		(dnp no)
 		(uuid "5244fa2b-7190-4a4f-b1a2-4303a93382c6")
 		(property "Reference" "#PWR08"
-			(at 113.03 33.02 0)
+			(at 113.03 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3980,7 +4131,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 113.03 25.4 0)
+			(at 113.03 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3988,7 +4139,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 113.03 29.21 0)
+			(at 113.03 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3997,7 +4148,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 113.03 29.21 0)
+			(at 113.03 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4006,7 +4157,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 113.03 29.21 0)
+			(at 113.03 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4021,6 +4172,109 @@
 			(project "trans-led-board"
 				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
 					(reference "#PWR08")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED_Filled")
+		(at 107.315 47.625 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "59aece38-209d-43e0-896f-2e397a27849b")
+		(property "Reference" "D3"
+			(at 107.315 45.085 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "VIS LED"
+			(at 107.315 51.435 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0_Narrow"
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Seoul Semiconductor Inc."
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" "S1S0-3030309503-0000003S-0P001"
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "Digi-Key"
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier PN" "897-S1S0-3030309503-0000003S-0P001CT-ND"
+			(at 107.315 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9cb2f964-1a4e-4423-a222-aca26d60d2a3")
+		)
+		(pin "2"
+			(uuid "b3f0894f-6645-47f9-a94d-c458de20eb8d")
+		)
+		(instances
+			(project "trans-led-board"
+				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
+					(reference "D3")
 					(unit 1)
 				)
 			)
@@ -4226,7 +4480,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 38.735 19.685 0)
+		(at 33.655 35.56 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4234,7 +4488,7 @@
 		(dnp no)
 		(uuid "68c59d4d-1dc1-49ec-995e-0c49e882ff34")
 		(property "Reference" "#PWR015"
-			(at 38.735 26.035 0)
+			(at 33.655 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4243,7 +4497,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 38.735 23.495 0)
+			(at 33.655 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4251,7 +4505,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.735 19.685 0)
+			(at 33.655 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4260,7 +4514,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 38.735 19.685 0)
+			(at 33.655 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4269,7 +4523,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 38.735 19.685 0)
+			(at 33.655 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4291,7 +4545,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 38.735 34.925 0)
+		(at 33.655 24.13 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4299,7 +4553,7 @@
 		(dnp no)
 		(uuid "8feb5205-3dbc-4b89-9000-8c68767e4423")
 		(property "Reference" "#PWR014"
-			(at 38.735 38.735 0)
+			(at 33.655 27.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4308,7 +4562,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 38.735 31.115 0)
+			(at 33.655 20.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4316,7 +4570,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4325,7 +4579,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4334,7 +4588,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4421,7 +4675,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 27.94 37.465 270)
+		(at 20.32 20.955 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4430,7 +4684,7 @@
 		(fields_autoplaced yes)
 		(uuid "91e67bcb-2326-43b0-adfd-9c015f461da0")
 		(property "Reference" "#FLG01"
-			(at 29.845 37.465 0)
+			(at 18.415 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4439,7 +4693,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 31.115 37.465 90)
+			(at 17.145 20.955 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4449,7 +4703,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4458,7 +4712,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4467,7 +4721,7 @@
 			)
 		)
 		(property "Description" "Special symbol for telling ERC where power comes from"
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4476,7 +4730,7 @@
 			)
 		)
 		(property "Manufacturer" ""
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4485,7 +4739,7 @@
 			)
 		)
 		(property "Manufacturer PN" ""
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4494,7 +4748,7 @@
 			)
 		)
 		(property "Supplier" ""
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4503,7 +4757,7 @@
 			)
 		)
 		(property "Supplier PN" ""
-			(at 27.94 37.465 0)
+			(at 20.32 20.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4701,7 +4955,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 38.735 34.925 180)
+		(at 33.655 24.13 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4710,7 +4964,7 @@
 		(fields_autoplaced yes)
 		(uuid "a0d322ea-0408-4d7a-b83b-aba86dc00e39")
 		(property "Reference" "#FLG02"
-			(at 38.735 36.83 0)
+			(at 35.56 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4719,7 +4973,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 38.735 38.1 90)
+			(at 36.83 24.13 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4729,7 +4983,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4738,7 +4992,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4747,7 +5001,7 @@
 			)
 		)
 		(property "Description" "Special symbol for telling ERC where power comes from"
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4756,7 +5010,7 @@
 			)
 		)
 		(property "Manufacturer" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4765,7 +5019,7 @@
 			)
 		)
 		(property "Manufacturer PN" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4774,7 +5028,7 @@
 			)
 		)
 		(property "Supplier" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4783,7 +5037,7 @@
 			)
 		)
 		(property "Supplier PN" ""
-			(at 38.735 34.925 0)
+			(at 33.655 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4805,7 +5059,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 38.735 19.685 0)
+		(at 33.655 33.655 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4814,7 +5068,7 @@
 		(fields_autoplaced yes)
 		(uuid "a3e76815-688d-40e3-ad74-e9e6c03b847c")
 		(property "Reference" "#FLG03"
-			(at 38.735 17.78 0)
+			(at 35.56 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4823,7 +5077,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 38.735 16.51 90)
+			(at 36.83 33.655 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4833,7 +5087,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4842,7 +5096,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4851,7 +5105,7 @@
 			)
 		)
 		(property "Description" "Special symbol for telling ERC where power comes from"
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4860,7 +5114,7 @@
 			)
 		)
 		(property "Manufacturer" ""
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4869,7 +5123,7 @@
 			)
 		)
 		(property "Manufacturer PN" ""
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4878,7 +5132,7 @@
 			)
 		)
 		(property "Supplier" ""
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4887,7 +5141,7 @@
 			)
 		)
 		(property "Supplier PN" ""
-			(at 38.735 19.685 0)
+			(at 33.655 33.655 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4902,109 +5156,6 @@
 			(project "trans-led-board"
 				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
 					(reference "#FLG03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:LED_Filled")
-		(at 107.315 90.805 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a574910d-1b1e-4a50-842a-b115a7d37f5f")
-		(property "Reference" "D3"
-			(at 107.315 88.265 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "UV LED"
-			(at 107.315 94.615 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "lib_fp:LED_WL-SUTW-2835_Narrow"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/153283387A212.pdf"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "WL-SUTW SMT ULTRAVIOLET TOPLED W 285nm"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "Würth Elektronik"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer PN" "153283387A212"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier" "Digi-Key"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier PN" "732-153283387A212CT-ND"
-			(at 107.315 90.805 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "1200dfc8-3700-4172-a1b0-8a8b7b8eefef")
-		)
-		(pin "2"
-			(uuid "90ed085a-35b2-4028-96a1-d9f420079c8a")
-		)
-		(instances
-			(project "trans-led-board"
-				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
-					(reference "D3")
 					(unit 1)
 				)
 			)
@@ -5116,109 +5267,6 @@
 			(project "main-board"
 				(path "/8d0c1d66-35ef-4a53-a28f-436a11b54f42"
 					(reference "R24")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:LED_Filled")
-		(at 107.315 74.295 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ac2a682f-d810-412d-9f7f-7818730e5e6b")
-		(property "Reference" "D5"
-			(at 107.315 71.755 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "UV LED"
-			(at 107.315 78.105 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "lib_fp:LED_WL-SUTW-2835_Narrow"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/153283387A212.pdf"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "WL-SUTW SMT ULTRAVIOLET TOPLED W 285nm"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "Würth Elektronik"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer PN" "153283387A212"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier" "Digi-Key"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier PN" "732-153283387A212CT-ND"
-			(at 107.315 74.295 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "5cf0dd19-fd5b-44e5-9bfb-6913ad8f9348")
-		)
-		(pin "2"
-			(uuid "dc3ff4d1-36f1-48cf-a0f1-0637d6f67e2a")
-		)
-		(instances
-			(project "trans-led-board"
-				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
-					(reference "D5")
 					(unit 1)
 				)
 			)
@@ -5464,6 +5512,109 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:LED_Filled")
+		(at 107.315 31.115 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c57e8a77-faff-4afa-ac08-6ad39c165c75")
+		(property "Reference" "D5"
+			(at 107.315 28.575 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "VIS LED"
+			(at 107.315 34.925 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0_Narrow"
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Seoul Semiconductor Inc."
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" "S1S0-3030309503-0000003S-0P001"
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "Digi-Key"
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier PN" "897-S1S0-3030309503-0000003S-0P001CT-ND"
+			(at 107.315 31.115 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f7bb4974-ccc7-452c-8e09-3d27c3586b3b")
+		)
+		(pin "2"
+			(uuid "0df06933-32d6-49d9-a184-ad8ba0fe7f1d")
+		)
+		(instances
+			(project "trans-led-board"
+				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
+					(reference "D5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R_Small")
 		(at 67.31 78.105 90)
 		(unit 1)
@@ -5568,40 +5719,31 @@
 	)
 	(symbol
 		(lib_id "Device:LED_Filled")
-		(at 107.315 99.06 0)
+		(at 107.315 39.37 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "de847091-dcb2-4e4b-a23c-03dd34647de9")
-		(property "Reference" "D2"
-			(at 107.315 96.52 0)
+		(uuid "d921d8c0-f7f7-4c2d-aa6d-580896160205")
+		(property "Reference" "D4"
+			(at 107.315 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "UV LED"
-			(at 107.315 102.87 0)
+		(property "Value" "VIS LED"
+			(at 107.315 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "lib_fp:LED_WL-SUTW-2835_Narrow"
-			(at 107.315 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/153283387A212.pdf"
-			(at 107.315 99.06 0)
+		(property "Footprint" "lib_fp:SunLike_LED_S1S0_Narrow"
+			(at 107.315 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5609,8 +5751,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "WL-SUTW SMT ULTRAVIOLET TOPLED W 285nm"
-			(at 107.315 99.06 0)
+		(property "Datasheet" "http://www.seoulsemicon.com/en/product/document/4727"
+			(at 107.315 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5618,8 +5760,8 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Würth Elektronik"
-			(at 107.315 99.06 0)
+		(property "Description" "SUNLIKE STWSC2PB-E0, 3000K"
+			(at 107.315 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5627,8 +5769,17 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer PN" "153283387A212"
-			(at 107.315 99.06 0)
+		(property "Manufacturer" "Seoul Semiconductor Inc."
+			(at 107.315 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" "S1S0-3030309503-0000003S-0P001"
+			(at 107.315 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5637,7 +5788,7 @@
 			)
 		)
 		(property "Supplier" "Digi-Key"
-			(at 107.315 99.06 0)
+			(at 107.315 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5645,8 +5796,111 @@
 				(hide yes)
 			)
 		)
-		(property "Supplier PN" "732-153283387A212CT-ND"
-			(at 107.315 99.06 0)
+		(property "Supplier PN" "897-S1S0-3030309503-0000003S-0P001CT-ND"
+			(at 107.315 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9a5d9072-156a-45f7-a6e1-af5b40e6db30")
+		)
+		(pin "2"
+			(uuid "9f6dc1aa-974a-4ea2-867d-9f45a7a7cb4c")
+		)
+		(instances
+			(project "trans-led-board"
+				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
+					(reference "D4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED_Pad")
+		(at 107.315 74.295 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "de847091-dcb2-4e4b-a23c-03dd34647de9")
+		(property "Reference" "D1"
+			(at 107.315 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "UV LED"
+			(at 107.315 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "lib_fp:LED_Seoul_Z5"
+			(at 107.315 74.295 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 107.315 74.295 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Light emitting diode with pad"
+			(at 107.315 74.295 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Seoul Viosys"
+			(at 107.315 74.295 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" "CUN86A1B"
+			(at 107.315 74.295 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "Digi-Key"
+			(at 107.315 74.295 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier PN" "2112-CUN86A1BCT-ND"
+			(at 107.315 74.295 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5660,10 +5914,13 @@
 		(pin "2"
 			(uuid "2a855b91-b3d6-4cd0-b289-c0b9d0322fa9")
 		)
+		(pin "3"
+			(uuid "a3b9165a-21ab-4903-896e-aca1309040ae")
+		)
 		(instances
 			(project "trans-led-board"
 				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
-					(reference "D2")
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -5671,7 +5928,7 @@
 	)
 	(symbol
 		(lib_id "power:Earth")
-		(at 26.67 38.1 0)
+		(at 20.32 22.86 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5680,7 +5937,7 @@
 		(fields_autoplaced yes)
 		(uuid "e049afde-ec74-4c2a-aa92-919fc8b6ea6d")
 		(property "Reference" "#PWR01"
-			(at 26.67 44.45 0)
+			(at 20.32 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5689,7 +5946,7 @@
 			)
 		)
 		(property "Value" "Earth"
-			(at 26.67 41.91 0)
+			(at 20.32 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5698,7 +5955,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 26.67 38.1 0)
+			(at 20.32 22.86 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5707,7 +5964,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 26.67 38.1 0)
+			(at 20.32 22.86 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5716,7 +5973,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"Earth\""
-			(at 26.67 38.1 0)
+			(at 20.32 22.86 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5840,6 +6097,110 @@
 			(project "main-board"
 				(path "/8d0c1d66-35ef-4a53-a28f-436a11b54f42"
 					(reference "C22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 114.935 81.915 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ea8ab258-9caa-4019-a0cc-55c51c07c5e8")
+		(property "Reference" "#FLG04"
+			(at 114.935 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 114.935 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer PN" ""
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" ""
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier PN" ""
+			(at 114.935 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8922c0ca-cb6a-4169-84d5-f8e697ea368a")
+		)
+		(instances
+			(project "trans-led-board"
+				(path "/6ca3c38c-4e71-4202-b6c1-1b25f04a27ae"
+					(reference "#FLG04")
 					(unit 1)
 				)
 			)
