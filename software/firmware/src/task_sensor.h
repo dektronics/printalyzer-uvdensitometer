@@ -88,9 +88,17 @@ osStatus_t sensor_set_agc_enabled(uint16_t sample_count);
 
 /**
  * Disable the sensor's automatic gain control
- * @return
  */
 osStatus_t sensor_set_agc_disabled();
+
+/**
+* Set whether sensor oscillator calibration is enabled.
+*
+* Can only be called when sensor is not enabled.
+*
+* @param enabled True to enable, false to disable
+*/
+osStatus_t sensor_set_oscillator_calibration(bool enabled);
 
 /**
  * Change the state of the sensor read light sources.

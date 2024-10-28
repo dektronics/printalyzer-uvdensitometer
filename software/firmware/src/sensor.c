@@ -69,6 +69,9 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
         ret = sensor_set_config(TSL2585_GAIN_256X, 719, 99);
         if (ret != osOK) { break; }
 
+        ret = sensor_set_oscillator_calibration(true);
+        if (ret != osOK) { break; }
+
         /* Start the sensor */
         ret = sensor_start();
         if (ret != osOK) { break; }
@@ -362,6 +365,9 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         ret = sensor_set_agc_enabled(49);
         if (ret != osOK) { break; }
 
+        ret = sensor_set_oscillator_calibration(true);
+        if (ret != osOK) { break; }
+
         /* Activate light source synchronized with sensor cycle */
         ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
         if (ret != osOK) { break; }
@@ -435,9 +441,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         if (als_result) { *als_result = (float)als_avg; }
     } else {
         log_e("Sensor read failed: ret=%d", ret);
-        if (ret == osOK) {
-            ret = osError;
-        }
+        ret = osError;
     }
     return ret;
 }
@@ -483,6 +487,9 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         ret = sensor_set_agc_disabled();
+        if (ret != osOK) { break; }
+
+        ret = sensor_set_oscillator_calibration(true);
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
@@ -533,9 +540,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
         }
     } else {
         log_e("Sensor read failed: ret=%d", ret);
-        if (ret == osOK) {
-            ret = osError;
-        }
+        ret = osError;
     }
     return ret;
 }
@@ -549,8 +554,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
  * only be compared to results from a similar run under the same conditions.
  *
  * @param count Number of values to average
- * @param mod0_avg Average reading of Modulator 0
- * @param mod1_avg Average reading of Modulator 1
+ * @param als_avg Average raw reading
  */
 osStatus_t sensor_raw_read_loop(uint8_t count, float *als_avg)
 {

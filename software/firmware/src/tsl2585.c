@@ -828,7 +828,17 @@ HAL_StatusTypeDef tsl2585_set_vsync_period_target(I2C_HandleTypeDef *hi2c, uint1
 
 }
 
-HAL_StatusTypeDef tsl2585_set_vsync_cfg(I2C_HandleTypeDef *hi2c, uint8_t value)
+HAL_StatusTypeDef tsl2585_set_vsync_control(I2C_HandleTypeDef *hi2c, uint8_t value)
+{
+    uint8_t data = value & 0x03;
+
+    HAL_StatusTypeDef ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS,
+        TSL2585_VSYNC_CONTROL, I2C_MEMADD_SIZE_8BIT,
+        &data, 1, HAL_MAX_DELAY);
+    return ret;
+}
+
+HAL_StatusTypeDef tsl2585_set_vsync_config(I2C_HandleTypeDef *hi2c, uint8_t value)
 {
     uint8_t data = value & 0xC7;
 

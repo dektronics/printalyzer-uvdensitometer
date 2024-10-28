@@ -907,6 +907,9 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
         ret = sensor_set_config(gain, 719, (time_index * 100) - 1);
         if (ret != osOK) { break; }
 
+        ret = sensor_set_oscillator_calibration(true);
+        if (ret != osOK) { break; }
+
         ret = sensor_start();
         if (ret != osOK) { break; }
 

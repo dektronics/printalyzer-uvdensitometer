@@ -203,7 +203,8 @@ HAL_StatusTypeDef tsl2585_set_vsync_period(I2C_HandleTypeDef *hi2c, uint16_t per
 
 HAL_StatusTypeDef tsl2585_set_vsync_period_target(I2C_HandleTypeDef *hi2c, uint16_t period_target, bool use_fast_timing);
 
-HAL_StatusTypeDef tsl2585_set_vsync_cfg(I2C_HandleTypeDef *hi2c, uint8_t value);
+HAL_StatusTypeDef tsl2585_set_vsync_control(I2C_HandleTypeDef *hi2c, uint8_t value);
+HAL_StatusTypeDef tsl2585_set_vsync_config(I2C_HandleTypeDef *hi2c, uint8_t value);
 HAL_StatusTypeDef tsl2585_set_vsync_gpio_int(I2C_HandleTypeDef *hi2c, uint8_t value);
 
 /**
