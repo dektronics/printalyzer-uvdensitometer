@@ -183,7 +183,7 @@ target_link_libraries(${EXECUTABLE} PRIVATE
     tinyusb
     printf
 
-    -T${MCU_LINKER_SCRIPT}
+    -T"${MCU_LINKER_SCRIPT}"
     ${CPU_PARAMETERS}
     -Wl,-Map=${CMAKE_PROJECT_NAME}.map
     -Wl,--gc-sections

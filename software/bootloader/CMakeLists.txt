@@ -115,7 +115,7 @@ target_compile_options(${EXECUTABLE} PRIVATE
     $<$<CONFIG:Release>:-Os -g0>)
 
 target_link_libraries(${EXECUTABLE} PRIVATE
-    -T${MCU_LINKER_SCRIPT}
+    -T"${MCU_LINKER_SCRIPT}"
     ${CPU_PARAMETERS}
     -Wl,-Map=${CMAKE_PROJECT_NAME}.map
     -Wl,--gc-sections
