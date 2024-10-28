@@ -67,6 +67,17 @@ set(CPU_PARAMETERS
 set(STARTUP_SCRIPT ${PROJECT_DIR}/system/startup_stm32l072kztx.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32L072KZTX_FLASH.ld)
 
+add_compile_options(
+    ${CPU_PARAMETERS}
+    -fstack-protector-strong
+    "$<$<CONFIG:Debug>:-Os;-g3;-ggdb>"
+    "$<$<CONFIG:Release>:-Os;-g0>"
+)
+
+add_compile_definitions(
+    ${MCU_MODEL}
+)
+
 #######################################################################
 # Build information variables
 execute_process(
@@ -98,74 +109,59 @@ set(PROJECT_INCLUDE_DIRECTORIES
     ${PROJECT_DIR}/system
 )
 
-set(EXTERNAL_INCLUDE_DIRECTORIES
-    ${EXTERNAL_DIR}/drivers/stm32l0xx/include
-    ${EXTERNAL_DIR}/drivers/stm32l0xx/include/Legacy
-    ${EXTERNAL_DIR}/drivers/cmsis/include
-    ${EXTERNAL_DIR}/freertos/include
-    ${EXTERNAL_DIR}/freertos/CMSIS_RTOS_V2
-    ${EXTERNAL_DIR}/freertos/portable/GCC/ARM_CM0
-    ${EXTERNAL_DIR}/printf
-    ${EXTERNAL_DIR}/easylogger/include
-    ${EXTERNAL_DIR}/u8g2/csrc
-    ${EXTERNAL_DIR}/tinyusb/src
-    ${EXTERNAL_DIR}/RTT/include
-)
-
 # Sources
 file(GLOB_RECURSE PROJECT_SOURCES FOLLOW_SYMLINKS
     ${PROJECT_DIR}/*.c)
-file(GLOB_RECURSE EXTERNAL_SOURCES
-    ${EXTERNAL_DIR}/drivers/*.c
-    ${EXTERNAL_DIR}/easylogger/src/*.c
-    ${EXTERNAL_DIR}/freertos/*.c
-    ${EXTERNAL_DIR}/printf/*.c
-    ${EXTERNAL_DIR}/tinyusb/src/*.c
-    ${EXTERNAL_DIR}/u8g2/csrc/*.c
-)
-if(USE_SEGGER_RTT)
-    set(RTT_SOURCES
-        ${EXTERNAL_DIR}/RTT/src/SEGGER_RTT_ASM_ARMv7M.S
-        ${EXTERNAL_DIR}/RTT/src/SEGGER_RTT.c
-        ${EXTERNAL_DIR}/RTT/src/SEGGER_RTT_printf.c
-    )
-endif()
 
 # Executable files
 add_executable(${EXECUTABLE}
-    ${EXTERNAL_SOURCES}
-    ${RTT_SOURCES}
     ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT}
 )
 
+if(USE_SEGGER_RTT)
+    add_subdirectory(${EXTERNAL_DIR}/RTT)
+    target_compile_definitions(${EXECUTABLE} PRIVATE
+        USE_SEGGER_RTT
+        BUFFER_SIZE_UP=512
+    )
+    target_link_libraries(${EXECUTABLE} PRIVATE RTT)
+endif()
+
+# Subdirectories to include
+add_subdirectory(${EXTERNAL_DIR}/drivers)
+target_include_directories(hal PRIVATE ${PROJECT_INCLUDE_DIRECTORIES})
+
+add_subdirectory(${EXTERNAL_DIR}/freertos)
+target_include_directories(freertos PRIVATE ${PROJECT_INCLUDE_DIRECTORIES})
+
+add_subdirectory(${EXTERNAL_DIR}/easylogger)
+target_include_directories(easylogger PRIVATE ${PROJECT_INCLUDE_DIRECTORIES})
+
+add_subdirectory(${EXTERNAL_DIR}/u8g2)
+
+add_subdirectory(${EXTERNAL_DIR}/tinyusb)
+target_include_directories(tinyusb PRIVATE ${PROJECT_INCLUDE_DIRECTORIES})
+
+add_subdirectory(${EXTERNAL_DIR}/printf)
+
 # Embedded macros(defines)
 target_compile_definitions(${EXECUTABLE} PRIVATE
-    ${MCU_MODEL}
     USE_HAL_DRIVER
     STM32_THREAD_SAFE_STRATEGY=4
     $<$<CONFIG:DEBUG>:DEBUG>
     APP_BUILD_DATE="${BUILD_DATE}"
     APP_BUILD_DESCRIBE="${BUILD_DESCRIBE}"
 )
-if(USE_SEGGER_RTT)
-    target_compile_definitions(${EXECUTABLE} PRIVATE
-        USE_SEGGER_RTT
-        BUFFER_SIZE_UP=512
-    )
-endif()
 
 # Add header directories (AFTER add_executable)
-target_include_directories(${EXECUTABLE} PRIVATE
-    ${EXTERNAL_INCLUDE_DIRECTORIES}
+target_include_directories(${EXECUTABLE} PUBLIC
     ${PROJECT_INCLUDE_DIRECTORIES}
 )
 
 # Compiler and linker options
 target_compile_options(${EXECUTABLE} PRIVATE
-    ${CPU_PARAMETERS}
     -Wall
-    -fstack-protector-strong
     -fstack-usage
     -fcyclomatic-complexity
     -Wformat-overflow
@@ -176,11 +172,17 @@ target_compile_options(${EXECUTABLE} PRIVATE
         -Wold-style-cast
         -Wuseless-cast
         -Wsuggest-override>
-    $<$<CONFIG:Debug>:-Os -g3 -ggdb>
-    $<$<CONFIG:Release>:-Os -g0>
 )
 
 target_link_libraries(${EXECUTABLE} PRIVATE
+    cmsis
+    hal
+    freertos
+    easylogger
+    u8g2
+    tinyusb
+    printf
+
     -T${MCU_LINKER_SCRIPT}
     ${CPU_PARAMETERS}
     -Wl,-Map=${CMAKE_PROJECT_NAME}.map

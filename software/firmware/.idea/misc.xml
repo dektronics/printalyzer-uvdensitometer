@@ -3,5 +3,8 @@
   <component name="BackendCodeEditorMiscSettings">
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
   </component>
+  <component name="CMakePythonSetting">
+    <option name="pythonIntegrationState" value="YES" />
+  </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
 </project>
