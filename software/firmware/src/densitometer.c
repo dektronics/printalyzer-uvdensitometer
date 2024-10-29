@@ -172,13 +172,16 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
 {
     settings_cal_transmission_t cal_transmission;
     bool use_target_cal = true;
+    char prefix;
 
     /* Get the current calibration values */
     bool result;
     if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
         result = settings_get_cal_uv_transmission(&cal_transmission);
+        prefix = 'U';
     } else {
         result = settings_get_cal_vis_transmission(&cal_transmission);
+        prefix = 'T';
     }
     if (!result) {
         if (densitometer_allow_uncalibrated) {
@@ -237,9 +240,9 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     densitometer_set_idle_light(densitometer, true);
 
     if (cdc_is_connected()) {
-        cdc_send_density_reading('T', densitometer->last_d, densitometer->zero_d, als_basic, corr_value);
+        cdc_send_density_reading(prefix, densitometer->last_d, densitometer->zero_d, als_basic, corr_value);
     } else {
-        hid_send_density_reading('T', densitometer->last_d, densitometer->zero_d);
+        hid_send_density_reading(prefix, densitometer->last_d, densitometer->zero_d);
     }
 
     return DENSITOMETER_OK;

@@ -24,7 +24,7 @@ bool cdc_is_connected();
 /**
  * Send a density reading out the CDC device.
  *
- * @param prefix The reading type, such as 'R' or 'T'
+ * @param prefix The reading type, such as 'R', 'T', or 'U'
  * @param d_value The density reading value
  * @param d_zero The density "zero" offset
  * @param raw_value The raw sensor reading, in basic counts

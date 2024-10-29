@@ -55,9 +55,9 @@ The common formats for these response arguments are:
 Density readings are sent out-of-band whenever a reading is taken on the device,
 and are not sent in response to commands. They follow the format of:
 
-`<R/T><+/->#.##D`
+`<R/T/U><+/->#.##D`
 
-An example of a density reading would be something like `R+0.20D` or `T+2.85D`.
+An example of a density reading would be something like `R+0.20D`, `T+2.85D`, or `U+1.90D`
 
 ### Logging Format
 
