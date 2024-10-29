@@ -334,7 +334,10 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
     uint8_t light_value = 0;
     sensor_reading_t reading;
     sensor_mode_t sensor_mode;
-    tsl2585_gain_t target_read_gain;
+    int agc_step;
+    int invalid_count;
+    int reading_count;
+    double als_basic = 0;
     double als_sum = 0;
     double als_avg = NAN;
 
@@ -355,14 +358,20 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
     log_i("Starting sensor target read (light=%d)", light_value);
 
     do {
-        /* Put the sensor and light into a known initial state */
+        /* Make sure the light is disabled */
+        ret = sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
+        if (ret != osOK) { break; }
+
+        osDelay(10);
+
+        /* Configure initial sensor settings */
         ret = sensor_set_mode(sensor_mode);
         if (ret != osOK) { break; }
 
-        ret = sensor_set_config(TSL2585_GAIN_256X, 719, 99);
+        ret = sensor_set_config(TSL2585_GAIN_256X, 719, 29);
         if (ret != osOK) { break; }
 
-        ret = sensor_set_agc_enabled(49);
+        ret = sensor_set_agc_enabled(19);
         if (ret != osOK) { break; }
 
         ret = sensor_set_oscillator_calibration(true);
@@ -376,60 +385,53 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         ret = sensor_start();
         if (ret != osOK) { break; }
 
-        /* Do initial read to detect gain */
-        ret = sensor_get_next_reading(&reading, 1000);
-        if (ret != osOK) { break; }
-
-        target_read_gain = reading.mod0.gain;
-
-        /* Disable the AGC */
-        ret = sensor_set_agc_disabled();
-        if (ret != osOK) { break; }
-
-        /* Invoke the progress callback */
-        if (callback) { callback(user_data); }
-
-        //TODO Figure out if we need to add some padding for constant measurement time
-
-        //TODO Detect errors or saturation here
-
-        /* Switch to the target read gain and integration time */
-        ret = sensor_set_config(target_read_gain, 719, 199);
-        if (ret != osOK) { break; }
-
-        /* Take the actual target measurement readings */
-        for (int i = 0; i < SENSOR_TARGET_READ_ITERATIONS; i++) {
-            double als_basic = 0;
-
-            ret = sensor_get_next_reading(&reading, 1000);
-            if (ret != osOK) { break; }
-
+        agc_step = 1;
+        invalid_count = 0;
+        reading_count = 0;
+        do {
             /* Invoke the progress callback */
             if (callback) { callback(user_data); }
 
-#if 0
-            //TODO
-            /* Make sure we're consistent with our read cycles */
-            if (reading.reading_count != i + 4) {
-                log_e("Unexpected read cycle count: %d", reading.reading_count);
-                ret = osError;
-                break;
-            }
-#endif
+            ret = sensor_get_next_reading(&reading, 500);
+            if (ret != osOK) { break; }
 
-            /* Make sure we didn't unexpectedly saturate or generate an error */
+            /* Make sure the reading is valid */
             if (reading.mod0.result != SENSOR_RESULT_VALID) {
-                log_e("Unexpected sensor result: %d", reading.mod0.result);
-                ret = osError;
-                break;
+                invalid_count++;
+                if (invalid_count > 5) {
+                    ret = osErrorTimeout;
+                    break;
+                } else {
+                    continue;
+                }
             }
 
+            /* Handle the process of moving from AGC to measurement */
+            if (agc_step == 1) {
+                /* Disable AGC */
+                ret = sensor_set_agc_disabled();
+                if (ret != osOK) { break; }
+                agc_step++;
+                continue;
+            } else if (agc_step == 2) {
+                /* Set measurement sample time */
+                ret = sensor_set_integration(719, 199);
+                if (ret != osOK) { break; }
+                agc_step = 0;
+                continue;
+            }
+
+            /* Collect the measurement */
             als_basic = sensor_convert_to_basic_counts(&reading, 0);
             als_sum += als_basic;
-        }
+            reading_count++;
+        } while (reading_count < SENSOR_TARGET_READ_ITERATIONS);
         if (ret != osOK) { break; }
 
         als_avg = (als_sum / (double)SENSOR_TARGET_READ_ITERATIONS);
+
+        //TODO Detect errors or saturation here
+
     } while (0);
 
     /* Turn off the sensor */
