@@ -29,7 +29,7 @@
 #include "util.h"
 #include "keypad.h"
 
-#define CMD_DATA_SIZE 64
+#define CMD_DATA_SIZE 104
 #define CDC_TX_TIMEOUT 200
 #define CDC_MIN_BIT_RATE 9600
 
@@ -50,7 +50,7 @@ typedef struct {
     cmd_type_t type;
     cmd_category_t category;
     char action[8];
-    char args[56];
+    char args[96];
 } cdc_command_t;
 
 typedef enum {
@@ -515,6 +515,12 @@ bool cdc_process_command_measurement(const cdc_command_t *cmd)
         encode_f32(buf, reading);
         cdc_send_command_response(cmd, buf);
         return true;
+    } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "UVTR") == 0) {
+        char buf[32];
+        float reading = densitometer_get_display_d(densitometer_uv_transmission());
+        encode_f32(buf, reading);
+        cdc_send_command_response(cmd, buf);
+        return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "FORMAT") == 0) {
         if (strcmp(cmd->args, "BASIC") == 0) {
             reading_format = READING_FORMAT_BASIC;
@@ -550,10 +556,12 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
      * "SC GAIN" -> Set sensor gain calibration values
      * "GC SLOPE" -> Get sensor slope calibration values
      * "SC SLOPE" -> Set sensor slope calibration values
-     * "GC REFL" -> Get reflection density calibration values
-     * "SC REFL" -> Set reflection density calibration values
-     * "GC TRAN" -> Get transmission density calibration values
-     * "SC TRAN" -> Set transmission density calibration values
+     * "GC REFL" -> Get VIS reflection density calibration values
+     * "SC REFL" -> Set VIS reflection density calibration values
+     * "GC TRAN" -> Get VIS transmission density calibration values
+     * "SC TRAN" -> Set VIS transmission density calibration values
+     * "GC UVTR" -> Get UV transmission density calibration values
+     * "SC UVTR" -> Set UV transmission density calibration values
      */
     if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "GAIN") == 0 && cdc_remote_active) {
         osStatus_t result = sensor_gain_calibration(cdc_invoke_gain_calibration_callback, (void *)cmd);
@@ -636,37 +644,23 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         return true;
     } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "GAIN") == 0) {
         char buf[128];
-        float gain_val[8] = {0};
         settings_cal_gain_t cal_gain;
 
         settings_get_cal_gain(&cal_gain);
 
-        gain_val[0] = 1.0F;
-        gain_val[1] = 1.0F;
-        //FIXME
-//        gain_val[2] = cal_gain.ch0_medium;
-//        gain_val[3] = cal_gain.ch1_medium;
-//        gain_val[4] = cal_gain.ch0_high;
-//        gain_val[5] = cal_gain.ch1_high;
-//        gain_val[6] = cal_gain.ch0_maximum;
-//        gain_val[7] = cal_gain.ch1_maximum;
-
-        encode_f32_array_response(buf, gain_val, 8);
+        encode_f32_array_response(buf, cal_gain.values, TSL2585_GAIN_256X + 1);
 
         cdc_send_command_response(cmd, buf);
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "GAIN") == 0) {
-        float gain_val[6] = {0};
-        size_t n = decode_f32_array_args(cmd->args, gain_val, 8);
-        if (n == 6) {
+        float gain_val[10] = {0};
+        size_t n = decode_f32_array_args(cmd->args, gain_val, 10);
+        if (n == 10) {
             settings_cal_gain_t cal_gain = {0};
-            //FIXME
-//            cal_gain.ch0_medium = gain_val[0];
-//            cal_gain.ch1_medium = gain_val[1];
-//            cal_gain.ch0_high = gain_val[2];
-//            cal_gain.ch1_high = gain_val[3];
-//            cal_gain.ch0_maximum = gain_val[4];
-//            cal_gain.ch1_maximum = gain_val[5];
+
+            for (size_t i = 0; i < 10; i++) {
+                cal_gain.values[i] = gain_val[i];
+            }
 
             if (settings_set_cal_gain(&cal_gain)) {
                 cdc_send_command_response(cmd, "OK");
@@ -766,6 +760,38 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
             cal_transmission.hi_value = tran_val[3];
 
             if (settings_set_cal_vis_transmission(&cal_transmission)) {
+                cdc_send_command_response(cmd, "OK");
+            } else {
+                cdc_send_command_response(cmd, "ERR");
+            }
+
+            return true;
+        }
+    } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "UVTR") == 0) {
+        char buf[64];
+        settings_cal_transmission_t cal_transmission;
+        float tran_val[4] = {0};
+
+        settings_get_cal_uv_transmission(&cal_transmission);
+        tran_val[0] = 0.0F;
+        tran_val[1] = cal_transmission.zero_value;
+        tran_val[2] = cal_transmission.hi_d;
+        tran_val[3] = cal_transmission.hi_value;
+
+        encode_f32_array_response(buf, tran_val, 4);
+
+        cdc_send_command_response(cmd, buf);
+        return true;
+    } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "UVTR") == 0) {
+        float tran_val[4] = {0};
+        size_t n = decode_f32_array_args(cmd->args, tran_val, 4);
+        if (n == 4 && tran_val[0] < 0.001F) {
+            settings_cal_transmission_t cal_transmission = {0};
+            cal_transmission.zero_value = tran_val[1];
+            cal_transmission.hi_d = tran_val[2];
+            cal_transmission.hi_value = tran_val[3];
+
+            if (settings_set_cal_uv_transmission(&cal_transmission)) {
                 cdc_send_command_response(cmd, "OK");
             } else {
                 cdc_send_command_response(cmd, "ERR");

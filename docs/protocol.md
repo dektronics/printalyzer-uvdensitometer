@@ -89,8 +89,8 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 * `GS UID`  - Get device unique ID
   * Response: `GS UID,<UID>`
 * `GS ISEN` - Internal sensor readings
-  * Response: `GS ISEN,<VDDA>,<Temperature>`
-  * Note: Response elements have unit suffixes appended, so it looks like "3300mV,24.5C"
+  * Response: `GS ISEN,<VDDA>,<MCU_Temp>,<Sensor_Temp>`
+  * Note: Response elements have unit suffixes appended, so it looks like "3300mV,24.5C,22.0C"
 * `IS REMOTE,n` - Invoke remote control mode (enable = 1, disable = 0)
   * Response: `IS REMOTE,n`
 * `SS DISP,text` - Write the provided text to the display
@@ -99,9 +99,11 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 
 ### Measurement Commands
 
-* `GM REFL` - Get last reflection measurement
+* `GM REFL` - Get last VIS reflection measurement
   * Response: `GM REFL,<D>`
-* `GM TRAN` - Get last transmission measurement
+* `GM TRAN` - Get last VIS transmission measurement
+  * Response: `GM TRAN,<D>`
+* `GM UVTR` - Get last UV transmission measurement
   * Response: `GM TRAN,<D>`
 * `SM FORMAT,x` - Change measurement output format
   * Possible measurement formats are:
@@ -141,25 +143,27 @@ Commands that lack a documented response format will return either `OK` or `ERR`
   * The values set the duty cycle for the measurement lights, and are
     in the range of 1-128, with 128 indicating full brightness.
 * `GC GAIN` - Get sensor gain calibration values
-  * Response: `GC GAIN,<L0>,<L1>,<M0>,<M1>,<H0>,<H1>,<X0>,<X1>`
-  * Note: `<L0>` and `<L1>` will always be equivalent to 1.0, as they represent
-    the sensor's base gain value. They are only included for the sake of completeness.
-* `SC GAIN,<M0>,<M1>,<H0>,<H1>,<X0>,<X1>` - Set sensor gain calibration values
-  * Note: `<L0>` and `<L1>` are omitted from the set command as their value
-    cannot be changed.
+  * Response: `GC GAIN,<G0>,<G1>,<G2>,<G3>,<G4>,<G5>,<G6>,<G7>,<G8>,<G9>`
+  * Note: `<G0..9>` represent gain values, doubling with each increment, from 0.5x to 256x
+* `SC GAIN,<G0>,<G1>,<G2>,<G3>,<G4>,<G5>,<G6>,<G7>,<G8>,<G9>` - Set sensor gain calibration values
 * `GC SLOPE` - Get sensor slope calibration values
-  * Response: `GC SLOPE,<B0>,<B1>,<B2>`
-* `SC SLOPE,<B0>,<B1>,<B2>` - Set sensor slope calibration values
+  * Response: `GC SLOPE,<B0>,<B1>,<B2>,<Z>`
+* `SC SLOPE,<B0>,<B1>,<B2>,<Z>` - Set sensor slope calibration values
   * _Note: There is no on-device way to perform slope calibration.
     It must be performed using the desktop application, and then
     loaded onto the device via the command interface._
-* `GC REFL` - Get reflection density calibration values
+* `GC REFL` - Get VIS reflection density calibration values
   * Response: `GC REFL,<LD>,<LREADING>,<HD>,<HREADING>`
-* `SC REFL,<LD>,<LREADING>,<HD>,<HREADING>` - Set reflection density calibration values
+* `SC REFL,<LD>,<LREADING>,<HD>,<HREADING>` - Set VIS reflection density calibration values
   * The reading values are assumed to be in slope corrected basic counts
-* `GC TRAN` - Get transmission density calibration values
+* `GC TRAN` - Get VIS transmission density calibration values
   * Response: `GC TRAN,<LD>,<LREADING>,<HD>,<HREADING>`
-* `SC TRAN,<LD>,<LREADING>,<HD>,<HREADING>` - Get transmission density calibration values
+* `SC TRAN,<LD>,<LREADING>,<HD>,<HREADING>` - Get VIS transmission density calibration values
+  * The reading values are assumed to be in slope corrected basic counts
+  * Note: `<HD>` is always zero, and only included here for the sake of consistency
+* `GC UVTR` - Get UV transmission density calibration values
+  * Response: `GC UVTR,<LD>,<LREADING>,<HD>,<HREADING>`
+* `SC UVTR,<LD>,<LREADING>,<HD>,<HREADING>` - Get UV transmission density calibration values
   * The reading values are assumed to be in slope corrected basic counts
   * Note: `<HD>` is always zero, and only included here for the sake of consistency
 
@@ -167,27 +171,39 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 
 * `GD DISP` - Get display screenshot
   * Response is XBM data in the multi-line format described above
-* `SD LR,nnn` -> Set reflection light duty cycle (nnn/127) ***(remote mode)***
-  * Light sources are mutually exclusive. To turn both off, set either to 0.
+* `SD LR,nnn` -> Set VIS reflection light duty cycle (nnn/127) ***(remote mode)***
+  * Light sources are mutually exclusive. To turn all off, set any to 0.
     To turn on to full brightness, set to 128.
-* `SD LT,nnn` -> Set transmission light duty cycle (nnn/127) ***(remote mode)***
-  * Light sources are mutually exclusive. To turn both off, set either to 0.
+* `SD LT,nnn` -> Set VIS transmission light duty cycle (nnn/127) ***(remote mode)***
+  * Light sources are mutually exclusive. To turn all off, set any to 0.
+    To turn on to full brightness, set to 128.
+* `SD LTU,nnn` -> Set UV transmission light duty cycle (nnn/127) ***(remote mode)***
+  * Light sources are mutually exclusive. To turn all off, set any to 0.
     To turn on to full brightness, set to 128.
 * `ID S,START` - Invoke sensor start ***(remote mode)***
   * When the sensor task is started via this diagnostic command, there is an
     implicit "Get Reading" command every time a result is available. Thus,
     results are periodically returned as long as the task is running.
-  * Result format: `GD S,<CH0>,<CH1>,<GAIN>,<TIME>`
+  * Result format: `GD S,<DATA>,<GAIN>,<TIME>,<COUNT>`
 * `ID S,STOP` - Invoke sensor stop ***(remote mode)***
-* `SD S,CFG,n,m` - Set sensor gain (n = [0-3]) and integration time (m = [0-5]) ***(remote mode)***
-* `ID READ,<L>,<N>,<M>` - Perform controlled sensor target read ***(remote mode)***
+* `SD S,MODE,<M>` - Set sensor spectrum measurement mode ***(remote mode)***
+  * `<M>` - Sensor photodiode configuration
+    * `0` - Default configuration
+    * `1` - Visual (Photopic) mode
+    * `2` - UV-A mode
+* `SD S,CFG,g,t,c` - Set sensor gain (n = [0-9]), integration time (t = [0-2047]), and integration count (c = [0-2047]) ***(remote mode)***
+* `SD AGCEN,c` - Enable automatic gain control with sample count (c = [0-2047]) ***(remote mode)***
+* `SD AGCDIS` - Disable automatic gain control
+* `ID READ,<L>,<G>,<T>,<C>` - Perform controlled sensor target read ***(remote mode)***
   * `<L>` - Measurement light source
     * `0` - Light off
-    * `R` - Reflection light, full power
-    * `T` - Transmission light, full power
-  * `<N>` - Sensor gain (0-3)
-  * `<M>` - Sensor integration time (0-5)
-  * Result format: `ID READ,<CH0>,<CH1>`
+    * `R` - VIS Reflection light, full power
+    * `T` - VIS Transmission light, full power
+    * `U` - UV Transmission light, full power
+  * `<G>` - Sensor gain (0-9)
+  * `<T>` - Sensor integration sample time (0-2047)
+  * `<C>` - Sensor integration sample count (0-2047)
+  * Result format: `ID READ,<DATA>`
   * Note: This operation behaves similarly to a real measurement, synchronizing
     read light control to the measurement loop, and averaging across a number
     of readings. Unlike a real measurement it uses preconfigured gain and
