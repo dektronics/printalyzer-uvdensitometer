@@ -40,7 +40,7 @@ static state_measure_t state_vis_reflection_measure_data = {
     .densitometer = NULL,
     .display_state = STATE_VIS_REFLECTION_DISPLAY,
     .display_title = "Reflection",
-    .display_mode = DISPLAY_MODE_REFLECTION
+    .display_mode = DISPLAY_MODE_VIS_REFLECTION
 };
 
 static state_measure_t state_vis_transmission_measure_data = {
@@ -54,8 +54,8 @@ static state_measure_t state_vis_transmission_measure_data = {
     .take_measurement = true,
     .densitometer = NULL,
     .display_state = STATE_VIS_TRANSMISSION_DISPLAY,
-    .display_title = "VIS Trans.",
-    .display_mode = DISPLAY_MODE_TRANSMISSION
+    .display_title = "Transmission",
+    .display_mode = DISPLAY_MODE_VIS_TRANSMISSION
 };
 
 static state_measure_t state_uv_transmission_measure_data = {
@@ -69,8 +69,8 @@ static state_measure_t state_uv_transmission_measure_data = {
     .take_measurement = true,
     .densitometer = NULL,
     .display_state = STATE_UV_TRANSMISSION_DISPLAY,
-    .display_title = "VIS Trans.",
-    .display_mode = DISPLAY_MODE_TRANSMISSION
+    .display_title = "Transmission",
+    .display_mode = DISPLAY_MODE_UV_TRANSMISSION
 };
 
 static void sensor_read_callback(void *user_data);

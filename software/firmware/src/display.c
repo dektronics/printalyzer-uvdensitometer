@@ -381,13 +381,35 @@ uint8_t display_input_value_f1_2(const char *title, const char *pre, uint16_t *v
     }
 }
 
+static bool display_get_mode_icon(display_mode_t mode, asset_info_t *asset)
+{
+    if (!asset) { return false; }
+
+    asset_name_t name;
+
+    switch (mode) {
+    case DISPLAY_MODE_VIS_REFLECTION:
+    case DISPLAY_MODE_VIS_TRANSMISSION:
+        name = ASSET_VIS_ICON;
+        break;
+    case DISPLAY_MODE_UV_TRANSMISSION:
+        name = ASSET_UV_ICON;
+        break;
+    default:
+        name = ASSET_MAX;
+        break;
+    }
+
+    return display_asset_get(asset, name) == 1;
+}
+
 static bool display_get_main_icon(display_mode_t mode, uint8_t frame, asset_info_t *asset)
 {
     if (!asset) { return false; }
 
     asset_name_t name = ASSET_MAX;
 
-    if (mode == DISPLAY_MODE_REFLECTION) {
+    if (mode == DISPLAY_MODE_VIS_REFLECTION) {
         switch (frame) {
         case 0:
             name = ASSET_REFLECTION_ICON_40;
@@ -402,7 +424,7 @@ static bool display_get_main_icon(display_mode_t mode, uint8_t frame, asset_info
             name = ASSET_REFLECTION_ICON_40;
             break;
         }
-    } else if (mode == DISPLAY_MODE_TRANSMISSION) {
+    } else if (mode == DISPLAY_MODE_VIS_TRANSMISSION || mode == DISPLAY_MODE_UV_TRANSMISSION) {
         switch (frame) {
         case 0:
             name = ASSET_TRANSMISSION_ICON_40;
@@ -480,10 +502,14 @@ void display_draw_main_elements(const display_main_elements_t *elements)
         u8g2_DrawUTF8(&u8g2, 0, u8g2_GetAscent(&u8g2), elements->title);
     }
 
+    if (display_get_mode_icon(elements->mode, &asset)) {
+        u8g2_DrawXBM(&u8g2, u8g2_GetDisplayWidth(&u8g2) - asset.width - 1, 0, asset.width, asset.height, asset.bits);
+    }
+
     if (elements->zero_indicator) {
         display_asset_get(&asset, ASSET_ZERO_INDICATOR);
         u8g2_DrawXBM(&u8g2,
-            u8g2_GetDisplayWidth(&u8g2) - asset.width, 0,
+            41, 43,
             asset.width, asset.height, asset.bits);
     }
 

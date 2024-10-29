@@ -5,8 +5,9 @@
 #include "stm32l0xx_hal.h"
 
 typedef enum {
-    DISPLAY_MODE_REFLECTION,
-    DISPLAY_MODE_TRANSMISSION
+    DISPLAY_MODE_VIS_REFLECTION,
+    DISPLAY_MODE_VIS_TRANSMISSION,
+    DISPLAY_MODE_UV_TRANSMISSION
 } display_mode_t;
 
 typedef struct {

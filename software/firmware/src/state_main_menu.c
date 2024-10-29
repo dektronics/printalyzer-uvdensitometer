@@ -247,7 +247,7 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
             uint8_t meas_option = 1;
             display_main_elements_t elements = {
                 .title = "Calibrating...",
-                .mode = DISPLAY_MODE_REFLECTION,
+                .mode = DISPLAY_MODE_VIS_REFLECTION,
                 .density100 = 0,
                 .decimal_sep = sep,
                 .frame = 0
@@ -421,7 +421,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
             uint8_t meas_option = 1;
             display_main_elements_t elements = {
                 .title = "Calibrating...",
-                .mode = DISPLAY_MODE_TRANSMISSION,
+                .mode = vis_uv ? DISPLAY_MODE_VIS_TRANSMISSION : DISPLAY_MODE_UV_TRANSMISSION,
                 .density100 = 0,
                 .decimal_sep = sep,
                 .frame = 0

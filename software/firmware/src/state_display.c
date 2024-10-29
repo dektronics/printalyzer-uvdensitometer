@@ -59,7 +59,7 @@ static state_display_t state_vis_reflection_display_data = {
     .alternate_state = STATE_VIS_TRANSMISSION_DISPLAY,
     .densitometer = NULL,
     .display_title = "Reflection",
-    .display_mode = DISPLAY_MODE_REFLECTION
+    .display_mode = DISPLAY_MODE_VIS_REFLECTION
 };
 
 static state_display_t state_vis_transmission_display_data = {
@@ -81,8 +81,8 @@ static state_display_t state_vis_transmission_display_data = {
     .measure_state = STATE_VIS_TRANSMISSION_MEASURE,
     .alternate_state = STATE_UV_TRANSMISSION_DISPLAY,
     .densitometer = NULL,
-    .display_title = "VIS Trans.",
-    .display_mode = DISPLAY_MODE_TRANSMISSION
+    .display_title = "Transmission",
+    .display_mode = DISPLAY_MODE_VIS_TRANSMISSION
 };
 
 static state_display_t state_uv_transmission_display_data = {
@@ -104,8 +104,8 @@ static state_display_t state_uv_transmission_display_data = {
     .measure_state = STATE_UV_TRANSMISSION_MEASURE,
     .alternate_state = STATE_VIS_REFLECTION_DISPLAY,
     .densitometer = NULL,
-    .display_title = "UV Trans.",
-    .display_mode = DISPLAY_MODE_TRANSMISSION
+    .display_title = "Transmission",
+    .display_mode = DISPLAY_MODE_UV_TRANSMISSION
 };
 
 state_t *state_vis_reflection_display()
