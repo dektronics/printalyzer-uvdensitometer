@@ -368,10 +368,10 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         ret = sensor_set_mode(sensor_mode);
         if (ret != osOK) { break; }
 
-        ret = sensor_set_config(TSL2585_GAIN_256X, 719, 29);
+        ret = sensor_set_config(TSL2585_GAIN_256X, 719, 0);
         if (ret != osOK) { break; }
 
-        ret = sensor_set_agc_enabled(19);
+        ret = sensor_set_agc_enabled(9);
         if (ret != osOK) { break; }
 
         ret = sensor_set_oscillator_calibration(true);
@@ -410,6 +410,9 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
             if (agc_step == 1) {
                 /* Disable AGC */
                 ret = sensor_set_agc_disabled();
+                if (ret != osOK) { break; }
+                /* Increase integration time to prevent FIFO overflow while AGC disable takes effect */
+                ret = sensor_set_integration(719, 9);
                 if (ret != osOK) { break; }
                 agc_step++;
                 continue;
