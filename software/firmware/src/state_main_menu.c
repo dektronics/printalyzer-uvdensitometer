@@ -541,10 +541,8 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
 void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controller_t *controller)
 {
     char buf[192];
-    settings_cal_light_t cal_light;
     settings_cal_gain_t cal_gain;
 
-    settings_get_cal_light(&cal_light);
     settings_get_cal_gain(&cal_gain);
 
     //FIXME show new gain values

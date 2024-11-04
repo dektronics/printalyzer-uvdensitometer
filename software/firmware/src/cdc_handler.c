@@ -550,8 +550,6 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
     /*
      * Calibration Commands
      * "IC GAIN" -> Invoke the sensor gain calibration process [remote]
-     * "GC LIGHT" -> Get measurement light calibration values
-     * "SC LIGHT" -> Set measurement light calibration values
      * "GC GAIN" -> Get sensor gain calibration values
      * "SC GAIN" -> Set sensor gain calibration values
      * "GC SLOPE" -> Get sensor slope calibration values
@@ -602,47 +600,7 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
         return true;
     }
 #endif
-    else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "LIGHT") == 0) {
-        char buf[64];
-        settings_cal_light_t cal_light;
-
-        settings_get_cal_light(&cal_light);
-        sprintf(buf, "%d,%d", cal_light.reflection, cal_light.transmission);
-
-        cdc_send_command_response(cmd, buf);
-        return true;
-    } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "LIGHT") == 0) {
-        char buf[8];
-        strncpy(buf, cmd->args, 8);
-        buf[7] = '\0';
-
-        char *p = strchr(buf, ',');
-        if (p && p != buf && *(p + 1) != '\0') {
-            *p = '\0';
-            int refl_value = atoi(buf);
-            int tran_value = atoi(p + 1);
-
-            if (refl_value >= 0 && refl_value <= 128
-                && tran_value >= 0 && tran_value <= 128) {
-                settings_cal_light_t cal_light = {0};
-                cal_light.reflection = (uint8_t)refl_value;
-                cal_light.transmission = (uint8_t)tran_value;
-
-                if (settings_set_cal_light(&cal_light)) {
-                    cdc_send_command_response(cmd, "OK");
-                } else {
-                    cdc_send_command_response(cmd, "ERR");
-                }
-            } else {
-                cdc_send_command_response(cmd, "ERR");
-            }
-
-        } else {
-            cdc_send_command_response(cmd, "ERR");
-        }
-
-        return true;
-    } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "GAIN") == 0) {
+    else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "GAIN") == 0) {
         char buf[128];
         settings_cal_gain_t cal_gain;
 

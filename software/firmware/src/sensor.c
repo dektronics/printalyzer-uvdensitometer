@@ -45,7 +45,6 @@ static bool gain_status_callback(
     sensor_gain_calibration_callback_t callback,
     sensor_gain_calibration_status_t status, int param,
     void *user_data);
-static uint8_t sensor_get_read_brightness(sensor_light_t light_source);
 
 osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, void *user_data)
 {
@@ -331,7 +330,6 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
     sensor_read_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
-    uint8_t light_value = 0;
     sensor_reading_t reading;
     sensor_mode_t sensor_mode;
     int agc_step;
@@ -353,9 +351,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         sensor_mode = SENSOR_MODE_VIS;
     }
 
-    light_value = sensor_get_read_brightness(light_source);
-
-    log_i("Starting sensor target read (light=%d)", light_value);
+    log_i("Starting sensor target read");
 
     do {
         /* Make sure the light is disabled */
@@ -378,7 +374,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
-        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
+        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, SENSOR_LIGHT_MAX);
         if (ret != osOK) { break; }
 
         /* Start the sensor */
@@ -457,7 +453,6 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
     uint32_t *als_reading)
 {
     osStatus_t ret = osOK;
-    uint8_t light_value = 0;
     sensor_reading_t reading;
     double als_sum = 0;
     double als_avg = NAN;
@@ -479,9 +474,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
         return osErrorParameter;
     }
 
-    light_value = sensor_get_read_brightness(light_source);
-
-    log_i("Starting sensor raw target read (light=%d)", light_value);
+    log_i("Starting sensor raw target read");
 
     do {
         /* Put the sensor into the configured state */
@@ -498,7 +491,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
-        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
+        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, SENSOR_LIGHT_MAX);
         if (ret != osOK) { break; }
 
         /* Start the sensor */
@@ -837,24 +830,4 @@ float sensor_apply_slope_correction(float basic_reading)
     float corr_reading = powf(10.0F, l_expected);
 
     return corr_reading;
-}
-
-uint8_t sensor_get_read_brightness(sensor_light_t light_source)
-{
-    settings_cal_light_t cal_light = {0};
-
-    if (!settings_get_cal_light(&cal_light)) {
-        log_w("Using default light values due to invalid calibration");
-    }
-
-    switch (light_source) {
-    case SENSOR_LIGHT_VIS_REFLECTION:
-        return cal_light.reflection;
-    case SENSOR_LIGHT_VIS_TRANSMISSION:
-        return cal_light.transmission;
-    case SENSOR_LIGHT_OFF:
-        return 0;
-    default:
-        return 128;
-    }
 }

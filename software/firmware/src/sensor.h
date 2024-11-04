@@ -21,6 +21,8 @@ typedef enum {
     SENSOR_LIGHT_UV_TRANSMISSION
 } sensor_light_t;
 
+#define SENSOR_LIGHT_MAX 128
+
 /**
  * Sensor spectrum measurement mode
  */

@@ -137,11 +137,6 @@ Commands that lack a documented response format will return either `OK` or `ERR`
       * 7 = calibration process complete
     * `IC GAIN,OK` - Gain calibration process is complete
     * `IC GAIN,ERR` - Gain calibration process has failed
-* `GC LIGHT` - Get measurement light calibration values
-  * Response: `GC LIGHT,<REFL>,<TRAN>`
-* `SC LIGHT,<REFL>,<TRAN>` - Set measurement light calibration values
-  * The values set the duty cycle for the measurement lights, and are
-    in the range of 1-128, with 128 indicating full brightness.
 * `GC GAIN` - Get sensor gain calibration values
   * Response: `GC GAIN,<G0>,<G1>,<G2>,<G3>,<G4>,<G5>,<G6>,<G7>,<G8>,<G9>`
   * Note: `<G0..9>` represent gain values, doubling with each increment, from 0.5x to 256x
