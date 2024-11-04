@@ -6,7 +6,7 @@
  * Externally, this provides a simple interface for controlling the LED
  * drivers on in the device.
  * Internally, it implements special handling of the peculiarities of
- * the MIC4811 LED driver.
+ * the MIC4811/MIC4812 LED driver.
  *
  * Starting LEDs from an off state requires a 60us pulse prior to normal
  * PWM operation.

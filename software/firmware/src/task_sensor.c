@@ -172,6 +172,7 @@ static osStatus_t sensor_control_set_integration(const sensor_control_integratio
 static osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *params);
 static osStatus_t sensor_control_set_agc_disabled();
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
+static void sensor_light_change_impl(sensor_light_t light, uint8_t value);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
 static HAL_StatusTypeDef sensor_control_read_fifo(tsl2585_fifo_data_t *fifo_data);
 static HAL_StatusTypeDef sensor_control_set_mod_photodiode_smux(sensor_mode_t mode);
@@ -848,51 +849,42 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
 {
     //log_d("sensor_set_light_mode: %d, %d, %d", params->light, params->next_cycle, params->value);
 
-    uint8_t pending_vis_reflection;
-    uint8_t pending_vis_transmission;
-    uint8_t pending_uv_transmission;
-
-    /* Convert the parameters into pending values for the LEDs */
-    if (params->light == SENSOR_LIGHT_OFF || params->value == 0) {
-        pending_vis_reflection = 0;
-        pending_vis_transmission = 0;
-        pending_uv_transmission = 0;
-    } else if (params->light == SENSOR_LIGHT_VIS_REFLECTION) {
-        pending_vis_reflection = params->value;
-        pending_vis_transmission = 0;
-        pending_uv_transmission = 0;
-    } else if (params->light == SENSOR_LIGHT_VIS_TRANSMISSION) {
-        pending_vis_reflection = 0;
-        pending_vis_transmission = params->value;
-        pending_uv_transmission = 0;
-    } else if (params->light == SENSOR_LIGHT_UV_TRANSMISSION) {
-        pending_vis_reflection = 0;
-        pending_vis_transmission = 0;
-        pending_uv_transmission = params->value;
-    } else {
-        pending_vis_reflection = 0;
-        pending_vis_transmission = 0;
-        pending_uv_transmission = 0;
-    }
-
     taskENTER_CRITICAL();
     if (params->next_cycle) {
         /* Schedule the change for the next ISR invocation */
         pending_int_light_change = 0x80000000
-            | pending_vis_reflection
-            | (pending_vis_transmission << 8)
-            | (pending_uv_transmission << 16);
+            | (uint8_t)params->light << 8
+            | params->value;
     } else {
         /* Apply the change immediately */
-        light_set_vis_reflection(pending_vis_reflection);
-        light_set_vis_transmission(pending_vis_transmission);
-        light_set_uv_transmission(pending_uv_transmission);
+        sensor_light_change_impl(params->light, params->value);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;
     }
     taskEXIT_CRITICAL();
 
     return osOK;
+}
+
+void sensor_light_change_impl(sensor_light_t light, uint8_t value)
+{
+    if (light == SENSOR_LIGHT_VIS_REFLECTION) {
+        light_set_vis_transmission(0);
+        light_set_uv_transmission(0);
+        light_set_vis_reflection(value);
+    } else if (light == SENSOR_LIGHT_VIS_TRANSMISSION) {
+        light_set_vis_reflection(0);
+        light_set_uv_transmission(0);
+        light_set_vis_transmission(value);
+    } else if (light == SENSOR_LIGHT_UV_TRANSMISSION) {
+        light_set_vis_reflection(0);
+        light_set_vis_transmission(0);
+        light_set_uv_transmission(value);
+    } else {
+        light_set_vis_reflection(0);
+        light_set_vis_transmission(0);
+        light_set_uv_transmission(0);
+    }
 }
 
 osStatus_t sensor_get_next_reading(sensor_reading_t *reading, uint32_t timeout)
@@ -920,9 +912,9 @@ void sensor_int_handler()
     /* Apply any pending light change values */
     UBaseType_t interrupt_status = taskENTER_CRITICAL_FROM_ISR();
     if ((pending_int_light_change & 0x80000000) == 0x80000000) {
-        light_set_vis_reflection(pending_int_light_change & 0x000000FF);
-        light_set_vis_transmission((pending_int_light_change & 0x0000FF00) >> 8);
-        light_set_uv_transmission((pending_int_light_change & 0x00FF0000) >> 16);
+        const sensor_light_t light = (pending_int_light_change & 0x0000FF00) >> 8;
+        const uint8_t value = pending_int_light_change & 0x000000FF;
+        sensor_light_change_impl(light, value);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;
     }

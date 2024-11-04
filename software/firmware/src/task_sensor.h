@@ -103,9 +103,9 @@ osStatus_t sensor_set_oscillator_calibration(bool enabled);
 /**
  * Change the state of the sensor read light sources.
  *
- * Both lights are treated as mutually exclusive and are never turned on at
- * the same time. Turning one on will result in the other being turned off.
- * However, for convenience, it is possible to turn both off by passing
+ * All lights are treated as mutually exclusive and are never turned on at
+ * the same time. Turning one on will result in the rest being turned off.
+ * However, for convenience, it is possible to turn them all off by passing
  * SENSOR_LIGHT_OFF as the light selection.
  *
  * @param light Which light to change
