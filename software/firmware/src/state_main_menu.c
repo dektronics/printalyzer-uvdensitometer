@@ -541,29 +541,17 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
 void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controller_t *controller)
 {
     char buf[192];
+    int offset = 0;
     settings_cal_gain_t cal_gain;
 
     settings_get_cal_gain(&cal_gain);
 
     //FIXME show new gain values
     sprintf_(buf, "");
-#if 0
-    sprintf_(buf,
-        "LR=%d  LT=%d\n"
-        "L0 = %.1fx\n"
-        "L1 = %.1fx\n"
-        "M0 = %.4fx\n"
-        "M1 = %.4fx\n"
-        "H0 = %.3fx\n"
-        "H1 = %.3fx\n"
-        "X0 = %.2fx\n"
-        "X1 = %.2fx",
-        cal_light.reflection, cal_light.transmission,
-        1.0F, 1.0F,
-        cal_gain.ch0_medium, cal_gain.ch1_medium,
-        cal_gain.ch0_high, cal_gain.ch1_high,
-        cal_gain.ch0_maximum, cal_gain.ch1_maximum);
-#endif
+    for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
+        offset += sprintf_(buf + offset, "[%i]=%f\n", i, cal_gain.values[i]);
+    }
+    buf[offset - 1] = '\0';
 
     char sep = settings_get_decimal_separator();
     if (sep != '.') {
@@ -589,9 +577,11 @@ void main_menu_calibration_sensor_slope(state_main_menu_t *state, state_controll
 
     if (settings_get_cal_slope(&cal_slope)) {
         sprintf_(buf,
+            "Z = %.6f\n"
             "B0 = %.6f\n"
             "B1 = %.6f\n"
             "B2 = %.6f",
+            cal_slope.z,
             cal_slope.b0, cal_slope.b1, cal_slope.b2);
 
         char sep = settings_get_decimal_separator();
