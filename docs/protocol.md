@@ -189,12 +189,16 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 * `SD S,CFG,g,t,c` - Set sensor gain (n = [0-9]), integration time (t = [0-2047]), and integration count (c = [0-2047]) ***(remote mode)***
 * `SD AGCEN,c` - Enable automatic gain control with sample count (c = [0-2047]) ***(remote mode)***
 * `SD AGCDIS` - Disable automatic gain control
-* `ID READ,<L>,<G>,<T>,<C>` - Perform controlled sensor target read ***(remote mode)***
+* `ID READ,<L>,<M>,<G>,<T>,<C>` - Perform controlled sensor target read ***(remote mode)***
   * `<L>` - Measurement light source
     * `0` - Light off
     * `R` - VIS Reflection light, full power
     * `T` - VIS Transmission light, full power
     * `U` - UV Transmission light, full power
+  * `<M>` - Sensor photodiode configuration
+    * `0` - Default configuration
+    * `1` - Visual (Photopic) mode
+    * `2` - UV-A mode
   * `<G>` - Sensor gain (0-9)
   * `<T>` - Sensor integration sample time (0-2047)
   * `<C>` - Sensor integration sample count (0-2047)

@@ -790,7 +790,7 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
      * "SD S,AGCDIS"  -> Disable the sensor's automatic gain control [remote]
      * "GD S,READING" -> Get next sensor reading [remote]
      *
-     * "ID READ,L,n,m" -> Perform controlled sensor target read
+     * "ID READ,L,M,g,t,c" -> Perform controlled sensor target read
      *
      * "ID WIPE,UIDw2,CKSUM" -> Factory reset of configuration EEPROM
      *
@@ -908,7 +908,7 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
             }
         }
         return true;
-    } else if (strcmp(cmd->action, "READ") == 0 && cdc_remote_active && !cdc_remote_sensor_active) {
+    } else if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->action, "READ") == 0 && cdc_remote_active && !cdc_remote_sensor_active) {
         if ((cmd->args[0] == '0' || cmd->args[0] == 'R' || cmd->args[0] == 'T' || cmd->args[0] == 'U')
             && cmd->args[1] == ',') {
             uint16_t args[4] = {0};
