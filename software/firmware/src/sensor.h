@@ -107,10 +107,11 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source);
  * from which target density can be calculated.
  *
  * @param light_source Light source to use for target measurement
+ * @param light_value Light brightness value (Always use `SENSOR_LIGHT_MAX` for normal measurements)
  * @param als_result Sensor result
  * @return osOK on success
  */
-osStatus_t sensor_read_target(sensor_light_t light_source,
+osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
     float *als_result,
     sensor_read_callback_t callback, void *user_data);
 
@@ -127,6 +128,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
  * with the results set to UINT32_MAX.
  *
  * @param light_source Light source to use for target measurement
+ * @param light_value Light brightness value (Always use `SENSOR_LIGHT_MAX` for normal measurements)
  * @param mode Sensor mode
  * @param gain Sensor gain
  * @param sample_time Sensor integration sample time
@@ -134,7 +136,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
  * @param als_reading Sensor reading, in raw counts
  * @return osOK on success
  */
-osStatus_t sensor_read_target_raw(sensor_light_t light_source,
+osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint8_t light_value,
     sensor_mode_t mode, tsl2585_gain_t gain,
     uint16_t sample_time, uint16_t sample_count,
     uint32_t *als_reading);

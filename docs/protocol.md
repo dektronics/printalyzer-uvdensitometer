@@ -189,12 +189,14 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 * `SD S,CFG,g,t,c` - Set sensor gain (n = [0-9]), integration time (t = [0-2047]), and integration count (c = [0-2047]) ***(remote mode)***
 * `SD AGCEN,c` - Enable automatic gain control with sample count (c = [0-2047]) ***(remote mode)***
 * `SD AGCDIS` - Disable automatic gain control
-* `ID READ,<L>,<M>,<G>,<T>,<C>` - Perform controlled sensor target read ***(remote mode)***
+* `ID READ,<L>,<nnn>,<M>,<G>,<T>,<C>` - Perform controlled sensor target read ***(remote mode)***
   * `<L>` - Measurement light source
     * `0` - Light off
     * `R` - VIS Reflection light, full power
     * `T` - VIS Transmission light, full power
     * `U` - UV Transmission light, full power
+  * `<nnn>` - Measurement light duty cycle (nnn/127)
+    * 0 is off, 128 is full brightness
   * `<M>` - Sensor photodiode configuration
     * `0` - Default configuration
     * `1` - Visual (Photopic) mode
@@ -202,14 +204,29 @@ Commands that lack a documented response format will return either `OK` or `ERR`
   * `<G>` - Sensor gain (0-9)
   * `<T>` - Sensor integration sample time (0-2047)
   * `<C>` - Sensor integration sample count (0-2047)
-  * Result format: `ID READ,<DATA>`
-  * Note: This operation behaves similarly to a real measurement, synchronizing
+  * Result format: `ID READ,<DATA>` (Result is raw sensor counts)
+  * _Note: This operation behaves similarly to a real measurement, synchronizing
     read light control to the measurement loop, and averaging across a number
     of readings. Unlike a real measurement it uses preconfigured gain and
     integration settings, rather than automatically adjusting them as part
     of the cycle, and returns raw sensor data. It is intended for use as part of
     device characterization routines where repeatable measurement conditions
-    are necessary.
+    are necessary._
+* `ID MEAS,<L>,<nnn>` - Perform normal density measurement read cycle ***(remote mode)***
+  * `<L>` - Measurement light and sensor mode
+    * `R` - VIS Reflection measurement
+    * `T` - VIS Transmission measurement
+    * `U` - UV Transmission measurement
+  * `<nnn>` - Measurement light duty cycle (nnn/127)
+    * 0 is off, 128 is full brightness
+  * Result format: `ID MEAS,<DATA>` (Result is floating-point "Basic counts")
+  * _Note: This operation behaves exactly the same as a real measurement,
+    including automatic gain selection and repeatable timing. Unlike a
+    real measurement, it provides lower-level sensor data instead of a user
+    visible density result.
+    It is intended for use as part of device characterization routines which
+    need an automated way to take measurements without having to hard-code
+    sensor parameters._
 * `ID WIPE,<UID>,<CKSUM>` - Factory reset of configuration memory ***(remote mode)***
   * `<UIDw2>` is the last 4 bytes of the device UID, in hex format
   * `<CKSUM>` is the 4 byte checksum of the current firmware image, in hex format

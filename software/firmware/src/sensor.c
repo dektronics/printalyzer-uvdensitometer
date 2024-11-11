@@ -325,7 +325,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source)
 }
 #endif
 
-osStatus_t sensor_read_target(sensor_light_t light_source,
+osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
     float *als_result,
     sensor_read_callback_t callback, void *user_data)
 {
@@ -374,7 +374,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
-        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, SENSOR_LIGHT_MAX);
+        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
         if (ret != osOK) { break; }
 
         /* Start the sensor */
@@ -447,7 +447,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source,
     return ret;
 }
 
-osStatus_t sensor_read_target_raw(sensor_light_t light_source,
+osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint8_t light_value,
     sensor_mode_t mode, tsl2585_gain_t gain,
     uint16_t sample_time, uint16_t sample_count,
     uint32_t *als_reading)
@@ -491,7 +491,7 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source,
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */
-        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, SENSOR_LIGHT_MAX);
+        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
         if (ret != osOK) { break; }
 
         /* Start the sensor */
