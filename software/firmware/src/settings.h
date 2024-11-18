@@ -33,6 +33,12 @@ typedef struct {
 } settings_cal_slope_t;
 
 typedef struct {
+    float b0[3];
+    float b1[3];
+    float b2[3];
+} settings_cal_temperature_t;
+
+typedef struct {
     float lo_d;
     float lo_value;
     float hi_d;
@@ -150,6 +156,50 @@ bool settings_get_cal_slope(settings_cal_slope_t *cal_slope);
  * @return True if valid, false if invalid
  */
 bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope);
+
+/**
+ * Set the VIS temperature calibration values.
+ *
+ * @param cal_temperature Struct populated with values to save
+ * @return True if saved, false on error
+ */
+bool settings_set_cal_vis_temperature(const settings_cal_temperature_t *cal_temperature);
+
+/**
+ * Get the VIS temperature calibration values.
+ * If a valid set of values are not available, but the provided struct is
+ * usable, it will be initialized to NaN.
+ *
+ * @param cal_temperature Struct to be populated with saved values
+ * @return True if valid values are returned, false otherwise.
+ */
+bool settings_get_cal_vis_temperature(settings_cal_temperature_t *cal_temperature);
+
+/**
+ * Check if VIS temperature calibration values are valid
+ *
+ * @param cal_temperature Struct to validate
+ * @return True if valid, false if invalid
+ */
+bool settings_validate_cal_temperature(const settings_cal_temperature_t *cal_temperature);
+
+/**
+ * Set the UV temperature calibration values.
+ *
+ * @param cal_temperature Struct populated with values to save
+ * @return True if saved, false on error
+ */
+bool settings_set_cal_uv_temperature(const settings_cal_temperature_t *cal_temperature);
+
+/**
+ * Get the UV temperature calibration values.
+ * If a valid set of values are not available, but the provided struct is
+ * usable, it will be initialized to NaN.
+ *
+ * @param cal_temperature Struct to be populated with saved values
+ * @return True if valid values are returned, false otherwise.
+ */
+bool settings_get_cal_uv_temperature(settings_cal_temperature_t *cal_temperature);
 
 /**
  * Set the VIS reflection density calibration values.

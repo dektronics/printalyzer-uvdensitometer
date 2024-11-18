@@ -147,6 +147,17 @@ Commands that lack a documented response format will return either `OK` or `ERR`
   * _Note: There is no on-device way to perform slope calibration.
     It must be performed using the desktop application, and then
     loaded onto the device via the command interface._
+* `GC VTEMP` - Get VIS sensor temperature calibration values
+  * Response: `GC VTEMP,<B0_0>,<B0_1>,<B0_2>,<B1_0>,<B1_1>,<B1_2>,<B2_0>,<B2_1>,<B2_2>`
+* `SC VTEMP,<B0_0>,<B0_1>,<B0_2>,<B1_0>,<B1_1>,<B1_2>,<B2_0>,<B2_1>,<B2_2>` - Set VIS sensor temperature calibration values
+  * _Note: There is no on-device way to perform temperature calibration.
+    It is performed using an externally controlled process that captures
+    device measurements while the device is inside a thermal test chamber,
+    does a series of calculations, then provides a set of coefficients
+    that are loaded onto the device using this command._
+* `GC UTEMP` - Get UV sensor temperature calibration values
+  * Response: `GC VTEMP,<B0_0>,<B0_1>,<B0_2>,<B1_0>,<B1_1>,<B1_2>,<B2_0>,<B2_1>,<B2_2>`
+* `SC UTEMP,<B0_0>,<B0_1>,<B0_2>,<B1_0>,<B1_1>,<B1_2>,<B2_0>,<B2_1>,<B2_2>` - Set UV sensor temperature calibration values
 * `GC REFL` - Get VIS reflection density calibration values
   * Response: `GC REFL,<LD>,<LREADING>,<HD>,<HREADING>`
 * `SC REFL,<LD>,<LREADING>,<HD>,<HREADING>` - Set VIS reflection density calibration values

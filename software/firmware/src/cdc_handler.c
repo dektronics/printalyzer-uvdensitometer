@@ -99,7 +99,7 @@ static bool cdc_process_command_diagnostics(const cdc_command_t *cmd);
 static void cdc_send_response(const char *str);
 static void cdc_send_command_response(const cdc_command_t *cmd, const char *str);
 
-static void encode_f32_array_response(char *buf, const float *array, size_t len);
+static size_t encode_f32_array_response(char *buf, const float *array, size_t len);
 static size_t encode_f32(char *out, float value);
 static uint8_t decode_hex_char(char ch, bool *ok);
 static float decode_f32(const char *buf);
@@ -554,6 +554,10 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
      * "SC GAIN" -> Set sensor gain calibration values
      * "GC SLOPE" -> Get sensor slope calibration values
      * "SC SLOPE" -> Set sensor slope calibration values
+     * "GC VTEMP" -> Get VIS sensor temperature calibration values
+     * "SC VTEMP" -> Set VIS sensor temperature calibration values
+     * "GC UTEMP" -> Get VIS sensor temperature calibration values
+     * "SC UTEMP" -> Set VIS sensor temperature calibration values
      * "GC REFL" -> Get VIS reflection density calibration values
      * "SC REFL" -> Set VIS reflection density calibration values
      * "GC TRAN" -> Get VIS transmission density calibration values
@@ -654,6 +658,78 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
             cal_slope.z = slope_val[3];
 
             if (settings_set_cal_slope(&cal_slope)) {
+                cdc_send_command_response(cmd, "OK");
+            } else {
+                cdc_send_command_response(cmd, "ERR");
+            }
+            return true;
+        }
+    } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "VTEMP") == 0) {
+        char buf[128];
+        size_t n;
+        settings_cal_temperature_t cal_temperature;
+
+        settings_get_cal_vis_temperature(&cal_temperature);
+        n = encode_f32_array_response(buf, cal_temperature.b0, 3);
+        buf[n++] = ',';
+        n += encode_f32_array_response(buf + n, cal_temperature.b1, 3);
+        buf[n++] = ',';
+        encode_f32_array_response(buf + n, cal_temperature.b2, 3);
+
+        cdc_send_command_response(cmd, buf);
+        return true;
+    } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "VTEMP") == 0) {
+        float temp_val[9] = {0};
+        size_t n = decode_f32_array_args(cmd->args, temp_val, 9);
+        if (n == 9) {
+            settings_cal_temperature_t cal_temperature = {0};
+            cal_temperature.b0[0] = temp_val[0];
+            cal_temperature.b0[1] = temp_val[1];
+            cal_temperature.b0[2] = temp_val[2];
+            cal_temperature.b1[0] = temp_val[3];
+            cal_temperature.b1[1] = temp_val[4];
+            cal_temperature.b1[2] = temp_val[5];
+            cal_temperature.b2[0] = temp_val[6];
+            cal_temperature.b2[1] = temp_val[7];
+            cal_temperature.b2[2] = temp_val[8];
+
+            if (settings_set_cal_vis_temperature(&cal_temperature)) {
+                cdc_send_command_response(cmd, "OK");
+            } else {
+                cdc_send_command_response(cmd, "ERR");
+            }
+            return true;
+        }
+    } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "UTEMP") == 0) {
+        char buf[128];
+        size_t n;
+        settings_cal_temperature_t cal_temperature;
+
+        settings_get_cal_uv_temperature(&cal_temperature);
+        n = encode_f32_array_response(buf, cal_temperature.b0, 3);
+        buf[n++] = ',';
+        n += encode_f32_array_response(buf + n, cal_temperature.b1, 3);
+        buf[n++] = ',';
+        encode_f32_array_response(buf + n, cal_temperature.b2, 3);
+
+        cdc_send_command_response(cmd, buf);
+        return true;
+    } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "UTEMP") == 0) {
+        float temp_val[9] = {0};
+        size_t n = decode_f32_array_args(cmd->args, temp_val, 9);
+        if (n == 9) {
+            settings_cal_temperature_t cal_temperature = {0};
+            cal_temperature.b0[0] = temp_val[0];
+            cal_temperature.b0[1] = temp_val[1];
+            cal_temperature.b0[2] = temp_val[2];
+            cal_temperature.b1[0] = temp_val[3];
+            cal_temperature.b1[1] = temp_val[4];
+            cal_temperature.b1[2] = temp_val[5];
+            cal_temperature.b2[0] = temp_val[6];
+            cal_temperature.b2[1] = temp_val[7];
+            cal_temperature.b2[2] = temp_val[8];
+
+            if (settings_set_cal_uv_temperature(&cal_temperature)) {
                 cdc_send_command_response(cmd, "OK");
             } else {
                 cdc_send_command_response(cmd, "ERR");
@@ -1180,7 +1256,7 @@ void cdc_write(const char *buf, size_t len)
     osMutexRelease(cdc_mutex);
 }
 
-void encode_f32_array_response(char *buf, const float *array, size_t len)
+size_t encode_f32_array_response(char *buf, const float *array, size_t len)
 {
     size_t offset = 0;
     for (size_t i = 0; i < len; i++) {
@@ -1190,6 +1266,7 @@ void encode_f32_array_response(char *buf, const float *array, size_t len)
         offset += encode_f32(buf + offset, array[i]);
     }
     buf[offset] = '\0';
+    return offset;
 }
 
 size_t encode_f32(char *out, float value)

@@ -20,12 +20,16 @@ static bool settings_init_cal_target(bool force_clear);
 static bool settings_clear_cal_target();
 static bool settings_init_user_settings(bool force_clear);
 static bool settings_clear_user_settings();
-
+static bool settings_init_cal_temp_settings(bool force_clear);
+static bool settings_clear_cal_temp_settings();
 
 static void settings_set_cal_gain_defaults(settings_cal_gain_t *cal_gain);
 static bool settings_load_cal_gain();
 static void settings_set_cal_slope_defaults(settings_cal_slope_t *cal_slope);
 static bool settings_load_cal_slope();
+static void settings_set_cal_temperature_defaults(settings_cal_temperature_t *cal_temperature);
+static bool settings_load_cal_vis_temperature();
+static bool settings_load_cal_uv_temperature();
 static void settings_set_cal_reflection_defaults(settings_cal_reflection_t *cal_reflection);
 static bool settings_load_cal_vis_reflection();
 static void settings_set_cal_transmission_defaults(settings_cal_transmission_t *cal_transmission);
@@ -117,8 +121,27 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define CONFIG_USER_DISPLAY_FORMAT      (PAGE_USER_SETTINGS + 28U)
 #define CONFIG_USER_DISPLAY_FORMAT_SIZE (8U)
 
+/*
+ * Temperature Calibration Data (128b)
+*  This page contains data specific to calibration of the sensor's response
+*  to temperature, and can be considered a continuation of the sensor
+*  calibration data section.
+*  The data stored here will be considered part of factory calibration,
+ * as it is the result of a process which requires specialized equipment
+ * to perform.
+ */
+#define PAGE_CAL_TEMPERATURE         (DATA_EEPROM_BASE + 0x0200UL)
+#define PAGE_CAL_TEMPERATURE_SIZE    (128)
+#define PAGE_CAL_TEMPERATURE_VERSION 1UL
+#define CONFIG_CAL_VIS_TEMP          (PAGE_CAL_TEMPERATURE + 4U)
+#define CONFIG_CAL_VIS_TEMP_SIZE     (40U)
+#define CONFIG_CAL_UV_TEMP           (PAGE_CAL_TEMPERATURE + 44U)
+#define CONFIG_CAL_UV_TEMP_SIZE      (40U)
+
 static settings_cal_gain_t setting_cal_gain = {0};
 static settings_cal_slope_t setting_cal_slope = {0};
+static settings_cal_temperature_t setting_cal_vis_temperature = {0};
+static settings_cal_temperature_t setting_cal_uv_temperature = {0};
 static settings_cal_reflection_t setting_cal_vis_reflection = {0};
 static settings_cal_transmission_t setting_cal_vis_transmission = {0};
 static settings_cal_transmission_t setting_cal_uv_transmission = {0};
@@ -145,9 +168,15 @@ HAL_StatusTypeDef settings_init()
 
         /* Initialize all settings data pages, clearing if header page invalid */
         if (!settings_init_cal_sensor(!valid)) { break; }
-        if (!settings_init_cal_target(!valid)) { break; }
-        if (!settings_init_user_settings(!valid)) { break; }
+        watchdog_refresh();
 
+        if (!settings_init_cal_target(!valid)) { break; }
+        watchdog_refresh();
+
+        if (!settings_init_user_settings(!valid)) { break; }
+        watchdog_refresh();
+
+        if (!settings_init_cal_temp_settings(!valid)) { break; }
         watchdog_refresh();
 
         /* Initialize the header page if necessary */
@@ -196,6 +225,10 @@ HAL_StatusTypeDef settings_wipe()
         if (ret != HAL_OK) { break; }
 
         ret = settings_erase_page(PAGE_USER_SETTINGS, PAGE_USER_SETTINGS_SIZE);
+        watchdog_refresh();
+        if (ret != HAL_OK) { break; }
+
+        ret = settings_erase_page(PAGE_CAL_TEMPERATURE, PAGE_CAL_TEMPERATURE_SIZE);
         watchdog_refresh();
         if (ret != HAL_OK) { break; }
     } while (0);
@@ -485,6 +518,57 @@ bool settings_clear_user_settings()
     return true;
 }
 
+bool settings_init_cal_temp_settings(bool force_clear)
+{
+    bool result;
+    /* Initialize all fields to their default values */
+    settings_set_cal_temperature_defaults(&setting_cal_vis_temperature);
+    settings_set_cal_temperature_defaults(&setting_cal_uv_temperature);
+
+    /* Load settings if the version matches */
+    uint32_t version = force_clear ? 0 : settings_read_uint32(PAGE_CAL_TEMPERATURE);
+    if (version == PAGE_CAL_TEMPERATURE_VERSION) {
+        /* Version is good, load data with per-field validation */
+        settings_load_cal_vis_temperature();
+        settings_load_cal_uv_temperature();
+        result = true;
+    } else {
+        /* Version is bad, initialize a blank page */
+        if (!force_clear) {
+            log_w("Unexpected sensor cal temp version: %d != %d", version, PAGE_CAL_TEMPERATURE_VERSION);
+        }
+        result = settings_clear_cal_temp_settings();
+    }
+    return result;
+}
+
+bool settings_clear_cal_temp_settings()
+{
+    log_i("Clearing sensor cal temp page");
+
+    /* Zero the page version */
+    if (settings_write_uint32(PAGE_CAL_TEMPERATURE, 0UL) != HAL_OK) {
+        return false;
+    }
+
+    /* Write empty temperature cal structs */
+    settings_cal_temperature_t cal_temperature;
+    settings_set_cal_temperature_defaults(&cal_temperature);
+    if (!settings_set_cal_vis_temperature(&cal_temperature)) {
+        return false;
+    }
+    if (!settings_set_cal_uv_temperature(&cal_temperature)) {
+        return false;
+    }
+
+    /* Write the page version */
+    if (settings_write_uint32(PAGE_CAL_TEMPERATURE, PAGE_CAL_TEMPERATURE_VERSION) != HAL_OK) {
+        return false;
+    }
+
+    return true;
+}
+
 void settings_set_cal_gain_defaults(settings_cal_gain_t *cal_gain)
 {
     if (!cal_gain) { return; }
@@ -691,6 +775,184 @@ bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope)
     }
 
     return true;
+}
+
+void settings_set_cal_temperature_defaults(settings_cal_temperature_t *cal_temperature)
+{
+    if (!cal_temperature) { return; }
+    memset(cal_temperature, 0, sizeof(settings_cal_temperature_t));
+
+    for (uint8_t i = 0; i < 3; i++) {
+        cal_temperature->b0[i] = NAN;
+        cal_temperature->b1[i] = NAN;
+        cal_temperature->b2[i] = NAN;
+    }
+}
+
+bool settings_set_cal_vis_temperature(const settings_cal_temperature_t *cal_temperature)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    if (!cal_temperature) { return false; }
+
+    uint8_t buf[CONFIG_CAL_VIS_TEMP_SIZE];
+    copy_from_f32(&buf[0], cal_temperature->b0[0]);
+    copy_from_f32(&buf[4], cal_temperature->b0[1]);
+    copy_from_f32(&buf[8], cal_temperature->b0[2]);
+    copy_from_f32(&buf[12], cal_temperature->b1[0]);
+    copy_from_f32(&buf[16], cal_temperature->b1[1]);
+    copy_from_f32(&buf[20], cal_temperature->b1[2]);
+    copy_from_f32(&buf[24], cal_temperature->b2[0]);
+    copy_from_f32(&buf[28], cal_temperature->b2[1]);
+    copy_from_f32(&buf[32], cal_temperature->b2[2]);
+
+    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
+    copy_from_u32(&buf[36], crc);
+
+    ret = settings_write_buffer(CONFIG_CAL_VIS_TEMP, buf, sizeof(buf));
+
+    if (ret == HAL_OK) {
+        memcpy(&setting_cal_vis_temperature, cal_temperature, sizeof(settings_cal_temperature_t));
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool settings_load_cal_vis_temperature()
+{
+    uint8_t buf[CONFIG_CAL_VIS_TEMP_SIZE];
+
+    if (settings_read_buffer(CONFIG_CAL_VIS_TEMP, buf, sizeof(buf)) != HAL_OK) {
+        return false;
+    }
+
+    uint32_t crc = copy_to_u32(&buf[36]);
+    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
+
+    if (crc != calculated_crc) {
+        log_w("Invalid cal VIS temp CRC: %08X != %08X", crc, calculated_crc);
+        return false;
+    } else {
+        setting_cal_vis_temperature.b0[0] = copy_to_f32(&buf[0]);
+        setting_cal_vis_temperature.b0[1] = copy_to_f32(&buf[4]);
+        setting_cal_vis_temperature.b0[2] = copy_to_f32(&buf[8]);
+        setting_cal_vis_temperature.b1[0] = copy_to_f32(&buf[12]);
+        setting_cal_vis_temperature.b1[1] = copy_to_f32(&buf[16]);
+        setting_cal_vis_temperature.b1[2] = copy_to_f32(&buf[20]);
+        setting_cal_vis_temperature.b2[0] = copy_to_f32(&buf[24]);
+        setting_cal_vis_temperature.b2[1] = copy_to_f32(&buf[28]);
+        setting_cal_vis_temperature.b2[2] = copy_to_f32(&buf[32]);
+        return true;
+    }
+}
+
+bool settings_get_cal_vis_temperature(settings_cal_temperature_t *cal_temperature)
+{
+    if (!cal_temperature) { return false; }
+
+    /* Copy over the settings values */
+    memcpy(cal_temperature, &setting_cal_vis_temperature, sizeof(settings_cal_temperature_t));
+
+    /* Set default values if validation fails */
+    if (!settings_validate_cal_temperature(cal_temperature)) {
+        settings_set_cal_temperature_defaults(cal_temperature);
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool settings_validate_cal_temperature(const settings_cal_temperature_t *cal_temperature)
+{
+    if (!cal_temperature) { return false; }
+
+    /* Validate field numeric properties */
+    for (uint8_t i = 0; i < 3; i++) {
+        if (isnanf(cal_temperature->b0[i]) || isinff(cal_temperature->b0[i])) {
+            return false;
+        }
+        if (isnanf(cal_temperature->b1[i]) || isinff(cal_temperature->b1[i])) {
+            return false;
+        }
+        if (isnanf(cal_temperature->b2[i]) || isinff(cal_temperature->b2[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool settings_set_cal_uv_temperature(const settings_cal_temperature_t *cal_temperature)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    if (!cal_temperature) { return false; }
+
+    uint8_t buf[CONFIG_CAL_UV_TEMP_SIZE];
+    copy_from_f32(&buf[0], cal_temperature->b0[0]);
+    copy_from_f32(&buf[4], cal_temperature->b0[1]);
+    copy_from_f32(&buf[8], cal_temperature->b0[2]);
+    copy_from_f32(&buf[12], cal_temperature->b1[0]);
+    copy_from_f32(&buf[16], cal_temperature->b1[1]);
+    copy_from_f32(&buf[20], cal_temperature->b1[2]);
+    copy_from_f32(&buf[24], cal_temperature->b2[0]);
+    copy_from_f32(&buf[28], cal_temperature->b2[1]);
+    copy_from_f32(&buf[32], cal_temperature->b2[2]);
+
+    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
+    copy_from_u32(&buf[36], crc);
+
+    ret = settings_write_buffer(CONFIG_CAL_UV_TEMP, buf, sizeof(buf));
+
+    if (ret == HAL_OK) {
+        memcpy(&setting_cal_uv_temperature, cal_temperature, sizeof(settings_cal_temperature_t));
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool settings_load_cal_uv_temperature()
+{
+    uint8_t buf[CONFIG_CAL_UV_TEMP_SIZE];
+
+    if (settings_read_buffer(CONFIG_CAL_UV_TEMP, buf, sizeof(buf)) != HAL_OK) {
+        return false;
+    }
+
+    uint32_t crc = copy_to_u32(&buf[36]);
+    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
+
+    if (crc != calculated_crc) {
+        log_w("Invalid cal UV temp CRC: %08X != %08X", crc, calculated_crc);
+        return false;
+    } else {
+        setting_cal_uv_temperature.b0[0] = copy_to_f32(&buf[0]);
+        setting_cal_uv_temperature.b0[1] = copy_to_f32(&buf[4]);
+        setting_cal_uv_temperature.b0[2] = copy_to_f32(&buf[8]);
+        setting_cal_uv_temperature.b1[0] = copy_to_f32(&buf[12]);
+        setting_cal_uv_temperature.b1[1] = copy_to_f32(&buf[16]);
+        setting_cal_uv_temperature.b1[2] = copy_to_f32(&buf[20]);
+        setting_cal_uv_temperature.b2[0] = copy_to_f32(&buf[24]);
+        setting_cal_uv_temperature.b2[1] = copy_to_f32(&buf[28]);
+        setting_cal_uv_temperature.b2[2] = copy_to_f32(&buf[32]);
+        return true;
+    }
+}
+
+bool settings_get_cal_uv_temperature(settings_cal_temperature_t *cal_temperature)
+{
+    if (!cal_temperature) { return false; }
+
+    /* Copy over the settings values */
+    memcpy(cal_temperature, &setting_cal_uv_temperature, sizeof(settings_cal_temperature_t));
+
+    /* Set default values if validation fails */
+    if (!settings_validate_cal_temperature(cal_temperature)) {
+        settings_set_cal_temperature_defaults(cal_temperature);
+        return false;
+    } else {
+        return true;
+    }
 }
 
 void settings_set_cal_reflection_defaults(settings_cal_reflection_t *cal_reflection)
