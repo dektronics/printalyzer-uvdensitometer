@@ -809,6 +809,58 @@ float sensor_apply_zero_correction(float basic_reading)
     return corr_value;
 }
 
+float sensor_apply_temperature_correction(sensor_light_t light_source, float temp_c, float basic_reading)
+{
+    bool valid;
+    settings_cal_temperature_t cal_temperature;
+    float b0;
+    float b1;
+    float b2;
+    float temp_corr;
+
+    switch (light_source) {
+    case SENSOR_LIGHT_VIS_REFLECTION:
+    case SENSOR_LIGHT_VIS_TRANSMISSION:
+        valid = settings_get_cal_vis_temperature(&cal_temperature);
+        break;
+    case SENSOR_LIGHT_UV_TRANSMISSION:
+        valid = settings_get_cal_uv_temperature(&cal_temperature);
+        break;
+    default:
+        valid = false;
+        break;
+    }
+
+    if (!valid) {
+        log_w("Invalid temperature calibration values");
+        return basic_reading;
+    }
+
+    if (!is_valid_number(temp_c)) {
+        log_w("Invalid temperature reading");
+        return basic_reading;
+    }
+
+    /*
+     * Calculate the correction coefficients from the calibration values
+     * and the basic reading.
+     */
+    b0 = cal_temperature.b0[0] + (cal_temperature.b0[1] * basic_reading) + (cal_temperature.b0[2] * powf(basic_reading, 2.0F));
+    b1 = cal_temperature.b1[0] + (cal_temperature.b1[1] * basic_reading) + (cal_temperature.b1[2] * powf(basic_reading, 2.0F));
+    b2 = cal_temperature.b2[0] + (cal_temperature.b2[1] * basic_reading) + (cal_temperature.b2[2] * powf(basic_reading, 2.0F));
+
+    /*
+     * Calculate the temperature correction multiplier from the correction
+     * coefficients and the temperature reading.
+     */
+    temp_corr = b0 + (b1 * temp_c) + (b2 * powf(temp_c, 2.0F));
+
+    /* Calculate the final temperature-corrected reading */
+    float corr_reading = basic_reading * temp_corr;
+
+    return corr_reading;
+}
+
 float sensor_apply_slope_correction(float basic_reading)
 {
     settings_cal_slope_t cal_slope;

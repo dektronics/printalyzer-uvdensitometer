@@ -174,6 +174,30 @@ double sensor_convert_to_basic_counts(const sensor_reading_t *reading, uint8_t m
 float sensor_apply_zero_correction(float basic_reading);
 
 /**
+ * Apply the configured temperature correction formula to a sensor reading.
+ *
+ * The input value is in basic counts, as is normally done as part
+ * of the measurement process.
+ *
+ * Temperature correction is specific to the sensor mode, with a different
+ * set of corrections for VIS vs UV. It does not differ between reflection
+ * and transmission.
+ *
+ * Temperature correction should be applied before slope correction, as the
+ * slope can otherwise vary with temperature.
+ *
+ * If the relevant temperature correction values are not correctly configured,
+ * or the provided parameters are invalid, then the input value will be returned
+ * unmodified.
+ *
+ * @param light_source The light source used for the reading, used to convey sensor mode
+ * @param temp_c Temperature reading, in Celsius, taken at the same time as the sensor reading
+ * @param basic_reading Sensor reading in combined basic counts
+ * @return Temperature corrected sensor reading
+ */
+float sensor_apply_temperature_correction(sensor_light_t light_source, float temp_c, float basic_reading);
+
+/**
  * Apply the configured slope correction formula to a sensor reading.
  *
  * The input value is in basic counts, as is normally done as part

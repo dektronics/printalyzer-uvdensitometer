@@ -126,6 +126,16 @@ osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t 
 osStatus_t sensor_get_next_reading(sensor_reading_t *reading, uint32_t timeout);
 
 /**
+* Get the current sensor head temperature reading.
+*
+* This function does not depend on the state of the light sensor,
+* and can be called at any time after this task is initialized.
+*
+* @param temp_c Current sensor head temperature in Celsius
+*/
+osStatus_t sensor_read_temperature(float *temp_c);
+
+/**
  * Sensor interrupt handler.
  */
 void sensor_int_handler();

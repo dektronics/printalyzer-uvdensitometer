@@ -23,7 +23,6 @@
 #include "task_main.h"
 #include "task_sensor.h"
 #include "adc_handler.h"
-#include "mcp9808.h"
 #include "densitometer.h"
 #include "app_descriptor.h"
 #include "util.h"
@@ -444,7 +443,7 @@ bool cdc_process_command_system(const cdc_command_t *cmd)
         float sensor_temp_c = 0;
 
         adc_read(&readings);
-        mcp9808_read_temperature(&hi2c1, &sensor_temp_c);
+        sensor_read_temperature(&sensor_temp_c);
 
         sprintf_(buf, "%dmV,%.1fC,%.1fC", readings.vdda_mv, readings.temp_c, sensor_temp_c);
         cdc_send_command_response(cmd, buf);

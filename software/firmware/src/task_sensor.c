@@ -10,6 +10,7 @@
 
 #include "stm32l0xx_hal.h"
 #include "tsl2585.h"
+#include "mcp9808.h"
 #include "sensor.h"
 #include "light.h"
 #include "util.h"
@@ -27,6 +28,7 @@ typedef enum {
     SENSOR_CONTROL_SET_AGC_ENABLED,
     SENSOR_CONTROL_SET_AGC_DISABLED,
     SENSOR_CONTROL_SET_LIGHT_MODE,
+    SENSOR_CONTROL_READ_TEMPERATURE,
     SENSOR_CONTROL_INTERRUPT
 } sensor_control_event_type_t;
 
@@ -51,6 +53,10 @@ typedef struct {
 } sensor_control_light_mode_params_t;
 
 typedef struct {
+    float *temp_c;
+} sensor_control_read_temperature_params_t;
+
+typedef struct {
     uint32_t sensor_ticks;
     uint32_t light_ticks;
     uint32_t reading_count;
@@ -68,6 +74,7 @@ typedef struct {
         sensor_control_integration_params_t integration;
         sensor_control_agc_params_t agc;
         sensor_control_light_mode_params_t light_mode;
+        sensor_control_read_temperature_params_t read_temperature;
         sensor_control_interrupt_params_t interrupt;
     };
 } sensor_control_event_t;
@@ -110,6 +117,7 @@ typedef struct {
 extern I2C_HandleTypeDef hi2c1;
 
 static volatile bool sensor_initialized = false;
+static volatile bool temp_sensor_initialized = false;
 static volatile uint32_t pending_int_light_change = 0;
 static volatile uint32_t light_change_ticks = 0;
 static volatile uint32_t reading_count = 0;
@@ -173,6 +181,7 @@ static osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params
 static osStatus_t sensor_control_set_agc_disabled();
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
 static void sensor_light_change_impl(sensor_light_t light, uint8_t value);
+static osStatus_t sensor_control_read_temperature(sensor_control_read_temperature_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
 static HAL_StatusTypeDef sensor_control_read_fifo(tsl2585_fifo_data_t *fifo_data);
 static HAL_StatusTypeDef sensor_control_set_mod_photodiode_smux(sensor_mode_t mode);
@@ -229,6 +238,21 @@ void task_sensor_run(void *argument)
     }
 
     /*
+     * Initialize the temperature sensor, which will be accessed from
+     * the same task as the light sensor to avoid I2C peripheral
+     * synchronization issues.
+     */
+    ret = mcp9808_init(&hi2c1);
+
+    if (ret != HAL_OK) {
+        log_e("Temperature sensor initialization failed");
+        temp_sensor_initialized = false;
+    } else {
+        /* Set the initialized flag */
+        temp_sensor_initialized = true;
+    }
+
+    /*
      * Set some sensible defaults just in case the sensor isn't configured
      * prior to starting. Without this, we could run with an integration
      * time faster than we can deal with and overflow the FIFO.
@@ -272,6 +296,9 @@ void task_sensor_run(void *argument)
                 break;
             case SENSOR_CONTROL_SET_LIGHT_MODE:
                 ret = sensor_control_set_light_mode(&control_event.light_mode);
+                break;
+            case SENSOR_CONTROL_READ_TEMPERATURE:
+                ret = sensor_control_read_temperature(&control_event.read_temperature);
                 break;
             case SENSOR_CONTROL_INTERRUPT:
                 ret = sensor_control_interrupt(&control_event.interrupt);
@@ -896,6 +923,35 @@ osStatus_t sensor_get_next_reading(sensor_reading_t *reading, uint32_t timeout)
     }
 
     return osMessageQueueGet(sensor_reading_queue, reading, NULL, timeout);
+}
+
+osStatus_t sensor_read_temperature(float *temp_c)
+{
+    if (!temp_sensor_initialized) { return osErrorResource; }
+    if (!temp_c) { return osErrorParameter; }
+
+    osStatus_t result = osOK;
+    sensor_control_event_t control_event = {
+        .event_type = SENSOR_CONTROL_READ_TEMPERATURE,
+        .result = &result,
+        .read_temperature = {
+            .temp_c = temp_c
+        }
+    };
+
+    osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
+    osSemaphoreAcquire(sensor_control_semaphore, portMAX_DELAY);
+    return result;
+}
+
+osStatus_t sensor_control_read_temperature(sensor_control_read_temperature_params_t *params)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    log_d("sensor_control_read_temperature");
+
+    ret = mcp9808_read_temperature(&hi2c1, params->temp_c);
+
+    return hal_to_os_status(ret);
 }
 
 void sensor_int_handler()
