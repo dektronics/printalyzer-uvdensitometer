@@ -1,14 +1,12 @@
-// KiKit panelization for the Printalyzer UV/VIS Densitometer Main Board
-// This produces a 212.5x134mm sized panel containing 6 boards
+// KiKit panelization for the Printalizer UV/VIS Densitometer Transmission LED Board
+// This produces a 160x145mm sized panel, with tooling holes on a 10mm grid,
+// containing 24 boards.
 {
     "layout": {
         "type": "grid",
         "rows": 3,
-        "cols": 2,
-        "hspace": "2.5mm",
-        "vspace": "2.5mm",
-        "rotation": "180deg",
-        "alternation": "cols",
+        "cols": 8,
+        "rotation": "0deg",
         "renamenet": "Board_{n}-{orig}",
         "renameref": "{orig}"
     },
@@ -16,24 +14,23 @@
         "type": "auto",
         "tolerance": "5mm"
     },
-    "tabs": {
-        "type": "annotation"
-    },
     "cuts": {
-        "type": "mousebites",
-        "drill": "0.5mm",
-        "spacing": "0.7mm"
+        "type": "vcuts"
+    },
+    "tabs": {
+        "type": "fixed",
+        "width": "10mm"
     },
     "framing": {
         "type": "railstb",
         "width": "5mm",
-        "space": "2.5mm"
+        "vspace": "3mm"
     },
     "tooling": {
         "type": "4hole",
         "hoffset": "5mm",
         "voffset": "2.5mm",
-        "size": "2mm"
+        "size": "2.05mm"
     },
     "fiducials": {
         "type": "3fid",
@@ -44,7 +41,7 @@
     },
     "text": {
         "type": "simple",
-        "text": "${TITLE} Panel",
+        "text": "{boardTitle} Panel",
         "anchor": "mt",
         "voffset": "2.5mm",
         "hjustify": "center"
@@ -52,7 +49,6 @@
     "post": {
         "millradius": "1mm",
         "origin": "bl",
-        "script": "tools/kikit-post.py",
-        "scriptarg": "main-board/main-board.kicad_pcb"
+        "script": "tools/kikit-post.py"
     }
 }
