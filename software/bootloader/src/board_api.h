@@ -38,9 +38,23 @@
 // Features
 //--------------------------------------------------------------------+
 
+#ifndef BOARD_FLASH_ADDR_ZERO
+#define BOARD_FLASH_ADDR_ZERO   0
+#endif
+
 // Flash Start Address of Application
 #ifndef BOARD_FLASH_APP_START
 #define BOARD_FLASH_APP_START  0
+#endif
+
+
+#ifndef TUF2_LOG
+  #define TUF2_LOG 1
+#endif
+
+// Bootloader often has limited ROM than RAM and prefer to use RAM for data
+#ifndef TINYUF2_CONST
+#define TINYUF2_CONST const
 #endif
 
 // Use favicon.ico + autorun.inf (only works with windows)
@@ -153,12 +167,12 @@ void board_display_init(void);
 #define TUF2_LOG1_MEM           // tu_print_mem
 #define TUF2_LOG1_VAR(_x)       // tu_print_var((uint8_t const*)(_x), sizeof(*(_x)))
 #define TUF2_LOG1_INT(_x)       tuf2_printf(#_x " = %ld\r\n", (uint32_t) (_x) )
-#define TUF2_LOG1_HEX(_x)       tuf2_printf(#_x " = %lX\r\n", (uint32_t) (_x) )
+#define TUF2_LOG1_HEX(_x)       tuf2_printf(#_x " = 0x%lX\r\n", (uint32_t) (_x) )
 #define TUF2_LOG1_LOCATION()    tuf2_printf("%s: %d:\r\n", __PRETTY_FUNCTION__, __LINE__)
 #define TUF2_LOG1_FAILED()      tuf2_printf("%s: %d: Failed\r\n", __PRETTY_FUNCTION__, __LINE__)
 
 // Log with debug level 2
-#if CFG_TUSB_DEBUG > 1
+#if TUF2_LOG > 1
   #define TUF2_LOG2             TUF2_LOG1
   #define TUF2_LOG2_MEM         TUF2_LOG1_MEM
   #define TUF2_LOG2_VAR         TUF2_LOG1_VAR

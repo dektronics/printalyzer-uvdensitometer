@@ -12,7 +12,7 @@ latex
 *.ind
 .env
 .settings/
-.idea/
+.vscode/
 .gdb_history
 /examples/*/*/build*
 test_old/
@@ -21,10 +21,14 @@ _build
 /examples/*/*/ses
 /examples/*/*/ozone
 /examples/obsolete
+hw/bsp/**/cubemx/*/
+.mxproject
 # coverity intermediate files
 cov-int
 # cppcheck build directories
 *-build-dir
 /_bin/
 __pycache__
-
+cmake-build-*
+sdkconfig
+.PVS-Studio

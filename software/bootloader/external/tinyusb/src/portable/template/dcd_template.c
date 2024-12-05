@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2018, hathach (tinyusb.org)
@@ -26,7 +26,7 @@
 
 #include "tusb_option.h"
 
-#if CFG_TUSB_MCU == OPT_MCU_NONE
+#if CFG_TUD_ENABLED && CFG_TUSB_MCU == OPT_MCU_NONE
 
 #include "device/dcd.h"
 
@@ -102,6 +102,22 @@ bool dcd_edpt_open (uint8_t rhport, tusb_desc_endpoint_t const * ep_desc)
   return false;
 }
 
+// Allocate packet buffer used by ISO endpoints
+// Some MCU need manual packet buffer allocation, we allocate the largest size to avoid clustering
+bool dcd_edpt_iso_alloc(uint8_t rhport, uint8_t ep_addr, uint16_t largest_packet_size) {
+  (void) rhport;
+  (void) ep_addr;
+  (void) largest_packet_size;
+  return false;
+}
+
+// Configure and enable an ISO endpoint according to descriptor
+bool dcd_edpt_iso_activate(uint8_t rhport, tusb_desc_endpoint_t const * desc_ep) {
+  (void) rhport;
+  (void) desc_ep;
+  return false;
+}
+
 void dcd_edpt_close_all (uint8_t rhport)
 {
   (void) rhport;
@@ -140,5 +156,7 @@ void dcd_edpt_clear_stall (uint8_t rhport, uint8_t ep_addr)
   (void) rhport;
   (void) ep_addr;
 }
+
+
 
 #endif

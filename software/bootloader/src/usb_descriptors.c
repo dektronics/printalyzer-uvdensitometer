@@ -28,25 +28,25 @@
 #include "board_api.h"
 #include "tusb.h"
 
+/* Interface number */
+enum {
+    ITF_NUM_MSC,
+    ITF_NUM_TOTAL
+};
+
 /* String Descriptor Index */
 enum {
     STRID_LANGID = 0,
     STRID_MANUFACTURER,
     STRID_PRODUCT,
     STRID_SERIAL,
-    STRID_MSC,
-    STRID_VENDOR,
-};
-
-enum {
-    ITF_NUM_MSC,
-    ITF_NUM_TOTAL
+    STRID_MSC
 };
 
 /**
  * Device Descriptors
  */
-tusb_desc_device_t const desc_device = {
+tusb_desc_device_t TINYUF2_CONST desc_device = {
     .bLength            = sizeof(tusb_desc_device_t),
     .bDescriptorType    = TUSB_DESC_DEVICE,
     .bcdUSB             = 0x0200,
@@ -54,15 +54,12 @@ tusb_desc_device_t const desc_device = {
     .bDeviceSubClass    = 0x00,
     .bDeviceProtocol    = 0x00,
     .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
-
     .idVendor           = USB_VID,
     .idProduct          = USB_PID,
-    .bcdDevice          = 0x0100,
-
+    .bcdDevice          = 0x0101,
     .iManufacturer      = STRID_MANUFACTURER,
     .iProduct           = STRID_PRODUCT,
     .iSerialNumber      = STRID_SERIAL,
-
     .bNumConfigurations = 0x01
 };
 
@@ -84,7 +81,7 @@ uint8_t const * tud_descriptor_device_cb(void)
 #define EPNUM_MSC_OUT     0x01
 #define EPNUM_MSC_IN      0x81
 
-uint8_t const desc_configuration[] = {
+uint8_t TINYUF2_CONST desc_configuration[] = {
     /* Config number, interface count, string index, total length, attribute, power in mA */
     TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
 
@@ -118,14 +115,14 @@ static char desc_str_serial[1+16] = { 0 };
  */
 char const* string_desc_arr [] =
 {
-    (const char[]) { 0x09, 0x04 }, /*!< 0: is supported language is English (0x0409) */
+    (const char[]) { 0x09, 0x04 }, /*!< 0: Supported language is English (0x0409) */
     USB_MANUFACTURER,              /*!< 1: Manufacturer */
     USB_PRODUCT,                   /*!< 2: Product */
     desc_str_serial,               /*!< 3: Serials, use default MAC address */
     "UF2"                          /*!< 4: MSC Interface */
 };
 
-static uint16_t _desc_str[32+1];
+static uint16_t _desc_str[48+1];
 
 /**
  * Invoked when GET STRING DESCRIPTOR is received
@@ -150,15 +147,14 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
     {
         //TODO light alternation such as +1 to prevent conflict with application
         uint8_t serial_id[16] TU_ATTR_ALIGNED(4);
-        uint8_t serial_len;
-
-        serial_len = board_usb_get_serial(serial_id);
+        uint8_t serial_len = board_usb_get_serial(serial_id);
         chr_count = 2 * serial_len;
 
         for (uint8_t i = 0; i < serial_len; i++) {
             for (uint8_t j = 0; j < 2; j++) {
-                const char nibble_to_hex[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
+                const char nibble_to_hex[16] = {
+                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+                };
                 uint8_t nibble = (serial_id[i] >> (j * 4)) & 0xf;
                 _desc_str[1 + i * 2 + (1 - j)] = nibble_to_hex[nibble]; // UTF-16-LE
             }
@@ -173,11 +169,13 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
             return NULL;
         }
 
+        uint16_t const max_count = (sizeof(_desc_str) / sizeof(_desc_str[0])) - 1;
+
         const char* str = string_desc_arr[index];
 
         /* Cap at max char */
         chr_count = strlen(str);
-        if (chr_count > 31) chr_count = 31;
+        if (chr_count > max_count) chr_count = max_count;
 
         for (uint8_t i=0; i<chr_count; i++) {
             _desc_str[1+i] = str[i];
