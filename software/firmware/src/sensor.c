@@ -68,9 +68,6 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
         ret = sensor_set_config(TSL2585_GAIN_256X, 719, 99);
         if (ret != osOK) { break; }
 
-        ret = sensor_set_oscillator_calibration(true);
-        if (ret != osOK) { break; }
-
         /* Start the sensor */
         ret = sensor_start();
         if (ret != osOK) { break; }
@@ -370,9 +367,6 @@ osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
         ret = sensor_set_agc_enabled(9);
         if (ret != osOK) { break; }
 
-        ret = sensor_set_oscillator_calibration(true);
-        if (ret != osOK) { break; }
-
         /* Activate light source synchronized with sensor cycle */
         ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_value);
         if (ret != osOK) { break; }
@@ -485,9 +479,6 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint8_t light_val
         if (ret != osOK) { break; }
 
         ret = sensor_set_agc_disabled();
-        if (ret != osOK) { break; }
-
-        ret = sensor_set_oscillator_calibration(true);
         if (ret != osOK) { break; }
 
         /* Activate light source synchronized with sensor cycle */

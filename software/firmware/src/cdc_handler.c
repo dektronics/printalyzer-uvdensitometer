@@ -921,7 +921,6 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
         osStatus_t result;
         if (cmd->type == CMD_TYPE_INVOKE && strcmp(cmd->args, "START") == 0) {
             cdc_remote_sensor_active = true;
-            sensor_set_oscillator_calibration(true);
             result = sensor_start();
             if (result == osOK) {
                 cdc_send_command_response(cmd, "OK");

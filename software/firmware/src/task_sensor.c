@@ -92,7 +92,6 @@ typedef struct {
     uint16_t sample_count;
     bool agc_enabled;
     uint16_t agc_sample_count;
-    bool osc_cal_enabled;
     bool mode_pending;
     bool gain_pending;
     bool integration_pending;
@@ -169,11 +168,9 @@ static const tsl2585_modulator_t sensor_phd_mod_uv_dual[] = {
     0, 0, 0, TSL2585_MOD0, TSL2585_MOD1, 0
 };
 
-
 /* Sensor control implementation functions */
 static osStatus_t sensor_control_start();
 static osStatus_t sensor_control_stop();
-static HAL_StatusTypeDef sensor_control_osc_calibration();
 static osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode);
 static osStatus_t sensor_control_set_gain(const sensor_control_gain_params_t *params);
 static osStatus_t sensor_control_set_integration(const sensor_control_integration_params_t *params);
@@ -464,12 +461,6 @@ osStatus_t sensor_control_start()
             sensor_state.agc_pending = false;
         }
 
-        if (sensor_state.osc_cal_enabled) {
-            ret = sensor_control_osc_calibration();
-            if (ret != HAL_OK) { break; }
-            /* A VSYNC reference issue will fail with HAL_TIMEOUT here */
-        }
-
         /* Log initial state */
         const float als_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.sample_count);
         const float agc_atime = tsl2585_integration_time_ms(sensor_state.sample_time, sensor_state.agc_sample_count);
@@ -533,80 +524,6 @@ osStatus_t sensor_control_stop()
     } while (0);
 
     return hal_to_os_status(ret);
-}
-
-HAL_StatusTypeDef sensor_control_osc_calibration()
-{
-    HAL_StatusTypeDef ret = HAL_OK;
-    uint8_t status3 = 0;
-    uint16_t period = 0;
-    uint8_t count = 0;
-    bool success = false;
-
-    log_d("Oscillator calibration started");
-
-    do {
-        /* Set VSYNC period target */
-        ret = tsl2585_set_vsync_period_target(&hi2c1, 5625, true); /* 128Hz */
-        if (ret != HAL_OK) { break; }
-
-        /* Set calibration mode */
-        ret = tsl2585_set_vsync_config(&hi2c1, TSL2585_VSYNC_CFG_OSC_CALIB_AFTER_PON);
-        if (ret != HAL_OK) { break; }
-
-        /* Set VSYNC pin as input */
-        ret = tsl2585_set_vsync_gpio_int(&hi2c1, TSL2585_GPIO_INT_VSYNC_GPIO_IN_EN | TSL2585_GPIO_INT_VSYNC_GPIO_INVERT);
-        if (ret != HAL_OK) { break; }
-
-        /* Power on the sensor (PON only) */
-        ret = tsl2585_set_enable(&hi2c1, TSL2585_ENABLE_PON);
-        if (ret != HAL_OK) { break; }
-
-        /* Wait for 10ms */
-        osDelay(10);
-
-        /* Poll sensor status until calibration is complete */
-        do {
-            ret = tsl2585_get_status3(&hi2c1, &status3);
-            if (ret != HAL_OK) { break; }
-
-            if ((status3 & TSL2585_STATUS3_OSC_CALIB_FINISHED) != 0) {
-                log_d("Oscillator calibration finished");
-                success = true;
-                break;
-            }
-
-            osDelay(10);
-            count++;
-        } while (count < 10);
-        if (ret != HAL_OK) { break; }
-
-        if (!success) {
-            log_w("VSYNC_PERIOD did not match the target, STATUS3 = %02X", status3);
-        }
-
-        ret = tsl2585_get_vsync_period(&hi2c1, &period);
-        if (ret != HAL_OK) { break; }
-
-        log_d("VSYNC_PERIOD=%d (%f Hz)", period, ((1.0F / (period * 1.388889F))*1000000.0F));
-
-        /* Reconfigure the VSYNC of the sensor back to its default */
-        ret = tsl2585_set_vsync_config(&hi2c1, 0x00);
-        if (ret != HAL_OK) { break; }
-
-    } while (0);
-
-    if (ret != HAL_OK) {
-        /* Disable the sensor in case of failure */
-        tsl2585_disable(&hi2c1);
-    }
-
-    /* Report cal failures as timeouts */
-    if (ret == HAL_OK && !success) {
-        ret = HAL_TIMEOUT;
-    }
-
-    return ret;
 }
 
 osStatus_t sensor_set_mode(sensor_mode_t mode)
@@ -838,19 +755,6 @@ osStatus_t sensor_control_set_agc_disabled()
     }
 
     return hal_to_os_status(ret);
-}
-
-osStatus_t sensor_set_oscillator_calibration(bool enabled)
-{
-    log_d("sensor_set_oscillator_calibration: %d", enabled);
-
-    if (sensor_state.running) {
-        return osErrorResource;
-    } else {
-        sensor_state.osc_cal_enabled = enabled;
-    }
-
-    return osOK;
 }
 
 osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t value)

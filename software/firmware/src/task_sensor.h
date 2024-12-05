@@ -92,15 +92,6 @@ osStatus_t sensor_set_agc_enabled(uint16_t sample_count);
 osStatus_t sensor_set_agc_disabled();
 
 /**
-* Set whether sensor oscillator calibration is enabled.
-*
-* Can only be called when sensor is not enabled.
-*
-* @param enabled True to enable, false to disable
-*/
-osStatus_t sensor_set_oscillator_calibration(bool enabled);
-
-/**
  * Change the state of the sensor read light sources.
  *
  * All lights are treated as mutually exclusive and are never turned on at
