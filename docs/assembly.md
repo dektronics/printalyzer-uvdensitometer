@@ -1,5 +1,5 @@
-Printalyzer Densitometer Assembly
-=================================
+Printalyzer UV/VIS Densitometer Assembly
+========================================
 
 This document describes the process of assembling a complete
 Printalyzer Densitometer from its major components. It assumes that the
@@ -133,7 +133,8 @@ detailed descriptions and part numbers for any components listed here.
 * Diffuser material sheet
 * UV-IR cut filter
 * Main Board Assembly
-* M2 x 5mm thread forming screws (x6)
+* M2 x 6mm thread forming screws (x4)
+* M2 x 5mm thread forming screws (x2)
 
 ### Tools
 
@@ -157,6 +158,8 @@ detailed descriptions and part numbers for any components listed here.
 * Place the Main Board Assembly into the housing
 * Place the Sensor Board Cover on top of the Main Board Assembly.
 * Secure with screws the board with screws
+  * 6mm long screws go on the side with the sensor head
+  * 5mm long screws go on the side with the connectors
 
 
 ## Main Cover
