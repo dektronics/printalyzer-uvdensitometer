@@ -372,7 +372,8 @@ bool cdc_process_command_system(const cdc_command_t *cmd)
      * "GS UID"  -> Get device unique ID
      * "GS ISEN" -> Internal sensor readings
      * "IS REMOTE,n" -> Invoke remote control mode (enable = 1, disable = 0)
-     * "SS DISP,text" -> Write text to the display [remote]
+     * "SS DISP,\"text\"" -> Write text to the display [remote]
+     * "SS DISP,n" -> Enable or disable the display (enable = 1, disable = 0) [remote]
      */
     const app_descriptor_t *app_descriptor = app_descriptor_get();
     char buf[128];
@@ -470,22 +471,35 @@ bool cdc_process_command_system(const cdc_command_t *cmd)
 
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "DISP") == 0 && cdc_remote_active) {
-
-        bzero(buf, sizeof(buf));
-        uint8_t j = 0;
-        for (uint8_t i = 0; i < 56; i++) {
-            if (i < 55 && cmd->args[i] == '\\' && cmd->args[i + 1] == 'n') {
-                buf[j++] = '\n';
-                i++;
-            } else if (i < 55 && cmd->args[i] == '\\' && cmd->args[i + 1] == '\\') {
-                buf[j++] = '\\';
-                i++;
-            } else {
-                buf[j++] = cmd->args[i];
+        if (cmd->args[0] == '"') {
+            bzero(buf, sizeof(buf));
+            uint8_t j = 0;
+            for (uint8_t i = 1; i < 56; i++) {
+                if (i < 55 && cmd->args[i] == '\\' && cmd->args[i + 1] == 'n') {
+                    buf[j++] = '\n';
+                    i++;
+                } else if (i < 55 && cmd->args[i] == '\\' && cmd->args[i + 1] == '\\') {
+                    buf[j++] = '\\';
+                    i++;
+                } else {
+                    buf[j++] = cmd->args[i];
+                }
             }
+
+            size_t len = strlen(buf);
+            if (len > 0 && buf[len - 1] == '"') {
+                buf[len - 1] = '\0';
+            }
+
+            display_static_message(buf);
+        } else if (cmd->args[0] == '0' && cmd->args[1] == '\0') {
+            display_enable(false);
+        } else if (cmd->args[0] == '1' && cmd->args[1] == '\0') {
+            display_enable(true);
+        } else {
+            return false;
         }
 
-        display_static_message(buf);
         cdc_send_command_response(cmd, "OK");
         return true;
     } else {

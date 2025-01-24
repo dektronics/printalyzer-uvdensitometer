@@ -51,6 +51,7 @@ void state_remote_exit(state_t *state, state_controller_t *controller, state_ide
     log_i("Leaving remote control state");
     sensor_set_light_mode(SENSOR_LIGHT_OFF, false, 0);
     sensor_stop();
+    display_enable(true);
     display_clear();
     cdc_send_remote_state(false);
 }
