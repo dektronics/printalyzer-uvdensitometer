@@ -546,7 +546,6 @@ void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controlle
 
     settings_get_cal_gain(&cal_gain);
 
-    //FIXME show new gain values
     sprintf_(buf, "");
     for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
         offset += sprintf_(buf + offset, "[%i]=%f\n", i, cal_gain.values[i]);
