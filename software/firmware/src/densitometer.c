@@ -297,16 +297,16 @@ densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float
     if (is_zero) {
         if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
             /* Not currently zero-correcting UV measurements */
-            corr_value = als_basic_raw;
+            corr_value = als_basic_temp;
         } else {
-            corr_value = sensor_apply_zero_correction(als_basic_raw);
+            corr_value = sensor_apply_zero_correction(als_basic_temp);
         }
     } else {
         if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
             /* Not currently slope-correcting UV measurements */
-            corr_value = als_basic_raw;
+            corr_value = als_basic_temp;
         } else {
-            corr_value = sensor_apply_slope_correction(als_basic_raw);
+            corr_value = sensor_apply_slope_correction(als_basic_temp);
         }
     }
 
