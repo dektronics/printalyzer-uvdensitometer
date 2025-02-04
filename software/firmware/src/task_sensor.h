@@ -48,6 +48,17 @@ osStatus_t sensor_stop();
 osStatus_t sensor_set_mode(sensor_mode_t mode);
 
 /**
+ * Set the sensor's triggering mode
+ *
+ * This configures how the sensor's integration cycle is triggered.
+ * If the VSYNC mode is selected, then sensor measurements must be
+ * triggerred explicitly.
+ *
+ * @param trigger_mode Sensor trigger mode
+ */
+osStatus_t sensor_set_trigger_mode(tsl2585_trigger_mode_t trigger_mode);
+
+/**
  * Set the sensor's gain and integration time
  *
  * This function is a wrapper around 'sensor_set_gain()' and
@@ -104,6 +115,13 @@ osStatus_t sensor_set_agc_disabled();
  * @param value Value to set when making the change
  */
 osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t value);
+
+/**
+ * Explicitly trigger the next sensor integration cycle.
+ *
+ * For this function to work, the trigger mode must be set to VSYNC.
+ */
+osStatus_t sensor_trigger_next_reading();
 
 /**
  * Get the next reading from the sensor.

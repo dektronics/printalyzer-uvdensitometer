@@ -1152,6 +1152,35 @@ HAL_StatusTypeDef tsl2585_set_als_msb_position(I2C_HandleTypeDef *hi2c, uint8_t 
     return ret;
 }
 
+HAL_StatusTypeDef tsl2585_get_trigger_mode(I2C_HandleTypeDef *hi2c, tsl2585_trigger_mode_t *trigger_mode)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    ret =  HAL_I2C_Mem_Read(hi2c, TSL2585_ADDRESS, TSL2585_TRIGGER_MODE, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        return ret;
+    }
+
+    if (trigger_mode) {
+        *trigger_mode = data & 0x07;
+    }
+
+    return HAL_OK;
+}
+
+HAL_StatusTypeDef tsl2585_set_trigger_mode(I2C_HandleTypeDef *hi2c, tsl2585_trigger_mode_t trigger_mode)
+{
+    HAL_StatusTypeDef ret;
+    uint8_t data;
+
+    data = trigger_mode & 0x07;
+
+    ret = HAL_I2C_Mem_Write(hi2c, TSL2585_ADDRESS, TSL2585_TRIGGER_MODE, I2C_MEMADD_SIZE_8BIT, &data, 1, HAL_MAX_DELAY);
+
+    return ret;
+}
+
 HAL_StatusTypeDef tsl2585_get_als_data0(I2C_HandleTypeDef *hi2c, uint16_t *data)
 {
     HAL_StatusTypeDef ret;

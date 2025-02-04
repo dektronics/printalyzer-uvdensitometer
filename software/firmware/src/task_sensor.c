@@ -9,6 +9,7 @@
 #include <queue.h>
 
 #include "stm32l0xx_hal.h"
+#include "board_config.h"
 #include "tsl2585.h"
 #include "mcp9808.h"
 #include "sensor.h"
@@ -23,11 +24,13 @@ typedef enum {
     SENSOR_CONTROL_STOP = 0,
     SENSOR_CONTROL_START,
     SENSOR_CONTROL_SET_MODE,
+    SENSOR_CONTROL_SET_TRIGGER_MODE,
     SENSOR_CONTROL_SET_GAIN,
     SENSOR_CONTROL_SET_INTEGRATION,
     SENSOR_CONTROL_SET_AGC_ENABLED,
     SENSOR_CONTROL_SET_AGC_DISABLED,
     SENSOR_CONTROL_SET_LIGHT_MODE,
+    SENSOR_CONTROL_TRIGGER_NEXT_READING,
     SENSOR_CONTROL_READ_TEMPERATURE,
     SENSOR_CONTROL_INTERRUPT
 } sensor_control_event_type_t;
@@ -70,6 +73,7 @@ typedef struct {
     osStatus_t *result;
     union {
         sensor_mode_t sensor_mode;
+        tsl2585_trigger_mode_t trigger_mode;
         sensor_control_gain_params_t gain;
         sensor_control_integration_params_t integration;
         sensor_control_agc_params_t agc;
@@ -87,6 +91,7 @@ typedef struct {
     bool dual_mod;
     uint8_t uv_calibration;
     sensor_mode_t sensor_mode;
+    tsl2585_trigger_mode_t trigger_mode;
     tsl2585_gain_t gain[3];
     uint16_t sample_time;
     uint16_t sample_count;
@@ -172,16 +177,20 @@ static const tsl2585_modulator_t sensor_phd_mod_uv_dual[] = {
 static osStatus_t sensor_control_start();
 static osStatus_t sensor_control_stop();
 static osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode);
+static osStatus_t sensor_control_set_trigger_mode(tsl2585_trigger_mode_t trigger_mode);
 static osStatus_t sensor_control_set_gain(const sensor_control_gain_params_t *params);
 static osStatus_t sensor_control_set_integration(const sensor_control_integration_params_t *params);
 static osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *params);
 static osStatus_t sensor_control_set_agc_disabled();
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
 static void sensor_light_change_impl(sensor_light_t light, uint8_t value);
+static osStatus_t sensor_control_trigger_next_reading();
 static osStatus_t sensor_control_read_temperature(sensor_control_read_temperature_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
 static HAL_StatusTypeDef sensor_control_read_fifo(tsl2585_fifo_data_t *fifo_data);
 static HAL_StatusTypeDef sensor_control_set_mod_photodiode_smux(sensor_mode_t mode);
+
+static void sensor_set_vsync_state(bool state);
 
 void task_sensor_run(void *argument)
 {
@@ -279,6 +288,9 @@ void task_sensor_run(void *argument)
             case SENSOR_CONTROL_SET_MODE:
                 ret = sensor_control_set_mode(control_event.sensor_mode);
                 break;
+            case SENSOR_CONTROL_SET_TRIGGER_MODE:
+                ret = sensor_control_set_trigger_mode(control_event.trigger_mode);
+                break;
             case SENSOR_CONTROL_SET_GAIN:
                 ret = sensor_control_set_gain(&control_event.gain);
                 break;
@@ -293,6 +305,9 @@ void task_sensor_run(void *argument)
                 break;
             case SENSOR_CONTROL_SET_LIGHT_MODE:
                 ret = sensor_control_set_light_mode(&control_event.light_mode);
+                break;
+            case SENSOR_CONTROL_TRIGGER_NEXT_READING:
+                ret = sensor_control_trigger_next_reading();
                 break;
             case SENSOR_CONTROL_READ_TEMPERATURE:
                 ret = sensor_control_read_temperature(&control_event.read_temperature);
@@ -423,6 +438,17 @@ osStatus_t sensor_control_start()
         ret = tsl2585_set_calibration_nth_iteration(&hi2c1, 1);
         if (ret != HAL_OK) { break; }
 
+        /* Set initial state of the VSYNC pin to high */
+        sensor_set_vsync_state(true);
+
+        /* Set VSYNC pin configuration */
+        ret = tsl2585_set_vsync_config(&hi2c1, TSL2585_VSYNC_CFG_VSYNC_INVERT);
+        if (ret != HAL_OK) { break; }
+
+        /* Set VSYNC pin as input */
+        ret = tsl2585_set_vsync_gpio_int(&hi2c1, TSL2585_GPIO_INT_VSYNC_GPIO_IN_EN | TSL2585_GPIO_INT_VSYNC_GPIO_INVERT);
+        if (ret != HAL_OK) { break; }
+
         /* Apply any startup settings */
         if (sensor_state.mode_pending) {
             ret = sensor_control_set_mod_photodiode_smux(sensor_state.sensor_mode);
@@ -485,13 +511,30 @@ osStatus_t sensor_control_start()
             break;
         }
 
+        /* Set the trigger mode */
+        ret = tsl2585_set_trigger_mode(&hi2c1, sensor_state.trigger_mode);
+        if (ret != HAL_OK) {
+            break;
+        }
+
         /* Enable the sensor (ALS Enable and Power ON) */
         ret = tsl2585_enable(&hi2c1);
         if (ret != HAL_OK) {
             break;
         }
 
-        sensor_state.discard_next_reading = true;
+        if (sensor_state.trigger_mode == TSL2585_TRIGGER_VSYNC) {
+            /* In VSYNC trigger mode, we need to cycle the pin to prime the trigger */
+            osDelay(1);
+            sensor_set_vsync_state(false);
+            osDelay(1);
+            sensor_set_vsync_state(true);
+            osDelay(1);
+            sensor_state.discard_next_reading = false;
+        } else {
+            /* In continuous modes, discard the first reading */
+            sensor_state.discard_next_reading = true;
+        }
         sensor_state.running = true;
     } while (0);
 
@@ -552,7 +595,9 @@ osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode)
             sensor_state.sensor_mode = sensor_mode;
         }
 
-        sensor_state.discard_next_reading = true;
+        if (sensor_state.trigger_mode != TSL2585_TRIGGER_VSYNC) {
+            sensor_state.discard_next_reading = true;
+        }
         osMessageQueueReset(sensor_reading_queue);
     } else {
         sensor_state.sensor_mode = sensor_mode;
@@ -560,7 +605,41 @@ osStatus_t sensor_control_set_mode(sensor_mode_t sensor_mode)
     }
 
     return hal_to_os_status(ret);
+}
 
+osStatus_t sensor_set_trigger_mode(tsl2585_trigger_mode_t trigger_mode)
+{
+    if (!sensor_initialized) { return osErrorResource; }
+
+    osStatus_t result = osOK;
+    sensor_control_event_t control_event = {
+        .event_type = SENSOR_CONTROL_SET_TRIGGER_MODE,
+        .result = &result,
+        .trigger_mode = trigger_mode
+    };
+    osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
+    osSemaphoreAcquire(sensor_control_semaphore, portMAX_DELAY);
+    return result;
+}
+
+osStatus_t sensor_control_set_trigger_mode(tsl2585_trigger_mode_t trigger_mode)
+{
+    HAL_StatusTypeDef ret = HAL_OK;
+    log_d("sensor_control_set_trigger_mode: %d", trigger_mode);
+
+    if (sensor_state.running) {
+        ret = tsl2585_set_trigger_mode(&hi2c1, trigger_mode);
+
+        if (ret == HAL_OK) {
+            sensor_state.trigger_mode = trigger_mode;
+        }
+
+        osMessageQueueReset(sensor_reading_queue);
+    } else {
+        sensor_state.trigger_mode = trigger_mode;
+    }
+
+    return hal_to_os_status(ret);
 }
 
 osStatus_t sensor_set_config(tsl2585_gain_t gain, uint16_t sample_time, uint16_t sample_count)
@@ -620,7 +699,9 @@ osStatus_t sensor_control_set_gain(const sensor_control_gain_params_t *params)
             sensor_state.gain[mod_index] = params->gain;
         }
 
-        sensor_state.discard_next_reading = true;
+        if (sensor_state.trigger_mode != TSL2585_TRIGGER_VSYNC) {
+            sensor_state.discard_next_reading = true;
+        }
         osMessageQueueReset(sensor_reading_queue);
     } else {
         sensor_state.gain[mod_index] = params->gain;
@@ -664,7 +745,9 @@ osStatus_t sensor_control_set_integration(const sensor_control_integration_param
             sensor_state.sample_count = params->sample_count;
         }
 
-        sensor_state.discard_next_reading = true;
+        if (sensor_state.trigger_mode != TSL2585_TRIGGER_VSYNC) {
+            sensor_state.discard_next_reading = true;
+        }
         osMessageQueueReset(sensor_reading_queue);
     } else {
         sensor_state.sample_time = params->sample_time;
@@ -747,7 +830,9 @@ osStatus_t sensor_control_set_agc_disabled()
         if (ret == HAL_OK) {
             sensor_state.agc_enabled = false;
             sensor_state.agc_disabled_reset_gain = true;
-            sensor_state.discard_next_reading = true;
+            if (sensor_state.trigger_mode != TSL2585_TRIGGER_VSYNC) {
+                sensor_state.discard_next_reading = true;
+            }
         }
     } else {
         sensor_state.agc_enabled = false;
@@ -816,6 +901,40 @@ void sensor_light_change_impl(sensor_light_t light, uint8_t value)
         light_set_vis_transmission(0);
         light_set_uv_transmission(0);
     }
+}
+
+osStatus_t sensor_trigger_next_reading()
+{
+    if (!sensor_initialized) { return osErrorResource; }
+
+    osStatus_t result = osOK;
+    sensor_control_event_t control_event = {
+        .event_type = SENSOR_CONTROL_TRIGGER_NEXT_READING,
+        .result = &result
+    };
+    osMessageQueuePut(sensor_control_queue, &control_event, 0, portMAX_DELAY);
+    osSemaphoreAcquire(sensor_control_semaphore, portMAX_DELAY);
+    return result;
+}
+
+osStatus_t sensor_control_trigger_next_reading()
+{
+    osStatus_t ret = osOK;
+
+    log_d("sensor_control_trigger_next_reading");
+
+    if (sensor_state.running) {
+        if (sensor_state.trigger_mode == TSL2585_TRIGGER_VSYNC) {
+            sensor_set_vsync_state(false);
+            sensor_set_vsync_state(true);
+        } else {
+            ret = osErrorResource;
+        }
+    } else {
+        ret = osErrorResource;
+    }
+
+    return ret;
 }
 
 osStatus_t sensor_get_next_reading(sensor_reading_t *reading, uint32_t timeout)
@@ -1002,7 +1121,9 @@ osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *par
                 ret = tsl2585_set_mod_gain(&hi2c1, TSL2585_MOD0, TSL2585_STEP0, sensor_state.gain[0]);
                 if (ret != HAL_OK) { break; }
                 sensor_state.agc_disabled_reset_gain = false;
-                sensor_state.discard_next_reading = true;
+                if (sensor_state.trigger_mode != TSL2585_TRIGGER_VSYNC) {
+                    sensor_state.discard_next_reading = true;
+                }
             }
         }
 
@@ -1115,4 +1236,9 @@ HAL_StatusTypeDef sensor_control_set_mod_photodiode_smux(sensor_mode_t mode)
     }
 
     return tsl2585_set_mod_photodiode_smux(&hi2c1, TSL2585_STEP0, sensor_phd_mod);
+}
+
+void sensor_set_vsync_state(bool state)
+{
+    HAL_GPIO_WritePin(SENSOR_VSYNC_GPIO_Port, SENSOR_VSYNC_Pin, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }

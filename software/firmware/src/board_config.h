@@ -21,8 +21,8 @@
 #define BTN5_EXTI_IRQn      EXTI4_15_IRQn
 
 /* Pin mapping for LED drivers */
-#define RVLED_EN_Pin         GPIO_PIN_3
-#define RVLED_EN_GPIO_Port   GPIOB
+#define RVLED_EN_Pin        GPIO_PIN_3
+#define RVLED_EN_GPIO_Port  GPIOB
 #define TVLED_EN_Pin        GPIO_PIN_15
 #define TVLED_EN_GPIO_Port  GPIOA
 #define TULED_EN_Pin        GPIO_PIN_2
@@ -40,9 +40,11 @@
 #define DISP_RES_Pin        GPIO_PIN_0
 #define DISP_RES_GPIO_Port  GPIOB
 
-/* Pin mapping for sensor interrupt */
+/* Pin mapping for sensor control */
 #define SENSOR_INT_Pin       GPIO_PIN_5
 #define SENSOR_INT_GPIO_Port GPIOB
 #define SENSOR_INT_EXTI_IRQn EXTI4_15_IRQn
+#define SENSOR_VSYNC_Pin     GPIO_PIN_4
+#define SENSOR_VSYNC_GPIO_Port GPIOB
 
 #endif /* BOARD_CONFIG_H */

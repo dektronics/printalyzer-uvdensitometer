@@ -243,6 +243,9 @@ void gpio_init(void)
     HAL_GPIO_WritePin(DISP_DC_GPIO_Port, DISP_DC_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(DISP_RES_GPIO_Port, DISP_RES_Pin, GPIO_PIN_RESET);
 
+    /* Configure default GPIO pin output level for the sensor VSYNC pin */
+    HAL_GPIO_WritePin(SENSOR_VSYNC_GPIO_Port, SENSOR_VSYNC_Pin, GPIO_PIN_SET);
+
     /* Configure GPIO pins for BTN[1..5] */
     gpio_button_config();
 
@@ -266,8 +269,8 @@ void gpio_init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(DISP_RES_GPIO_Port, &GPIO_InitStruct);
 
-    /* Configure unused GPIO pins: PB1 PB4 */
-    GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_4;
+    /* Configure unused GPIO pins: PB1 */
+    GPIO_InitStruct.Pin = GPIO_PIN_1;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -277,6 +280,12 @@ void gpio_init(void)
     GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(SENSOR_INT_GPIO_Port, &GPIO_InitStruct);
+
+    /* Configure GPIO pin: SENSOR_VSYNC_Pin */
+    GPIO_InitStruct.Pin = SENSOR_VSYNC_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(SENSOR_VSYNC_GPIO_Port, &GPIO_InitStruct);
 
     /* EXTI interrupt init */
     HAL_NVIC_SetPriority(EXTI0_1_IRQn, 3, 0);
