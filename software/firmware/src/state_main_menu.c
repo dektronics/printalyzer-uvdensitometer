@@ -35,6 +35,9 @@ typedef enum {
     MAIN_MENU_SETTINGS_DISPLAY_FORMAT,
     MAIN_MENU_SETTINGS_USB_KEY,
     MAIN_MENU_SETTINGS_DIAGNOSTICS,
+#ifdef EMC_TEST
+    MAIN_MENU_SETTINGS_EMC_TEST,
+#endif
     MAIN_MENU_ABOUT
 } main_menu_state_t;
 
@@ -75,6 +78,9 @@ static void main_menu_settings_idle_light(state_main_menu_t *state, state_contro
 static void main_menu_settings_display_format(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_usb_key(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t *controller);
+#ifdef EMC_TEST
+static void main_menu_settings_emc_test(state_main_menu_t *state, state_controller_t *controller);
+#endif
 static void main_menu_about(state_main_menu_t *state, state_controller_t *controller);
 static void sensor_read_callback(void *user_data);
 
@@ -128,6 +134,10 @@ void state_main_menu_process(state_t *state_base, state_controller_t *controller
         main_menu_settings_usb_key(state, controller);
     } else if (state->menu_state == MAIN_MENU_SETTINGS_DIAGNOSTICS) {
         main_menu_settings_diagnostics(state, controller);
+#ifdef EMC_TEST
+    } else if (state->menu_state == MAIN_MENU_SETTINGS_EMC_TEST) {
+        main_menu_settings_emc_test(state, controller);
+#endif
     } else if (state->menu_state == MAIN_MENU_ABOUT) {
         main_menu_about(state, controller);
     }
@@ -617,7 +627,11 @@ void main_menu_settings(state_main_menu_t *state, state_controller_t *controller
         "Target Light\n"
         "Display Format\n"
         "USB Key Output\n"
-        "Diagnostics");
+        "Diagnostics"
+#ifdef EMC_TEST
+        "\nEMC Test Cycle"
+#endif
+        );
 
     if (state->settings_option == 1) {
         state->menu_state = MAIN_MENU_SETTINGS_IDLE_LIGHT;
@@ -627,6 +641,10 @@ void main_menu_settings(state_main_menu_t *state, state_controller_t *controller
         state->menu_state = MAIN_MENU_SETTINGS_USB_KEY;
     } else if (state->settings_option == 4) {
         state->menu_state = MAIN_MENU_SETTINGS_DIAGNOSTICS;
+#ifdef EMC_TEST
+    } else if (state->settings_option == 5) {
+        state->menu_state = MAIN_MENU_SETTINGS_EMC_TEST;
+#endif
     } else if (state->settings_option == UINT8_MAX) {
         state_controller_set_next_state(controller, STATE_HOME);
     } else {
@@ -1055,6 +1073,147 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
 
     state->menu_state = MAIN_MENU_SETTINGS;
 }
+
+#ifdef EMC_TEST
+typedef struct {
+    uint8_t test_mode;
+    uint8_t test_state;
+    densitometer_t *densitometer;
+    densitometer_result_t measure_result;
+    bool measuring;
+} emc_test_state_t;
+
+static void emc_test_update_display(void *user_data)
+{
+    const char *mode_str = 0;
+    char mode_prefix = ' ';
+    const char *state_str = 0;
+    char measure_buf[16];
+    char sign = ' ';
+    float d_display;
+    char buf[128];
+
+    emc_test_state_t *state = user_data;
+
+    memset(measure_buf, 0, sizeof(measure_buf));
+
+    if (state->test_mode == 0) {
+        mode_str = "Refl     [VIS]";
+        mode_prefix = 'R';
+    } else if (state->test_mode == 1) {
+        mode_str = "Tran     [VIS]";
+        mode_prefix = 'T';
+    } else if (state->test_mode == 2) {
+        mode_str = "Tran      [UV]";
+        mode_prefix = 'U';
+    }
+
+    if (state->test_state == 0) {
+        state_str = "Off        ";
+    } else if (state->test_state == 1) {
+        state_str = "Idle       ";
+    } else if (state->test_state == 2) {
+        if (state->measuring) {
+            state_str = "Measuring  ";
+        } else {
+            state_str = "Measure    ";
+        }
+    } else if (state->test_state == 3) {
+        if (state->measure_result == DENSITOMETER_OK) {
+            state_str = "Reading Ok ";
+        } else if (state->measure_result == DENSITOMETER_CAL_ERROR) {
+            state_str = "Cal Err    ";
+        } else if (state->measure_result == DENSITOMETER_SENSOR_ERROR) {
+            state_str = "Sensor Err ";
+        } else {
+            state_str = "Idle After ";
+        }
+    }
+
+    d_display = densitometer_get_display_d(state->densitometer);
+    if (d_display >= 0.0F) {
+        sign = '+';
+    } else {
+        sign = '-';
+    }
+    sprintf_(measure_buf, "%c%c%.2fD", mode_prefix, sign, fabsf(d_display));
+    if (strncmp(measure_buf + 1, "-0.00", 5) == 0) {
+        measure_buf[1] = '+';
+    }
+
+    sprintf(buf,
+        "%s\n"
+        "%s[%c]\n"
+        "%s",
+        mode_str,
+        state_str,
+        (keypad_is_detect() ? '*' : ' '),
+        measure_buf);
+    display_static_list("EMC Test Cycle", buf);
+}
+
+void main_menu_settings_emc_test(state_main_menu_t *state, state_controller_t *controller)
+{
+    keypad_event_t keypad_event;
+    emc_test_state_t emc_state = {0};
+    uint32_t delay = 0;
+
+    emc_state.densitometer = densitometer_vis_reflection();
+
+    do {
+        if (keypad_wait_for_event(&keypad_event, 0) == osOK) {
+            if (keypad_event.key == KEYPAD_BUTTON_MENU && !keypad_event.pressed) {
+                break;
+            }
+        }
+
+        if (emc_state.test_mode == 0) {
+            emc_state.densitometer = densitometer_vis_reflection();
+        } else if (emc_state.test_mode == 1) {
+            emc_state.densitometer = densitometer_vis_transmission();
+        } else if (emc_state.test_mode == 2) {
+            emc_state.densitometer = densitometer_uv_transmission();
+        }
+
+        if (emc_state.test_state == 0) {
+            /* Off */
+            densitometer_set_idle_light(emc_state.densitometer, false);
+            delay = 500;
+        } else if (emc_state.test_state == 1) {
+            /* Idle */
+            densitometer_set_idle_light(emc_state.densitometer, true);
+            delay = 500;
+        } else if (emc_state.test_state == 2) {
+            /* Measure */
+            emc_test_update_display(&emc_state);
+            emc_state.measuring = true;
+            emc_state.measure_result = densitometer_measure(emc_state.densitometer, emc_test_update_display, &emc_state);
+            emc_state.measuring = false;
+            delay = 100;
+        } else if (emc_state.test_state == 3) {
+            /* Idle */
+            densitometer_set_idle_light(emc_state.densitometer, true);
+            delay = 1000;
+        }
+
+        emc_test_update_display(&emc_state);
+
+        osDelay(delay);
+
+        /* Advance to the next state or mode */
+        emc_state.test_state++;
+        if (emc_state.test_state > 3) {
+            emc_state.test_state = 0;
+            emc_state.test_mode++;
+            if (emc_state.test_mode > 2) {
+                emc_state.test_mode = 0;
+            }
+        }
+    } while (1);
+
+    state->menu_state = MAIN_MENU_SETTINGS;
+}
+#endif
 
 void main_menu_about(state_main_menu_t *state, state_controller_t *controller)
 {

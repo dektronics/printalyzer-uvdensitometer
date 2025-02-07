@@ -152,6 +152,7 @@ target_compile_definitions(${EXECUTABLE} PRIVATE
     $<$<CONFIG:DEBUG>:DEBUG>
     APP_BUILD_DATE="${BUILD_DATE}"
     APP_BUILD_DESCRIBE="${BUILD_DESCRIBE}"
+    EMC_TEST
 )
 
 # Add header directories (AFTER add_executable)
