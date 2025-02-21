@@ -5709,17 +5709,42 @@
 			(justify bottom)
 		)
 	)
-	(gr_text "Note: This board is designed for a Copper substrate,\nand thus needs to be single-layer.\nLayer F.Sink represents heatsink pads."
-		(at 110 104.5 0)
+	(gr_text_box "Fabrication notes:\n- Process: JLCPCB Direct Heatsink Copper Core\n- Base Material: Copper Core\n- PCB Thickness: 1.6 mm\n- Layers: 1\n- Surface Finish: OSP\n- Outer Copper Weight: 1 oz\n"
+		(start 152.5 47)
+		(end 192 60.5)
+		(margins 1.0025 1.0025 1.0025 1.0025)
 		(layer "Cmts.User")
-		(uuid "616c56b9-1a61-4a2c-9fd1-dfd1507634c1")
+		(uuid "895189a2-3e0d-4f80-bad7-9074f7002925")
 		(effects
 			(font
 				(size 1 1)
 				(thickness 0.15)
-				(italic yes)
 			)
-			(justify left bottom)
+			(justify left top)
+		)
+		(border yes)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+	)
+	(gr_text_box "Layer notes:\n- KiCad stackup does not accurately represent board construction\n- F.Cu is the only real copper layer on this board\n- F.Sink is purely illustrative and shows where direct heatsink pads are located\n- The center pad of D1 (D1_PAD net) is a direct heatsink pad"
+		(start 152.5 62.5)
+		(end 218 72.5)
+		(margins 1.0025 1.0025 1.0025 1.0025)
+		(layer "Cmts.User")
+		(uuid "da7aecb8-f633-4e8c-b10e-8fddd182e345")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left top)
+		)
+		(border yes)
+		(stroke
+			(width 0.1)
+			(type solid)
 		)
 	)
 	(dimension

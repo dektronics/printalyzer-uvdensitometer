@@ -1901,7 +1901,7 @@
 		)
 		(uuid "4d4b0fcd-2c79-4fc3-b5fa-7a0741601344")
 	)
-	(text "Note: This board is designed for an Aluminum substrate,\nwhich requires a single-layer PCB layout.\nZero-ohm resistors may be added to the schematic\nas jumpers where necessary."
+	(text "Note: This board is designed for single layer construction\non a metal core PCB.\nZero-ohm resistors may be added to the schematic\nas jumpers where necessary, and thermal pads may have\nspecial treatment."
 		(exclude_from_sim no)
 		(at 120.015 52.705 0)
 		(effects
