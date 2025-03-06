@@ -114,7 +114,7 @@ osStatus_t sensor_set_agc_disabled();
  * @param next_cycle Whether to delay the change until the completion of the next integration cycle
  * @param value Value to set when making the change
  */
-osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t value);
+osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint16_t value);
 
 /**
  * Explicitly trigger the next sensor integration cycle.

@@ -52,7 +52,7 @@ typedef struct {
 typedef struct {
     sensor_light_t light;
     bool next_cycle;
-    uint8_t value;
+    uint16_t value;
 } sensor_control_light_mode_params_t;
 
 typedef struct {
@@ -183,7 +183,7 @@ static osStatus_t sensor_control_set_integration(const sensor_control_integratio
 static osStatus_t sensor_control_set_agc_enabled(const sensor_control_agc_params_t *params);
 static osStatus_t sensor_control_set_agc_disabled();
 static osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_t *params);
-static void sensor_light_change_impl(sensor_light_t light, uint8_t value);
+static void sensor_light_change_impl(sensor_light_t light, uint16_t value);
 static osStatus_t sensor_control_trigger_next_reading();
 static osStatus_t sensor_control_read_temperature(sensor_control_read_temperature_params_t *params);
 static osStatus_t sensor_control_interrupt(const sensor_control_interrupt_params_t *params);
@@ -842,7 +842,7 @@ osStatus_t sensor_control_set_agc_disabled()
     return hal_to_os_status(ret);
 }
 
-osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint8_t value)
+osStatus_t sensor_set_light_mode(sensor_light_t light, bool next_cycle, uint16_t value)
 {
     if (!sensor_initialized) { return osErrorResource; }
 
@@ -869,7 +869,7 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
     if (params->next_cycle) {
         /* Schedule the change for the next ISR invocation */
         pending_int_light_change = 0x80000000
-            | (uint8_t)params->light << 8
+            | (uint8_t)params->light << 16
             | params->value;
     } else {
         /* Apply the change immediately */
@@ -882,7 +882,7 @@ osStatus_t sensor_control_set_light_mode(const sensor_control_light_mode_params_
     return osOK;
 }
 
-void sensor_light_change_impl(sensor_light_t light, uint8_t value)
+void sensor_light_change_impl(sensor_light_t light, uint16_t value)
 {
     if (light == SENSOR_LIGHT_VIS_REFLECTION) {
         light_set_vis_transmission(0);
@@ -991,8 +991,8 @@ void sensor_int_handler()
     /* Apply any pending light change values */
     UBaseType_t interrupt_status = taskENTER_CRITICAL_FROM_ISR();
     if ((pending_int_light_change & 0x80000000) == 0x80000000) {
-        const sensor_light_t light = (pending_int_light_change & 0x0000FF00) >> 8;
-        const uint8_t value = pending_int_light_change & 0x000000FF;
+        const sensor_light_t light = (pending_int_light_change & 0x00FF0000) >> 16;
+        const uint16_t value = pending_int_light_change & 0x0000FFFF;
         sensor_light_change_impl(light, value);
         light_change_ticks = osKernelGetTickCount();
         pending_int_light_change = 0;

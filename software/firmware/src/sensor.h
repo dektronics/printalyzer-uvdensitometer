@@ -109,7 +109,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source);
  * @param als_result Sensor result
  * @return osOK on success
  */
-osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
+osStatus_t sensor_read_target(sensor_light_t light_source, uint16_t light_value,
     float *als_result,
     sensor_read_callback_t callback, void *user_data);
 
@@ -134,7 +134,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
  * @param als_reading Sensor reading, in raw counts
  * @return osOK on success
  */
-osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint8_t light_value,
+osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint16_t light_value,
     sensor_mode_t mode, tsl2585_gain_t gain,
     uint16_t sample_time, uint16_t sample_count,
     uint32_t *als_reading);

@@ -83,7 +83,7 @@ void densitometer_set_idle_light(const densitometer_t *densitometer, bool enable
     if (!densitometer) { return; }
 
     if (enabled) {
-        uint8_t idle_value = 0;
+        uint16_t idle_value = 0;
 
         /* Copy over latest idle value from settings */
         sensor_light_t idle_light = densitometer->read_light;

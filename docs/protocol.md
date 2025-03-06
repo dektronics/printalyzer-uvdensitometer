@@ -179,15 +179,16 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 
 * `GD DISP` - Get display screenshot
   * Response is XBM data in the multi-line format described above
-* `SD LR,nnn` -> Set VIS reflection light duty cycle (nnn/127) ***(remote mode)***
+* `GD LMAX` -> Get maximum light duty cycle value
+* `SD LR,nnn` -> Set VIS reflection light duty cycle (nnn/LMAX) ***(remote mode)***
   * Light sources are mutually exclusive. To turn all off, set any to 0.
-    To turn on to full brightness, set to 128.
-* `SD LT,nnn` -> Set VIS transmission light duty cycle (nnn/127) ***(remote mode)***
+    To turn on to full brightness, set to LMAX.
+* `SD LT,nnn` -> Set VIS transmission light duty cycle (nnn/LMAX) ***(remote mode)***
   * Light sources are mutually exclusive. To turn all off, set any to 0.
-    To turn on to full brightness, set to 128.
-* `SD LTU,nnn` -> Set UV transmission light duty cycle (nnn/127) ***(remote mode)***
+    To turn on to full brightness, set to LMAX.
+* `SD LTU,nnn` -> Set UV transmission light duty cycle (nnn/LMAX) ***(remote mode)***
   * Light sources are mutually exclusive. To turn all off, set any to 0.
-    To turn on to full brightness, set to 128.
+    To turn on to full brightness, set to LMAX.
 * `ID S,START` - Invoke sensor start ***(remote mode)***
   * When the sensor task is started via this diagnostic command, there is an
     implicit "Get Reading" command every time a result is available. Thus,
@@ -208,8 +209,8 @@ Commands that lack a documented response format will return either `OK` or `ERR`
     * `R` - VIS Reflection light, full power
     * `T` - VIS Transmission light, full power
     * `U` - UV Transmission light, full power
-  * `<nnn>` - Measurement light duty cycle (nnn/127)
-    * 0 is off, 128 is full brightness
+  * `<nnn>` - Measurement light duty cycle (nnn/LMAX)
+    * 0 is off, LMAX is full brightness
   * `<M>` - Sensor photodiode configuration
     * `0` - Default configuration
     * `1` - Visual (Photopic) mode
@@ -230,8 +231,8 @@ Commands that lack a documented response format will return either `OK` or `ERR`
     * `R` - VIS Reflection measurement
     * `T` - VIS Transmission measurement
     * `U` - UV Transmission measurement
-  * `<nnn>` - Measurement light duty cycle (nnn/127)
-    * 0 is off, 128 is full brightness
+  * `<nnn>` - Measurement light duty cycle (nnn/LMAX)
+    * 0 is off, LMAX is full brightness
   * Result format: `ID MEAS,<DATA>` (Result is floating-point "Basic counts")
   * _Note: This operation behaves exactly the same as a real measurement,
     including automatic gain selection and repeatable timing. Unlike a

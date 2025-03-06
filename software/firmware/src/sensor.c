@@ -29,7 +29,7 @@ static osStatus_t sensor_gain_calibration_segment(
     sensor_gain_calibration_callback_t callback, void *user_data);
 
 static osStatus_t sensor_raw_read_loop(uint8_t count, float *als_avg);
-static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
+static osStatus_t sensor_find_gain_brightness(uint16_t *led_brightness,
     tsl2585_gain_t gain,
     sensor_gain_calibration_callback_t callback, void *user_data);
 static bool gain_status_callback(
@@ -124,7 +124,7 @@ osStatus_t sensor_gain_calibration_segment(
     sensor_gain_calibration_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
-    uint8_t led_brightness;
+    uint16_t led_brightness;
     float gain_avg;
     size_t i = 0;
     if (low_gain >= high_gain) { return osErrorParameter; }
@@ -174,6 +174,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source)
     tsl2585_gain_t gain = TSL2585_GAIN_128X;
     sensor_reading_t reading;
     uint32_t ticks_start;
+    uint16_t light_max = light_get_max_value();
 
     /*
      * Variables used for regression.
@@ -242,7 +243,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source)
         if (ret != osOK) { break; }
 
         /* Set LED to full brightness at the next cycle */
-        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, 128);
+        ret = sensor_set_light_mode(light_source, /*next_cycle*/true, light_max);
         if (ret != osOK) { break; }
 
         /* Wait for another cycle which will trigger the LED on */
@@ -315,7 +316,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source)
 }
 #endif
 
-osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
+osStatus_t sensor_read_target(sensor_light_t light_source, uint16_t light_value,
     float *als_result,
     sensor_read_callback_t callback, void *user_data)
 {
@@ -434,7 +435,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source, uint8_t light_value,
     return ret;
 }
 
-osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint8_t light_value,
+osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint16_t light_value,
     sensor_mode_t mode, tsl2585_gain_t gain,
     uint16_t sample_time, uint16_t sample_count,
     uint32_t *als_reading)
@@ -606,16 +607,16 @@ bool gain_status_callback(
  * @param led_brightness Brightness to use for further measurements
  * @param gain Measurement gain setting
  */
-static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
+static osStatus_t sensor_find_gain_brightness(uint16_t *led_brightness,
     tsl2585_gain_t gain,
     sensor_gain_calibration_callback_t callback, void *user_data)
 {
     osStatus_t ret = osOK;
-    uint8_t start_brightness = 0;
-    uint8_t end_brightness = 0;
-    uint8_t sat_brightness = 0;
+    uint16_t start_brightness = 0;
+    uint16_t end_brightness = 0;
+    uint16_t sat_brightness = 0;
     sensor_reading_t reading;
-    uint8_t closest_led = 0;
+    uint16_t closest_led = 0;
 
     if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, 0, user_data)) { return osError; }
 
@@ -634,7 +635,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
         if (ret != osOK) { break; }
 
         /* Start at max brightness and use multiplicative decrease to find a rough saturation threshold */
-        for (uint8_t i = 128; i >= 1; i >>= 1) {
+        for (uint16_t i = 128; i >= 1; i >>= 1) {
             if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, i, user_data)) { return osError; }
 
             /* Set the LED to target brightness on the next cycle */
@@ -670,7 +671,7 @@ static osStatus_t sensor_find_gain_brightness(uint8_t *led_brightness,
         }
 
         /* Use additive increase to find the actual saturation point */
-        for (uint8_t i = start_brightness; i < end_brightness; i++) {
+        for (uint16_t i = start_brightness; i < end_brightness; i++) {
             if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_LED, i, user_data)) { return osError; }
 
             /* Set the LED to target brightness on the next cycle */

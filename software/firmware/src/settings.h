@@ -73,8 +73,8 @@ typedef struct {
 } settings_user_usb_key_t;
 
 typedef struct {
-    uint8_t reflection;
-    uint8_t transmission;
+    uint16_t reflection;
+    uint16_t transmission;
     uint8_t timeout;
 } settings_user_idle_light_t;
 

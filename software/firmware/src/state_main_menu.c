@@ -886,6 +886,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
     char modebuf[16];
     char numbuf[16];
     char buf[128];
+    const uint16_t light_max = light_get_max_value();
 
     do {
         ret = sensor_set_mode(sensor_mode);
@@ -996,15 +997,15 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
                 light_ch = '-';
                 break;
             case 1:
-                sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, 128);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, light_max);
                 light_ch = 'R';
                 break;
             case 2:
-                sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, 128);
+                sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, light_max);
                 light_ch = 'T';
                 break;
             case 3:
-                sensor_set_light_mode(SENSOR_LIGHT_UV_TRANSMISSION, false, 128);
+                sensor_set_light_mode(SENSOR_LIGHT_UV_TRANSMISSION, false, light_max);
                 light_ch = 'U';
                 break;
             default:

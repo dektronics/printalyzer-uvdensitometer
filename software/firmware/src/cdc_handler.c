@@ -867,9 +867,10 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
      * Diagnostics Commands
      * "GD DISP" -> Get display screenshot (multi-line response)
      *
-     * "SD LR,nnn" -> Set VIS reflection light duty cycle (nnn/127) [remote]
-     * "SD LT,nnn" -> Set VIS transmission light duty cycle (nnn/127) [remote]
-     * "SD LTU,nnn" -> Set UV transmission light duty cycle (nnn/127) [remote]
+     * "GD LMAX" -> Get maximum light duty cycle value
+     * "SD LR,nnn" -> Set VIS reflection light duty cycle (nnn/LMAX) [remote]
+     * "SD LT,nnn" -> Set VIS transmission light duty cycle (nnn/LMAX) [remote]
+     * "SD LTU,nnn" -> Set UV transmission light duty cycle (nnn/LMAX) [remote]
      *
      * "ID S,START"   -> Invoke sensor start [remote]
      * "ID S,STOP"    -> Invoke sensor stop [remote]
@@ -895,9 +896,15 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
         display_capture_screenshot();
         cdc_send_response("]]\r\n");
         return true;
+    } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "LMAX") == 0) {
+        char buf[32];
+        sprintf(buf, "%d", light_get_max_value());
+        cdc_send_command_response(cmd, buf);
+        return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "LR") == 0 && cdc_remote_active) {
-        uint8_t value = atoi(cmd->args);
-        if (value > 128) { value = 128; }
+        const uint16_t light_max = light_get_max_value();
+        uint16_t value = atoi(cmd->args);
+        if (value > light_max) { value = light_max; }
 
         osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_VIS_REFLECTION, false, value);
         if (result == osOK) {
@@ -908,8 +915,9 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
 
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "LT") == 0 && cdc_remote_active) {
-        uint8_t value = atoi(cmd->args);
-        if (value > 128) { value = 128; }
+        const uint16_t light_max = light_get_max_value();
+        uint16_t value = atoi(cmd->args);
+        if (value > light_max) { value = light_max; }
 
         osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_VIS_TRANSMISSION, false, value);
         if (result == osOK) {
@@ -920,8 +928,9 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
 
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "LTU") == 0 && cdc_remote_active) {
-        uint8_t value = atoi(cmd->args);
-        if (value > 128) { value = 128; }
+        const uint16_t light_max = light_get_max_value();
+        uint16_t value = atoi(cmd->args);
+        if (value > light_max) { value = light_max; }
 
         osStatus_t result = sensor_set_light_mode(SENSOR_LIGHT_UV_TRANSMISSION, false, value);
         if (result == osOK) {
@@ -1005,7 +1014,7 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
             if (n >= 5) {
                 uint32_t als_reading;
                 sensor_light_t light;
-                uint8_t light_value = (uint8_t)args[0];
+                uint16_t light_value = (uint16_t)args[0];
                 sensor_mode_t mode = (sensor_mode_t)args[1];
                 tsl2585_gain_t gain = (tsl2585_gain_t)args[2];
                 uint16_t sample_time = args[3];
@@ -1040,8 +1049,9 @@ bool cdc_process_command_diagnostics(const cdc_command_t *cmd)
             && cmd->args[1] == ',') {
             float als_result;
 
-            uint8_t light_value = atoi(cmd->args + 2);
-            if (light_value > 128) { light_value = 128; }
+            const uint16_t light_max = light_get_max_value();
+            uint16_t light_value = atoi(cmd->args + 2);
+            if (light_value > light_max) { light_value = light_max; }
 
             sensor_light_t light_source;
             if (cmd->args[0] == 'R') {

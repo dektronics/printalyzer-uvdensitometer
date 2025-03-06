@@ -1318,8 +1318,8 @@ bool settings_load_user_idle_light()
         return false;
     }
 
-    setting_user_idle_light.reflection = (uint8_t)copy_to_u32(&buf[0]);
-    setting_user_idle_light.transmission = (uint8_t)copy_to_u32(&buf[4]);
+    setting_user_idle_light.reflection = (uint16_t)copy_to_u32(&buf[0]);
+    setting_user_idle_light.transmission = (uint16_t)copy_to_u32(&buf[4]);
     setting_user_idle_light.timeout = (uint8_t)copy_to_u32(&buf[8]);
     return true;
 }

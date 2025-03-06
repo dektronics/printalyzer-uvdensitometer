@@ -27,14 +27,14 @@ typedef struct {
     uint32_t channel;
     volatile uint8_t state;
     volatile uint8_t startup_count;
-    volatile uint8_t val;
+    volatile uint16_t val;
 } light_t;
 
 static light_t light_vis_refl = {0};
 static light_t light_vis_tran = {0};
 static light_t light_uv_tran = {0};
 
-static void light_set_val(light_t *light, uint8_t val);
+static void light_set_val(light_t *light, uint16_t val);
 
 void light_init(TIM_HandleTypeDef *htim, uint32_t r_channel, uint32_t tv_channel, uint32_t tu_channel)
 {
@@ -57,25 +57,34 @@ void light_init(TIM_HandleTypeDef *htim, uint32_t r_channel, uint32_t tv_channel
     __HAL_TIM_SET_COMPARE(light_uv_tran.htim, light_uv_tran.channel, 0);
 }
 
-void light_set_vis_reflection(uint8_t val)
+uint16_t light_get_max_value()
+{
+    return __HAL_TIM_GET_AUTORELOAD(light_vis_refl.htim) + 1;
+}
+
+void light_set_vis_reflection(uint16_t val)
 {
     light_set_val(&light_vis_refl, val);
 }
 
-void light_set_vis_transmission(uint8_t val)
+void light_set_vis_transmission(uint16_t val)
 {
     light_set_val(&light_vis_tran, val);
 }
 
-void light_set_uv_transmission(uint8_t val)
+void light_set_uv_transmission(uint16_t val)
 {
     light_set_val(&light_uv_tran, val);
 }
 
-void light_set_val(light_t *light, uint8_t val)
+void light_set_val(light_t *light, uint16_t val)
 {
+    const uint16_t light_max = light_get_max_value();
+
+    if (val > light_max) { val = light_max; }
+
     if (light->state == LIGHT_STATE_OFF) {
-        if (val == 128) {
+        if (val == light_max) {
             __HAL_TIM_ENABLE_OCxPRELOAD(light->htim, light->channel);
             __HAL_TIM_SET_COMPARE(light->htim, light->channel, val);
             HAL_TIM_PWM_Start(light->htim, light->channel);
