@@ -16,6 +16,9 @@
  * the minimum and maximum duty cycle, which will be documented later.
  */
 
+/* With the current timer settings, this corresponds to a little bit over 60us */
+#define TIM_MIN_STARTUP_COUNT 330
+
 typedef enum {
     LIGHT_STATE_OFF = 0,
     LIGHT_STATE_STARTUP,
@@ -26,7 +29,6 @@ typedef struct {
     TIM_HandleTypeDef *htim;
     uint32_t channel;
     volatile uint8_t state;
-    volatile uint8_t startup_count;
     volatile uint16_t val;
 } light_t;
 
@@ -84,7 +86,7 @@ void light_set_val(light_t *light, uint16_t val)
     if (val > light_max) { val = light_max; }
 
     if (light->state == LIGHT_STATE_OFF) {
-        if (val == light_max) {
+        if (val >= TIM_MIN_STARTUP_COUNT) {
             __HAL_TIM_ENABLE_OCxPRELOAD(light->htim, light->channel);
             __HAL_TIM_SET_COMPARE(light->htim, light->channel, val);
             HAL_TIM_PWM_Start(light->htim, light->channel);
@@ -92,10 +94,9 @@ void light_set_val(light_t *light, uint16_t val)
         } else if (val > 0) {
             /* Special PWM startup routine */
             light->state = LIGHT_STATE_STARTUP;
-            light->startup_count = 0;
             __HAL_TIM_DISABLE_OCxPRELOAD(light->htim, light->channel);
             __HAL_TIM_SET_COUNTER(light->htim, 0);
-            __HAL_TIM_SET_COMPARE(light->htim, light->channel, 0);
+            __HAL_TIM_SET_COMPARE(light->htim, light->channel, TIM_MIN_STARTUP_COUNT);
             HAL_TIM_PWM_Start_IT(light->htim, light->channel);
         }
         light->val = val;
@@ -127,14 +128,8 @@ void light_int_handler(uint32_t channel, uint32_t interrupt)
         return;
     }
 
-    light->startup_count++;
-    if (light->startup_count == 1) {
-        __HAL_TIM_SET_COMPARE(light->htim, light->channel, 128);
-    } else if (light->startup_count >= 3) {
-        __HAL_TIM_DISABLE_IT(light->htim, interrupt);
-        __HAL_TIM_ENABLE_OCxPRELOAD(light->htim, light->channel);
-        __HAL_TIM_SET_COMPARE(light->htim, light->channel, light->val);
-        light->state = LIGHT_STATE_ON;
-        light->startup_count = 0;
-    }
+    __HAL_TIM_DISABLE_IT(light->htim, interrupt);
+    __HAL_TIM_ENABLE_OCxPRELOAD(light->htim, light->channel);
+    __HAL_TIM_SET_COMPARE(light->htim, light->channel, light->val);
+    light->state = LIGHT_STATE_ON;
 }
