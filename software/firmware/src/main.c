@@ -334,16 +334,26 @@ void i2c1_init(void)
 void tim2_init(void)
 {
     /*
-     * PWM frequency for LED drivers: 533.33Hz
+     * PWM frequency for LED drivers: 651Hz
+     *
+     * This frequency is a trade-off between having a stable measured LED
+     * brightness, and maintaining a 1:1 relationship between duty cycle
+     * and brightness when plotted on a logarithmic scale.
+     *
+     * Frequencies in the 400-1000Hz range do fairly well up to an equivalent
+     * of 2.00D, then start to deviate significantly.
+     * With a frequency of around 80Hz it is possible to get an equivalent of
+     * 3.00D before deviation, but with compromises on stability and
+     * measurement timing.
      */
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
 
     htim2.Instance = TIM2;
-    htim2.Init.Prescaler = 5;
+    htim2.Init.Prescaler = 2;
     htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim2.Init.Period = 9999;
+    htim2.Init.Period = 16383;
     htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
