@@ -21,8 +21,6 @@ typedef enum {
     SENSOR_LIGHT_UV_TRANSMISSION
 } sensor_light_t;
 
-#define SENSOR_LIGHT_MAX 128
-
 /**
  * Sensor spectrum measurement mode
  */
@@ -105,7 +103,7 @@ osStatus_t sensor_light_calibration(sensor_light_t light_source);
  * from which target density can be calculated.
  *
  * @param light_source Light source to use for target measurement
- * @param light_value Light brightness value (Always use `SENSOR_LIGHT_MAX` for normal measurements)
+ * @param light_value Light brightness value (Always use `light_get_max_value()` for normal measurements)
  * @param als_result Sensor result
  * @return osOK on success
  */
@@ -126,7 +124,7 @@ osStatus_t sensor_read_target(sensor_light_t light_source, uint16_t light_value,
  * with the results set to UINT32_MAX.
  *
  * @param light_source Light source to use for target measurement
- * @param light_value Light brightness value (Always use `SENSOR_LIGHT_MAX` for normal measurements)
+ * @param light_value Light brightness value (Always use `light_get_max_value()` for normal measurements)
  * @param mode Sensor mode
  * @param gain Sensor gain
  * @param sample_time Sensor integration sample time
