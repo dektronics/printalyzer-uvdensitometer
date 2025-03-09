@@ -349,11 +349,11 @@ bool cdc_parse_command(cdc_command_t *cmd, const char *buf, size_t len)
             strncpy(cmd->args, p + 1, MIN(len - ((p + 1) - buf), sizeof(cmd->args) - 1));
         } else {
             strncpy(cmd->action, buf + 3, MIN(len - 3, sizeof(cmd->action) - 1));
-            bzero(cmd->args, sizeof(cmd->args));
+            memset(cmd->args, 0, sizeof(cmd->args));
         }
     } else {
-        bzero(cmd->action, sizeof(cmd->action));
-        bzero(cmd->args, sizeof(cmd->args));
+        memset(cmd->action, 0, sizeof(cmd->action));
+        memset(cmd->args, 0, sizeof(cmd->args));
     }
 
     log_i("Command: [%c][%c] {%s},\"%s\"", buf[0], buf[1], cmd->action, cmd->args);
@@ -472,7 +472,7 @@ bool cdc_process_command_system(const cdc_command_t *cmd)
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "DISP") == 0 && cdc_remote_active) {
         if (cmd->args[0] == '"') {
-            bzero(buf, sizeof(buf));
+            memset(buf, 0, sizeof(buf));
             uint8_t j = 0;
             for (uint8_t i = 1; i < 56; i++) {
                 if (i < 55 && cmd->args[i] == '\\' && cmd->args[i + 1] == 'n') {
@@ -1167,15 +1167,15 @@ void cdc_send_density_reading(char prefix, float d_value, float d_zero, float ra
     char sign;
 
     /* Force any invalid values to be zero */
-    if (isnanf(d_value) || isinff(d_value)) {
+    if (isnan(d_value) || isinf(d_value)) {
         d_value = 0.0F;
     }
-    if (isnanf(raw_value) || isinff(raw_value)) {
+    if (isnan(raw_value) || isinf(raw_value)) {
         raw_value = 0.0F;
     }
 
     /* Calculate the display value */
-    if (!isnanf(d_zero)) {
+    if (!isnan(d_zero)) {
         d_display = d_value - d_zero;
     } else {
         d_display = d_value;
@@ -1353,7 +1353,7 @@ size_t decode_f32_array_args(const char *args, float *elements, size_t len)
         if (args[q] == ',' || args[q] == '\0') {
             if (p >= q) { break; }
             if (q - p < sizeof(numbuf) - 1) {
-                bzero(numbuf, sizeof(numbuf));
+                memset(numbuf, 0, sizeof(numbuf));
                 strncpy(numbuf, args + p, q - p);
                 elements[n] = decode_f32(numbuf);
             } else {
@@ -1386,7 +1386,7 @@ size_t decode_u16_array_args(const char *args, uint16_t *elements, size_t len)
         if (args[q] == ',' || args[q] == '\0') {
             if (p >= q) { break; }
             if (q - p < sizeof(numbuf) - 1) {
-                bzero(numbuf, sizeof(numbuf));
+                memset(numbuf, 0, sizeof(numbuf));
                 strncpy(numbuf, args + p, q - p);
                 elements[n] = atoi(numbuf);
             } else {

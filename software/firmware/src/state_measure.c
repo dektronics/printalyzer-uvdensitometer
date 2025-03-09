@@ -168,8 +168,8 @@ void state_measure_process(state_t *state_base, state_controller_t *controller)
                 reading = densitometer_get_display_d(state->densitometer);
             }
 
-            bool has_zero = !isnanf(densitometer_get_zero_d(state->densitometer));
-            elements.density100 = (!isnanf(reading)) ? lroundf(reading * 100) : 0;
+            bool has_zero = !isnan(densitometer_get_zero_d(state->densitometer));
+            elements.density100 = (!isnan(reading)) ? lroundf(reading * 100) : 0;
             elements.zero_indicator = has_zero;
             display_draw_main_elements(&elements);
             state->display_dirty = false;

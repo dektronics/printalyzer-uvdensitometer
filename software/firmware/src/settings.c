@@ -652,7 +652,7 @@ float settings_get_cal_gain_value(const settings_cal_gain_t *cal_gain, tsl2585_g
 
     if (gain >= TSL2585_GAIN_0_5X && gain <= TSL2585_GAIN_256X) {
         result = cal_gain->values[gain];
-        if (isnanf(result)) {
+        if (isnan(result)) {
             result = tsl2585_gain_value(gain);
         }
     } else {
@@ -668,7 +668,7 @@ bool settings_validate_cal_gain(const settings_cal_gain_t *cal_gain)
 
     /* Validate field numeric properties */
     for (size_t i = 0; i <= TSL2585_GAIN_256X; i++) {
-        if (isnanf(cal_gain->values[i])) {
+        if (isnan(cal_gain->values[i])) {
             return false;
         }
     }
@@ -761,16 +761,16 @@ bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope)
     if (!cal_slope) { return false; }
 
     /* Validate field numeric properties */
-    if (isnanf(cal_slope->b0) || isinff(cal_slope->b0)) {
+    if (isnan(cal_slope->b0) || isinf(cal_slope->b0)) {
         return false;
     }
-    if (isnanf(cal_slope->b1) || isinff(cal_slope->b1)) {
+    if (isnan(cal_slope->b1) || isinf(cal_slope->b1)) {
         return false;
     }
-    if (isnanf(cal_slope->b2) || isinff(cal_slope->b2)) {
+    if (isnan(cal_slope->b2) || isinf(cal_slope->b2)) {
         return false;
     }
-    if (isnanf(cal_slope->z) || isinff(cal_slope->z)) {
+    if (isnan(cal_slope->z) || isinf(cal_slope->z)) {
         return false;
     }
 
@@ -868,13 +868,13 @@ bool settings_validate_cal_temperature(const settings_cal_temperature_t *cal_tem
 
     /* Validate field numeric properties */
     for (uint8_t i = 0; i < 3; i++) {
-        if (isnanf(cal_temperature->b0[i]) || isinff(cal_temperature->b0[i])) {
+        if (isnan(cal_temperature->b0[i]) || isinf(cal_temperature->b0[i])) {
             return false;
         }
-        if (isnanf(cal_temperature->b1[i]) || isinff(cal_temperature->b1[i])) {
+        if (isnan(cal_temperature->b1[i]) || isinf(cal_temperature->b1[i])) {
             return false;
         }
-        if (isnanf(cal_temperature->b2[i]) || isinff(cal_temperature->b2[i])) {
+        if (isnan(cal_temperature->b2[i]) || isinf(cal_temperature->b2[i])) {
             return false;
         }
     }
@@ -1036,16 +1036,16 @@ bool settings_validate_cal_reflection(const settings_cal_reflection_t *cal_refle
     if (!cal_reflection) { return false; }
 
     /* Validate field numeric properties */
-    if (isnanf(cal_reflection->lo_d) || isinff(cal_reflection->lo_d)) {
+    if (isnan(cal_reflection->lo_d) || isinf(cal_reflection->lo_d)) {
         return false;
     }
-    if (isnanf(cal_reflection->lo_value) || isinff(cal_reflection->lo_value)) {
+    if (isnan(cal_reflection->lo_value) || isinf(cal_reflection->lo_value)) {
         return false;
     }
-    if (isnanf(cal_reflection->hi_d) || isinff(cal_reflection->hi_d)) {
+    if (isnan(cal_reflection->hi_d) || isinf(cal_reflection->hi_d)) {
         return false;
     }
-    if (isnanf(cal_reflection->hi_value) || isinff(cal_reflection->hi_value)) {
+    if (isnan(cal_reflection->hi_value) || isinf(cal_reflection->hi_value)) {
         return false;
     }
 
@@ -1200,13 +1200,13 @@ bool settings_validate_cal_transmission(const settings_cal_transmission_t *cal_t
     if (!cal_transmission) { return false; }
 
     /* Validate field numeric properties */
-    if (isnanf(cal_transmission->zero_value) || isinff(cal_transmission->zero_value)) {
+    if (isnan(cal_transmission->zero_value) || isinf(cal_transmission->zero_value)) {
         return false;
     }
-    if (isnanf(cal_transmission->hi_d) || isinff(cal_transmission->hi_d)) {
+    if (isnan(cal_transmission->hi_d) || isinf(cal_transmission->hi_d)) {
         return false;
     }
-    if (isnanf(cal_transmission->hi_value) || isinff(cal_transmission->hi_value)) {
+    if (isnan(cal_transmission->hi_value) || isinf(cal_transmission->hi_value)) {
         return false;
     }
 

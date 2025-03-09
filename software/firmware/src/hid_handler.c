@@ -32,12 +32,12 @@ void hid_send_density_reading(char prefix, float d_value, float d_zero)
     if (!usb_key.enabled) { return; }
 
     /* Force any invalid values to be zero */
-    if (isnanf(d_value) || isinff(d_value)) {
+    if (isnan(d_value) || isinf(d_value)) {
         d_value = 0.0F;
     }
 
     /* Calculate the display value */
-    if (!isnanf(d_zero)) {
+    if (!isnan(d_zero)) {
         d_display = d_value - d_zero;
     } else {
         d_display = d_value;

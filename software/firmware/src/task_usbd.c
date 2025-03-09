@@ -223,7 +223,7 @@ void usbd_hid_send(const char *str, size_t len)
     /* Clear out the buffer and reset state variables */
     hid_buffer_len = 0;
     hid_buffer_offset = 0;
-    bzero(hid_buffer, sizeof(hid_buffer));
+    memset(hid_buffer, 0, sizeof(hid_buffer));
     hid_has_key = false;
 
     /* Iterate through the input string, and add HID-supported characters */

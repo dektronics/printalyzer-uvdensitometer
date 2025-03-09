@@ -286,11 +286,11 @@ void state_display_process(state_t *state_base, state_controller_t *controller)
         }
 
         char sep = settings_get_decimal_separator();
-        bool has_zero = !isnanf(densitometer_get_zero_d(state->densitometer));
+        bool has_zero = !isnan(densitometer_get_zero_d(state->densitometer));
         display_main_elements_t elements = {
             .title = state->display_title,
             .mode = state->display_mode,
-            .density100 = ((!isnanf(reading)) ? lroundf(reading * 100) : 0),
+            .density100 = ((!isnan(reading)) ? lroundf(reading * 100) : 0),
             .decimal_sep = sep,
             .zero_indicator = has_zero,
             .f_indicator = (display_format.unit == SETTING_DISPLAY_UNIT_FSTOP)

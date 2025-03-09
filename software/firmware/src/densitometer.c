@@ -326,7 +326,7 @@ void densitometer_set_zero_d(densitometer_t *densitometer, float d_value)
 {
     if (!densitometer) { return; }
 
-    if (!isnanf(d_value) && d_value >= 0.0F && d_value <= densitometer->max_d) {
+    if (!isnan(d_value) && d_value >= 0.0F && d_value <= densitometer->max_d) {
         densitometer->zero_d = d_value;
     } else {
         densitometer->zero_d = NAN;
@@ -352,7 +352,7 @@ float densitometer_get_display_d(const densitometer_t *densitometer)
     if (!densitometer) { return NAN; }
 
     float display_value;
-    if (!isnanf(densitometer->zero_d)) {
+    if (!isnan(densitometer->zero_d)) {
         display_value = densitometer->last_d - densitometer->zero_d;
     } else {
         display_value = densitometer->last_d;
@@ -375,7 +375,7 @@ float densitometer_get_display_d(const densitometer_t *densitometer)
 float densitometer_get_display_f(const densitometer_t *densitometer)
 {
     float d_value = densitometer_get_display_d(densitometer);
-    if (isnanf(d_value)) { return d_value; }
+    if (isnan(d_value)) { return d_value; }
 
     float f_value = log2f(powf(10.0F, d_value));
 

@@ -774,7 +774,7 @@ float sensor_apply_zero_correction(float basic_reading)
 
     bool valid = settings_get_cal_slope(&cal_slope);
 
-    if (isnanf(basic_reading) || isinff(basic_reading) || basic_reading <= 0.0F) {
+    if (isnan(basic_reading) || isinf(basic_reading) || basic_reading <= 0.0F) {
         log_w("Cannot apply zero correction to invalid reading: %f", basic_reading);
         return basic_reading;
     }
@@ -847,7 +847,7 @@ float sensor_apply_slope_correction(float basic_reading)
 
     bool valid = settings_get_cal_slope(&cal_slope);
 
-    if (isnanf(basic_reading) || isinff(basic_reading) || basic_reading <= 0.0F) {
+    if (isnan(basic_reading) || isinf(basic_reading) || basic_reading <= 0.0F) {
         log_w("Cannot apply slope correction to invalid reading: %f", basic_reading);
         return basic_reading;
     }

@@ -140,8 +140,7 @@ osStatus_t keypad_clear_events()
 
 osStatus_t keypad_flush_events()
 {
-    keypad_event_t event;
-    bzero(&event, sizeof(keypad_event_t));
+    keypad_event_t event = {0};
     osMessageQueueReset(keypad_event_queue);
     return osMessageQueuePut(keypad_event_queue, &event, 0, 0);
 }
@@ -154,7 +153,7 @@ osStatus_t keypad_wait_for_event(keypad_event_t *event, int msecs_to_wait)
         if (msecs_to_wait > 0) {
             return osErrorTimeout;
         } else {
-            bzero(event, sizeof(keypad_event_t));
+            memset(event, 0, sizeof(keypad_event_t));
         }
     }
     return osOK;
