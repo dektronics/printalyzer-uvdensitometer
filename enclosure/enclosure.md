@@ -64,6 +64,13 @@ These files are in the `models_3d` subdirectory.
 * `jig-cal-strip-measure` - Jig for holding a calibration reference for measurement,
   when the label markings have not yet been applied
 
+### Calibration Jigs
+
+* `jig-cal-t2120-center` - Jig to repeatably position a Stouffer T2120 step wedge for linearity calibration (center position)
+* `jig-cal-t2120-side` - Jig to repeatably position a Stouffer T2120 step wedge for linearity calibration (side position)
+* `jig-cal-t5100-full` - Jig to repeatably position s Stouffer T5100 step wedge for measurement or target calibration (measurement spot at the patch center)
+* `jig-cal-t5100-labeled` - Jig to repeatably position a Stouffer T5100 step wedge for measurement or target calibration (measurement spot shifted to accommodate a 4x1" label)
+
 ## 2D Models
 
 Models designed for laser cutting are provided as DXF files.
