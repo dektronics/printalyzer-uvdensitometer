@@ -334,7 +334,7 @@ void i2c1_init(void)
 void tim2_init(void)
 {
     /*
-     * PWM frequency for LED drivers: 651Hz
+     * Default PWM frequency for LED drivers: 651Hz
      *
      * This frequency is a trade-off between having a stable measured LED
      * brightness, and maintaining a 1:1 relationship between duty cycle

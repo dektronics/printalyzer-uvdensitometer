@@ -1,5 +1,6 @@
 #include "light.h"
 
+#include "elog.h"
 #include "stm32l0xx_hal.h"
 
 /*
@@ -46,11 +47,6 @@ static void light_set_val(light_t *light, uint16_t val);
 
 void light_init(TIM_HandleTypeDef *htim, uint32_t r_channel, uint32_t tv_channel, uint32_t tu_channel)
 {
-    const uint32_t clock_freq = HAL_RCC_GetSysClockFreq();
-    const uint32_t timer_prescaler = htim->Instance->PSC;
-    light_startup_count = (STARTUP_PULSE_US * (clock_freq / 1000000)) / (timer_prescaler + 1);
-    light_val_max = __HAL_TIM_GET_AUTORELOAD(htim) + 1;
-
     light_vis_refl.htim = htim;
     light_vis_refl.channel = r_channel;
 
@@ -61,6 +57,48 @@ void light_init(TIM_HandleTypeDef *htim, uint32_t r_channel, uint32_t tv_channel
     light_uv_tran.channel = tu_channel;
 
     /* Set us to a known initial state */
+    light_set_frequency(LIGHT_FREQUENCY_DEFAULT);
+}
+
+void light_set_frequency(light_frequency_t frequency)
+{
+    TIM_HandleTypeDef *htim = light_vis_tran.htim;
+
+    if (light_vis_refl.state != LIGHT_STATE_OFF
+        || light_vis_tran.state != LIGHT_STATE_OFF
+        || light_uv_tran.state != LIGHT_STATE_OFF) {
+        log_w("Changing light frequency while lights are not off");
+    }
+
+    if (frequency == LIGHT_FREQUENCY_HIGH) {
+        /*
+         * Frequency: 125kHz
+         * This frequency works the best for gain calibration use cases, but doesn't
+         * provide the best adjustment granularity or a good value-vs-brightness
+         * relationship.
+         */
+        __HAL_TIM_SET_PRESCALER(htim, 1);
+        __HAL_TIM_SET_AUTORELOAD(htim, 127);
+    } else {
+        /*
+         * Frequency: 651Hz (default)
+         * This frequency works best for adjustable brightness at around 8x sensor gain,
+         * and has a sufficiently 1:1 relationship between value and brightness out to
+         * an equivalent density reduction of 2.0D.
+         * Unfortunately, it does not work well for reducing measured brightness
+         * at higher sensor gain settings, and doesn't produce the best results
+         * for certain gain calibration pairs.
+         */
+        __HAL_TIM_SET_PRESCALER(htim, 2);
+        __HAL_TIM_SET_AUTORELOAD(htim, 16383);
+    }
+
+    const uint32_t clock_freq = HAL_RCC_GetSysClockFreq();
+    const uint32_t timer_prescaler = htim->Instance->PSC;
+    light_startup_count = (STARTUP_PULSE_US * (clock_freq / 1000000)) / (timer_prescaler + 1);
+    light_val_max = __HAL_TIM_GET_AUTORELOAD(htim) + 1;
+
+    /* Reset the counter states */
     __HAL_TIM_DISABLE_OCxPRELOAD(light_vis_refl.htim, light_vis_refl.channel);
     __HAL_TIM_DISABLE_OCxPRELOAD(light_vis_tran.htim, light_vis_tran.channel);
     __HAL_TIM_DISABLE_OCxPRELOAD(light_uv_tran.htim, light_uv_tran.channel);
