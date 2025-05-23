@@ -737,27 +737,6 @@ double sensor_convert_to_basic_counts(const sensor_reading_t *reading, uint8_t m
     return als_reading / (atime_ms * als_gain);
 }
 
-float sensor_apply_zero_correction(float basic_reading)
-{
-    settings_cal_slope_t cal_slope;
-
-    bool valid = settings_get_cal_slope(&cal_slope);
-
-    if (isnan(basic_reading) || isinf(basic_reading) || basic_reading <= 0.0F) {
-        log_w("Cannot apply zero correction to invalid reading: %f", basic_reading);
-        return basic_reading;
-    }
-
-    if (!valid) {
-        log_w("Invalid slope calibration values");
-        return basic_reading;
-    }
-
-    float corr_value = basic_reading * powf(10.0F, cal_slope.z);
-
-    return corr_value;
-}
-
 float sensor_apply_temperature_correction(sensor_light_t light_source, float temp_c, float basic_reading)
 {
     bool valid;
@@ -806,29 +785,6 @@ float sensor_apply_temperature_correction(sensor_light_t light_source, float tem
 
     /* Calculate the final temperature-corrected reading */
     float corr_reading = basic_reading * temp_corr;
-
-    return corr_reading;
-}
-
-float sensor_apply_slope_correction(float basic_reading)
-{
-    settings_cal_slope_t cal_slope;
-
-    bool valid = settings_get_cal_slope(&cal_slope);
-
-    if (isnan(basic_reading) || isinf(basic_reading) || basic_reading <= 0.0F) {
-        log_w("Cannot apply slope correction to invalid reading: %f", basic_reading);
-        return basic_reading;
-    }
-
-    if (!valid) {
-        log_w("Invalid slope calibration values");
-        return basic_reading;
-    }
-
-    float l_reading = log10f(basic_reading);
-    float l_expected = cal_slope.b0 + (cal_slope.b1 * l_reading) + (cal_slope.b2 * powf(l_reading, 2.0F));
-    float corr_reading = powf(10.0F, l_expected);
 
     return corr_reading;
 }

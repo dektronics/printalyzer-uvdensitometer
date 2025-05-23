@@ -111,8 +111,8 @@ Commands that lack a documented response format will return either `OK` or `ERR`
   * Possible measurement formats are:
     * `BASIC` - The default format, which just includes the measurement mode
       and density value in a human-readable form, to 2 decimal places
-    * `EXT` - Appends the density, zero offset, raw basic count,
-      and slope corrected basic count sensor readings in the hex encoded format
+    * `EXT` - Appends the density, zero offset, and gain adjusted basic count
+      readings in the hex encoded floating point format
   * Note: The active format will revert to **BASIC** upon disconnect
 * `SM UNCAL,x` - Allow measurements without target calibration (0=false, 1=true)
   * Note: This setting will revert to false upon disconnect
@@ -130,25 +130,17 @@ Commands that lack a documented response format will return either `OK` or `ERR`
   * Status is reported via the following responses:
     * `IC GAIN,STATUS,n,m` where n is an enumerated value as follows:
       * 0 = initializing
-      * 1 = measuring medium gain (m = 0 or 1)
-      * 2 = measuring high gain (m = 0 or 1)
-      * 3 = measuring maximum gain (m = 0 or 1)
+      * 1 = finding gain measurement brightness (m = gain level)
+      * 2 = waiting between measurements
+      * 3 = measuring gain level (m = gain being measured)
       * 4 = calibration process failed
-      * 5 = finding gain measurement brightness (m = progress)
-      * 6 = waiting between measurements (m = index)
-      * 7 = calibration process complete
+      * 5 = calibration process complete
     * `IC GAIN,OK` - Gain calibration process is complete
     * `IC GAIN,ERR` - Gain calibration process has failed
 * `GC GAIN` - Get sensor gain calibration values
   * Response: `GC GAIN,<G0>,<G1>,<G2>,<G3>,<G4>,<G5>,<G6>,<G7>,<G8>,<G9>`
   * Note: `<G0..9>` represent gain values, doubling with each increment, from 0.5x to 256x
 * `SC GAIN,<G0>,<G1>,<G2>,<G3>,<G4>,<G5>,<G6>,<G7>,<G8>,<G9>` - Set sensor gain calibration values
-* `GC SLOPE` - Get sensor slope calibration values
-  * Response: `GC SLOPE,<B0>,<B1>,<B2>,<Z>`
-* `SC SLOPE,<B0>,<B1>,<B2>,<Z>` - Set sensor slope calibration values
-  * _Note: There is no on-device way to perform slope calibration.
-    It must be performed using the desktop application, and then
-    loaded onto the device via the command interface._
 * `GC VTEMP` - Get VIS sensor temperature calibration values
   * Response: `GC VTEMP,<B0_0>,<B0_1>,<B0_2>,<B1_0>,<B1_1>,<B1_2>,<B2_0>,<B2_1>,<B2_2>`
 * `SC VTEMP,<B0_0>,<B0_1>,<B0_2>,<B1_0>,<B1_1>,<B1_2>,<B2_0>,<B2_1>,<B2_2>` - Set VIS sensor temperature calibration values
@@ -163,16 +155,16 @@ Commands that lack a documented response format will return either `OK` or `ERR`
 * `GC REFL` - Get VIS reflection density calibration values
   * Response: `GC REFL,<LD>,<LREADING>,<HD>,<HREADING>`
 * `SC REFL,<LD>,<LREADING>,<HD>,<HREADING>` - Set VIS reflection density calibration values
-  * The reading values are assumed to be in slope corrected basic counts
+  * The reading values are assumed to be in gain adjusted basic counts
 * `GC TRAN` - Get VIS transmission density calibration values
   * Response: `GC TRAN,<LD>,<LREADING>,<HD>,<HREADING>`
 * `SC TRAN,<LD>,<LREADING>,<HD>,<HREADING>` - Get VIS transmission density calibration values
-  * The reading values are assumed to be in slope corrected basic counts
+  * The reading values are assumed to be in gain adjusted basic counts
   * Note: `<HD>` is always zero, and only included here for the sake of consistency
 * `GC UVTR` - Get UV transmission density calibration values
   * Response: `GC UVTR,<LD>,<LREADING>,<HD>,<HREADING>`
 * `SC UVTR,<LD>,<LREADING>,<HD>,<HREADING>` - Get UV transmission density calibration values
-  * The reading values are assumed to be in slope corrected basic counts
+  * The reading values are assumed to be in gain adjusted basic counts
   * Note: `<HD>` is always zero, and only included here for the sake of consistency
 
 ### Diagnostic Commands

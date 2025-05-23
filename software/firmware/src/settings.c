@@ -25,8 +25,6 @@ static bool settings_clear_cal_temp_settings();
 
 static void settings_set_cal_gain_defaults(settings_cal_gain_t *cal_gain);
 static bool settings_load_cal_gain();
-static void settings_set_cal_slope_defaults(settings_cal_slope_t *cal_slope);
-static bool settings_load_cal_slope();
 static void settings_set_cal_temperature_defaults(settings_cal_temperature_t *cal_temperature);
 static bool settings_load_cal_vis_temperature();
 static bool settings_load_cal_uv_temperature();
@@ -78,11 +76,8 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define CONFIG_CAL_GAIN             (PAGE_CAL_SENSOR + 4U)
 #define CONFIG_CAL_GAIN_SIZE        (44U)
 
-#define CONFIG_CAL_SLOPE            (PAGE_CAL_SENSOR + 48U)
-#define CONFIG_CAL_SLOPE_SIZE       (20U)
-
-#define CONFIG_CAL_RESERVED         (PAGE_CAL_SENSOR + 68U)
-#define CONFIG_CAL_RESERVED_SIZE    (12U)
+#define CONFIG_CAL_RESERVED         (PAGE_CAL_SENSOR + 48U)
+#define CONFIG_CAL_RESERVED_SIZE    (32U)
 
 /*
  * Target Calibration Data (128b)
@@ -139,7 +134,6 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define CONFIG_CAL_UV_TEMP_SIZE      (40U)
 
 static settings_cal_gain_t setting_cal_gain = {0};
-static settings_cal_slope_t setting_cal_slope = {0};
 static settings_cal_temperature_t setting_cal_vis_temperature = {0};
 static settings_cal_temperature_t setting_cal_uv_temperature = {0};
 static settings_cal_reflection_t setting_cal_vis_reflection = {0};
@@ -306,14 +300,12 @@ bool settings_init_cal_sensor(bool force_clear)
     bool result;
     /* Initialize all fields to their default values */
     settings_set_cal_gain_defaults(&setting_cal_gain);
-    settings_set_cal_slope_defaults(&setting_cal_slope);
 
     /* Load settings if the version matches */
     uint32_t version = force_clear ? 0 : settings_read_uint32(PAGE_CAL_SENSOR);
     if (version == PAGE_CAL_SENSOR_VERSION) {
         /* Version is good, load data with per-field validation */
         settings_load_cal_gain();
-        settings_load_cal_slope();
         result = true;
     } else {
         /* Version is bad, initialize a blank page */
@@ -338,13 +330,6 @@ bool settings_clear_cal_sensor()
     settings_cal_gain_t cal_gain;
     settings_set_cal_gain_defaults(&cal_gain);
     if (!settings_set_cal_gain(&cal_gain)) {
-        return false;
-    }
-
-    /* Write an empty slope cal struct */
-    settings_cal_slope_t cal_slope;
-    settings_set_cal_slope_defaults(&cal_slope);
-    if (!settings_set_cal_slope(&cal_slope)) {
         return false;
     }
 
@@ -678,100 +663,6 @@ bool settings_validate_cal_gain(const settings_cal_gain_t *cal_gain)
         if (cal_gain->values[i] <= cal_gain->values[i - 1]) {
             return false;
         }
-    }
-
-    return true;
-}
-
-void settings_set_cal_slope_defaults(settings_cal_slope_t *cal_slope)
-{
-    if (!cal_slope) { return; }
-    memset(cal_slope, 0, sizeof(settings_cal_slope_t));
-    cal_slope->z = NAN;
-    cal_slope->b0 = NAN;
-    cal_slope->b1 = NAN;
-    cal_slope->b2 = NAN;
-}
-
-bool settings_set_cal_slope(const settings_cal_slope_t *cal_slope)
-{
-    HAL_StatusTypeDef ret = HAL_OK;
-    if (!cal_slope) { return false; }
-
-    uint8_t buf[CONFIG_CAL_SLOPE_SIZE];
-    copy_from_f32(&buf[0], cal_slope->b0);
-    copy_from_f32(&buf[4], cal_slope->b1);
-    copy_from_f32(&buf[8], cal_slope->b2);
-    copy_from_f32(&buf[12], cal_slope->z);
-
-    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 4);
-    copy_from_u32(&buf[16], crc);
-
-    ret = settings_write_buffer(CONFIG_CAL_SLOPE, buf, sizeof(buf));
-
-    if (ret == HAL_OK) {
-        memcpy(&setting_cal_slope, cal_slope, sizeof(settings_cal_slope_t));
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool settings_load_cal_slope()
-{
-    uint8_t buf[CONFIG_CAL_SLOPE_SIZE];
-
-    if (settings_read_buffer(CONFIG_CAL_SLOPE, buf, sizeof(buf)) != HAL_OK) {
-        return false;
-    }
-
-    uint32_t crc = copy_to_u32(&buf[16]);
-    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 4);
-
-    if (crc != calculated_crc) {
-        log_w("Invalid cal slope CRC: %08X != %08X", crc, calculated_crc);
-        return false;
-    } else {
-        setting_cal_slope.b0 = copy_to_f32(&buf[0]);
-        setting_cal_slope.b1 = copy_to_f32(&buf[4]);
-        setting_cal_slope.b2 = copy_to_f32(&buf[8]);
-        setting_cal_slope.z = copy_to_f32(&buf[12]);
-        return true;
-    }
-}
-
-bool settings_get_cal_slope(settings_cal_slope_t *cal_slope)
-{
-    if (!cal_slope) { return false; }
-
-    /* Copy over the settings values */
-    memcpy(cal_slope, &setting_cal_slope, sizeof(settings_cal_slope_t));
-
-    /* Set default values if validation fails */
-    if (!settings_validate_cal_slope(cal_slope)) {
-        settings_set_cal_slope_defaults(cal_slope);
-        return false;
-    } else {
-        return true;
-    }
-}
-
-bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope)
-{
-    if (!cal_slope) { return false; }
-
-    /* Validate field numeric properties */
-    if (isnan(cal_slope->b0) || isinf(cal_slope->b0)) {
-        return false;
-    }
-    if (isnan(cal_slope->b1) || isinf(cal_slope->b1)) {
-        return false;
-    }
-    if (isnan(cal_slope->b2) || isinf(cal_slope->b2)) {
-        return false;
-    }
-    if (isnan(cal_slope->z) || isinf(cal_slope->z)) {
-        return false;
     }
 
     return true;

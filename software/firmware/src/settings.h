@@ -27,13 +27,6 @@ typedef struct {
 } settings_cal_gain_t;
 
 typedef struct {
-    float z;
-    float b0;
-    float b1;
-    float b2;
-} settings_cal_slope_t;
-
-typedef struct {
     float b0[3];
     float b1[3];
     float b2[3];
@@ -131,32 +124,6 @@ float settings_get_cal_gain_value(const settings_cal_gain_t *cal_gain, tsl2585_g
  * @return True if valid, false if invalid
  */
 bool settings_validate_cal_gain(const settings_cal_gain_t *cal_gain);
-
-/**
- * Set the slope calibration values.
- *
- * @param cal_slope Struct populated with values to save
- * @return True if saved, false on error
- */
-bool settings_set_cal_slope(const settings_cal_slope_t *cal_slope);
-
-/**
- * Get the slope calibration values.
- * If a valid set of values are not available, but the provided struct is
- * usable, it will be initialized to NaN.
- *
- * @param cal_slope Struct to be populated with saved values
- * @return True if valid values are returned, false otherwise.
- */
-bool settings_get_cal_slope(settings_cal_slope_t *cal_slope);
-
-/**
- * Check if the slope calibration values are valid
- *
- * @param cal_slope Struct to validate
- * @return True if valid, false if invalid
- */
-bool settings_validate_cal_slope(const settings_cal_slope_t *cal_slope);
 
 /**
  * Set the VIS temperature calibration values.

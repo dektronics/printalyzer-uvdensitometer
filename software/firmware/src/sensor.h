@@ -152,24 +152,6 @@ osStatus_t sensor_read_target_raw(sensor_light_t light_source, uint16_t light_va
 double sensor_convert_to_basic_counts(const sensor_reading_t *reading, uint8_t mod);
 
 /**
- * Apply the configured zero correction formula to a sensor reading.
- *
- * The input value is in basic counts, as is normally done as part
- * of the measurement process.
- *
- * This is a special case of slope correction that only covers the
- * case where the sensor is directly exposed to the measurement light
- * with no film or paper in the way.
- *
- * If the slope correction values are not correctly configured, then
- * the input will be returned unmodified.
- *
- * @param basic_reading Sensor reading in combined basic counts
- * @return Zero corrected sensor reading
- */
-float sensor_apply_zero_correction(float basic_reading);
-
-/**
  * Apply the configured temperature correction formula to a sensor reading.
  *
  * The input value is in basic counts, as is normally done as part
@@ -192,19 +174,5 @@ float sensor_apply_zero_correction(float basic_reading);
  * @return Temperature corrected sensor reading
  */
 float sensor_apply_temperature_correction(sensor_light_t light_source, float temp_c, float basic_reading);
-
-/**
- * Apply the configured slope correction formula to a sensor reading.
- *
- * The input value is in basic counts, as is normally done as part
- * of the measurement process.
- *
- * If the slope correction values are not correctly configured, then
- * the input will be returned unmodified.
- *
- * @param basic_reading Sensor reading in combined basic counts
- * @return Slope corrected sensor reading
- */
-float sensor_apply_slope_correction(float basic_reading);
 
 #endif /* SENSOR_H */

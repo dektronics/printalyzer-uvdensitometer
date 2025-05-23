@@ -645,38 +645,6 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
 
             return true;
         }
-    }
-    else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "SLOPE") == 0) {
-        char buf[64];
-        settings_cal_slope_t cal_slope;
-        float slope_val[4] = {0};
-
-        settings_get_cal_slope(&cal_slope);
-        slope_val[0] = cal_slope.b0;
-        slope_val[1] = cal_slope.b1;
-        slope_val[2] = cal_slope.b2;
-        slope_val[3] = cal_slope.z;
-        encode_f32_array_response(buf, slope_val, 4);
-
-        cdc_send_command_response(cmd, buf);
-        return true;
-    } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "SLOPE") == 0) {
-        float slope_val[4] = {0};
-        size_t n = decode_f32_array_args(cmd->args, slope_val, 4);
-        if (n == 4) {
-            settings_cal_slope_t cal_slope = {0};
-            cal_slope.b0 = slope_val[0];
-            cal_slope.b1 = slope_val[1];
-            cal_slope.b2 = slope_val[2];
-            cal_slope.z = slope_val[3];
-
-            if (settings_set_cal_slope(&cal_slope)) {
-                cdc_send_command_response(cmd, "OK");
-            } else {
-                cdc_send_command_response(cmd, "ERR");
-            }
-            return true;
-        }
     } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "VTEMP") == 0) {
         char buf[128];
         size_t n;
@@ -1160,7 +1128,7 @@ void cdc_send_command_response(const cdc_command_t *cmd, const char *str)
     cdc_write(buf, n);
 }
 
-void cdc_send_density_reading(char prefix, float d_value, float d_zero, float raw_value, float corr_value)
+void cdc_send_density_reading(char prefix, float d_value, float d_zero, float raw_value)
 {
     float d_display;
     char buf[16];
@@ -1206,8 +1174,6 @@ void cdc_send_density_reading(char prefix, float d_value, float d_zero, float ra
         n += encode_f32(extbuf + n, d_zero);
         extbuf[n++] = ',';
         n += encode_f32(extbuf + n, raw_value);
-        extbuf[n++] = ',';
-        n += encode_f32(extbuf + n, corr_value);
         extbuf[n++] = '\r';
         extbuf[n++] = '\n';
         extbuf[n] = '\0';

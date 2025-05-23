@@ -134,14 +134,11 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     }
 
     /* Apply temperature correction to the basic reading */
-    float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
-
-    /* Apply slope correction */
-    float corr_value = sensor_apply_slope_correction(als_basic_temp);
+    const float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
 
     if (use_target_cal) {
         /* Convert all values into log units */
-        float meas_ll = log10f(corr_value);
+        float meas_ll = log10f(als_basic_temp);
         float cal_hi_ll = log10f(cal_reflection.hi_value);
         float cal_lo_ll = log10f(cal_reflection.lo_value);
 
@@ -151,7 +148,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
         /* Calculate the measured density */
         float meas_d = (m * (meas_ll - cal_lo_ll)) + cal_reflection.lo_d;
 
-        log_i("D=%.2f, VALUE=%f,%f(%.1fC),%f", meas_d, als_basic_raw, als_basic_temp, temp_c, corr_value);
+        log_i("D=%.2f, VALUE=%f,%f(%.1fC)", meas_d, als_basic_raw, als_basic_temp, temp_c);
 
         /* Clamp the return value to be within an acceptable range */
         if (meas_d <= 0.0F) { meas_d = 0.0F; }
@@ -160,7 +157,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
         densitometer->last_d = meas_d;
 
     } else {
-        log_i("D=<uncal>, VALUE=%f,%f(%.1fC),%f", als_basic_raw, als_basic_temp, temp_c, corr_value);
+        log_i("D=<uncal>, VALUE=%f,%f(%.1fC)", als_basic_raw, als_basic_temp, temp_c);
 
         /* Assign a default reading when missing target calibration */
         densitometer->last_d = 0.0F;
@@ -170,7 +167,7 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     densitometer_set_idle_light(densitometer, true);
 
     if (cdc_is_connected()) {
-        cdc_send_density_reading('R', densitometer->last_d, densitometer->zero_d, als_basic_temp, corr_value);
+        cdc_send_density_reading('R', densitometer->last_d, densitometer->zero_d, als_basic_temp);
     } else {
         hid_send_density_reading('R', densitometer->last_d, densitometer->zero_d);
     }
@@ -217,26 +214,14 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     }
 
     /* Apply temperature correction to the basic reading */
-    float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
-
-    /* Apply slope correction, only to VIS readings */
-    float corr_value;
-    if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
-        /*
-         * Not applying slope calibration to UV readings, due to the lack of an
-         * adequate reference for determining appropriate corrections.
-         */
-        corr_value = als_basic_temp;
-    } else {
-        corr_value = sensor_apply_slope_correction(als_basic_temp);
-    }
+    const float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
 
     if (use_target_cal) {
         /* Calculate the measured CAL-HI density relative to the zero value */
         float cal_hi_meas_d = -1.0F * log10f(cal_transmission.hi_value / cal_transmission.zero_value);
 
         /* Calculate the measured target density relative to the zero value */
-        float meas_d = -1.0F * log10f(corr_value / cal_transmission.zero_value);
+        float meas_d = -1.0F * log10f(als_basic_temp / cal_transmission.zero_value);
 
         /* Calculate the adjustment factor */
         float adj_factor = cal_transmission.hi_d / cal_hi_meas_d;
@@ -244,7 +229,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
         /* Calculate the calibration corrected density */
         float corr_d = meas_d * adj_factor;
 
-        log_i("D=%.2f, VALUE=%f,%f(%.1fC),%f", corr_d, als_basic_raw, als_basic_temp, temp_c, corr_value);
+        log_i("D=%.2f, VALUE=%f,%f(%.1fC)", corr_d, als_basic_raw, als_basic_temp, temp_c);
 
         /* Clamp the return value to be within an acceptable range */
         if (corr_d <= 0.0F) { corr_d = 0.0F; }
@@ -253,7 +238,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
         densitometer->last_d = corr_d;
 
     } else {
-        log_i("D=<uncal>, VALUE=%f,%f(%.1fC),%f", als_basic_raw, als_basic_temp, temp_c, corr_value);
+        log_i("D=<uncal>, VALUE=%f,%f(%.1fC)", als_basic_raw, als_basic_temp, temp_c);
 
         /* Assign a default reading when missing target calibration */
         densitometer->last_d = 0.0F;
@@ -263,7 +248,7 @@ densitometer_result_t transmission_measure(densitometer_t *densitometer, sensor_
     densitometer_set_idle_light(densitometer, true);
 
     if (cdc_is_connected()) {
-        cdc_send_density_reading(prefix, densitometer->last_d, densitometer->zero_d, als_basic_temp, corr_value);
+        cdc_send_density_reading(prefix, densitometer->last_d, densitometer->zero_d, als_basic_temp);
     } else {
         hid_send_density_reading(prefix, densitometer->last_d, densitometer->zero_d);
     }
@@ -290,33 +275,15 @@ densitometer_result_t densitometer_calibrate(densitometer_t *densitometer, float
     }
 
     /* Apply temperature correction to the basic reading */
-    float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
+    const float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
 
-    /* Apply zero and slope corrections as appropriate */
-    float corr_value;
-    if (is_zero) {
-        if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
-            /* Not currently zero-correcting UV measurements */
-            corr_value = als_basic_temp;
-        } else {
-            corr_value = sensor_apply_zero_correction(als_basic_temp);
-        }
-    } else {
-        if (densitometer->read_light == SENSOR_LIGHT_UV_TRANSMISSION) {
-            /* Not currently slope-correcting UV measurements */
-            corr_value = als_basic_temp;
-        } else {
-            corr_value = sensor_apply_slope_correction(als_basic_temp);
-        }
-    }
-
-    if (als_basic_temp < 0.0001F || corr_value < 0.0001F) {
+    if (als_basic_temp < 0.0001F) {
         return DENSITOMETER_CAL_ERROR;
     }
 
     /* Assign the calibration value */
     if (cal_value) {
-        *cal_value = corr_value;
+        *cal_value = als_basic_temp;
     }
 
     return DENSITOMETER_OK;

@@ -29,7 +29,6 @@ typedef enum {
     MAIN_MENU_CALIBRATION_VIS_TRANSMISSION,
     MAIN_MENU_CALIBRATION_UV_TRANSMISSION,
     MAIN_MENU_CALIBRATION_SENSOR_GAIN,
-    MAIN_MENU_CALIBRATION_SENSOR_SLOPE,
     MAIN_MENU_SETTINGS,
     MAIN_MENU_SETTINGS_IDLE_LIGHT,
     MAIN_MENU_SETTINGS_DISPLAY_FORMAT,
@@ -69,7 +68,6 @@ static void main_menu_calibration(state_main_menu_t *state, state_controller_t *
 static void main_menu_calibration_reflection(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_calibration_transmission(state_main_menu_t *state, state_controller_t *controller, bool vis_uv);
 static void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controller_t *controller);
-static void main_menu_calibration_sensor_slope(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_idle_light(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_display_format(state_main_menu_t *state, state_controller_t *controller);
@@ -116,8 +114,6 @@ void state_main_menu_process(state_t *state_base, state_controller_t *controller
         main_menu_calibration_transmission(state, controller, false);
     } else if (state->menu_state == MAIN_MENU_CALIBRATION_SENSOR_GAIN) {
         main_menu_calibration_sensor_gain(state, controller);
-    } else if (state->menu_state == MAIN_MENU_CALIBRATION_SENSOR_SLOPE) {
-        main_menu_calibration_sensor_slope(state, controller);
     } else if (state->menu_state == MAIN_MENU_SETTINGS) {
         main_menu_settings(state, controller);
     } else if (state->menu_state == MAIN_MENU_SETTINGS_IDLE_LIGHT) {
@@ -160,8 +156,7 @@ void main_menu_calibration(state_main_menu_t *state, state_controller_t *control
         "VIS Reflection\n"
         "VIS Trans.\n"
         "UV Trans.\n"
-        "Sensor Gain\n"
-        "Sensor Slope");
+        "Sensor Gain");
 
     if (state->cal_option == 1) {
         state->menu_state = MAIN_MENU_CALIBRATION_VIS_REFLECTION;
@@ -171,8 +166,6 @@ void main_menu_calibration(state_main_menu_t *state, state_controller_t *control
         state->menu_state = MAIN_MENU_CALIBRATION_UV_TRANSMISSION;
     } else if (state->cal_option == 4) {
         state->menu_state = MAIN_MENU_CALIBRATION_SENSOR_GAIN;
-    } else if (state->cal_option == 5) {
-        state->menu_state = MAIN_MENU_CALIBRATION_SENSOR_SLOPE;
     } else if (state->cal_option == UINT8_MAX) {
         state_controller_set_next_state(controller, STATE_HOME);
     } else {
@@ -560,47 +553,6 @@ void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controlle
     state->cal_sub_option = display_selection_list(
         "Sensor Gain", state->cal_sub_option,
         buf);
-
-    if (state->cal_sub_option == UINT8_MAX) {
-        state_controller_set_next_state(controller, STATE_HOME);
-    } else if (state->cal_sub_option == 0) {
-        state->menu_state = MAIN_MENU_CALIBRATION;
-        state->cal_sub_option = 1;
-    }
-}
-
-void main_menu_calibration_sensor_slope(state_main_menu_t *state, state_controller_t *controller)
-{
-    char buf[128];
-    settings_cal_slope_t cal_slope;
-
-    if (settings_get_cal_slope(&cal_slope)) {
-        sprintf_(buf,
-            "Z = %.6f\n"
-            "B0 = %.6f\n"
-            "B1 = %.6f\n"
-            "B2 = %.6f",
-            cal_slope.z,
-            cal_slope.b0, cal_slope.b1, cal_slope.b2);
-
-        char sep = settings_get_decimal_separator();
-        if (sep != '.') {
-            replace_all_char(buf, '.', sep);
-        }
-
-        state->cal_sub_option = display_selection_list(
-            "Sensor Slope", state->cal_sub_option,
-            buf);
-    } else {
-        state->cal_sub_option = display_message(
-            "Sensor Slope", NULL,
-            "calibration\n"
-            "not set",
-            " OK ");
-        if (state->cal_sub_option == 1) {
-            state->cal_sub_option = 0;
-        }
-    }
 
     if (state->cal_sub_option == UINT8_MAX) {
         state_controller_set_next_state(controller, STATE_HOME);
