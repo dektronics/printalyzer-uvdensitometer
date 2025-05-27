@@ -71,7 +71,7 @@ close $in;
 my $descriptor = substr($cont, length($cont) - 256, 256 - 4);
 
 # Check that the descriptor starts with the magic bytes
-if (substr($descriptor, 0, 4) ne "\x54\x76\xCD\xAB") {
+if (substr($descriptor, 0, 4) ne "\x05\x71\xCD\xAB") {
 	die "Invalid descriptor magic"
 }
 

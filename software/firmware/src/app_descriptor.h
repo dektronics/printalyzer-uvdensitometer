@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define APP_DESCRIPTOR_MAGIC_WORD 0xABCD7654
+#define APP_DESCRIPTOR_MAGIC_WORD 0xABCD7105
 
 /**
  * Application descriptor structure.

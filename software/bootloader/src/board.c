@@ -94,6 +94,12 @@ bool board_app_valid(void)
         BL_LOG_STR("App checksum is valid\r\n");
     }
 
+    /* Verify that the magic word matches */
+    if (app_descriptor->magic_word != APP_DESCRIPTOR_MAGIC_WORD) {
+        BL_LOG_STR("Invalid magic\r\n");
+        return false;
+    }
+
     return true;
 }
 

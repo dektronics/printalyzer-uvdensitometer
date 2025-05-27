@@ -23,10 +23,10 @@
 #define USB_VID           0x16D0
 #define USB_PID           0x1198
 #define USB_MANUFACTURER  "Dektronics"
-#define USB_PRODUCT       "Printalyzer Densitometer"
+#define USB_PRODUCT       "Printalyzer UV/VIS Densitometer"
 #define UF2_PRODUCT_NAME  USB_MANUFACTURER " " USB_PRODUCT
 #define UF2_BOARD_ID      "STM32L072KZ-DPD105-revD"
-#define UF2_VOLUME_LABEL  "PRDENSBOOT"
+#define UF2_VOLUME_LABEL  "UVDENSBOOT"
 #define UF2_INDEX_URL     "https://www.dektronics.com/printalyzer-uvvis-dens"
 
 #endif /* BOARD_H */
