@@ -133,7 +133,6 @@ add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
 
 # Post-build commands
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
-    DEPENDS ${EXECUTABLE}
     COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE}.elf ${EXECUTABLE}.bin
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/dfuse-pack.py -b 0x08000000:${EXECUTABLE}.bin -D 0x0483:0xdf11 -a 0 ${EXECUTABLE}.dfu
 )
