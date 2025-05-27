@@ -75,6 +75,10 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
             ret = sensor_find_gain_brightness(&measure_brightness, i, callback, user_data);
             if (ret != osOK) { break; }
             led_brightness[i] = measure_brightness;
+
+            /* Wait for cooldown before next step */
+            if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_WAITING, 0, user_data)) { return osError; }
+            osDelay(SENSOR_GAIN_LED_COOLDOWN_MS);
         }
         if (ret != osOK) { break; }
         led_brightness[TSL2585_GAIN_0_5X] = led_brightness[TSL2585_GAIN_1X];
@@ -274,7 +278,7 @@ osStatus_t sensor_find_gain_brightness(uint16_t led_brightness[static 1],
             adj_brightness = cur_brightness;
         } else {
             /* Adjust to prevent saturation due to noise */
-            adj_brightness = (uint16_t)ceilf((float)cur_brightness * SENSOR_GAIN_CAL_BRIGHTNESS_THRESHOLD);
+            adj_brightness = (uint16_t)floorf((float)cur_brightness * SENSOR_GAIN_CAL_BRIGHTNESS_THRESHOLD);
 
             /* Prevent near-zero */
             if (adj_brightness < 2) {
@@ -308,6 +312,11 @@ osStatus_t sensor_measure_gain_pair(float gain_ratio[static 1],
             high_gain, 719, 199,
             &high_gain_reading);
         if (ret != osOK) { break; }
+        if (high_gain_reading == UINT32_MAX) {
+            log_w("Saturating at high gain");
+            ret = osError;
+            break;
+        }
 
         if (!gain_status_callback(callback, SENSOR_GAIN_CALIBRATION_STATUS_WAITING, 0, user_data)) { return osError; }
         osDelay(SENSOR_GAIN_LED_COOLDOWN_MS);
@@ -318,6 +327,11 @@ osStatus_t sensor_measure_gain_pair(float gain_ratio[static 1],
             low_gain, 719, 199,
             &low_gain_reading);
         if (ret != osOK) { break; }
+        if (low_gain_reading == UINT32_MAX) {
+            log_w("Saturating at low gain");
+            ret = osError;
+            break;
+        }
 
     } while (0);
 
