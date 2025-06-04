@@ -37,7 +37,7 @@ static const osSemaphoreAttr_t task_start_semaphore_attributes = {
 
 #define TASK_MAIN_STACK_SIZE (2048U)
 #define TASK_USBD_STACK_SIZE (1024U)
-#define TASK_CDC_STACK_SIZE (1536U)
+#define TASK_CDC_STACK_SIZE (2048U)
 
 #ifdef KEYPAD_DEBUG
 #define TASK_KEYPAD_STACK_SIZE (768U)
