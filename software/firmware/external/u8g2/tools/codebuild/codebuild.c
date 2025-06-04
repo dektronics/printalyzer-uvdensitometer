@@ -561,6 +561,23 @@ struct controller controller_list[] =
     }
   },
 
+  {
+    "ssd1309", 	16, 	16, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_6800|COM_8080,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "128x128_noname0" },
+      { NULL }
+    }
+  },
+  {
+    "ssd1309", 	16, 	16, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_ssd13xx_i2c", "i2c", COM_I2C,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "128x128_noname0" },
+      { NULL }
+    }
+  },
+  
   
     {
     "ssd1312", 	16, 	4, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080|COM_8080,
@@ -1607,6 +1624,14 @@ struct controller controller_list[] =
       { NULL }
     }
   },
+  {
+    "st7567", 		16, 	8, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "erc12864" },
+      { NULL }
+    }
+  },
 
   {
     "st7567", 		12, 	9, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
@@ -1704,6 +1729,7 @@ struct controller controller_list[] =
     "", /* is_generate_u8g2_class= */ 1,
     {
       { "128x96" },
+      { "g12896" },
       { NULL }
     }
   },
@@ -1712,6 +1738,7 @@ struct controller controller_list[] =
     "", /* is_generate_u8g2_class= */ 1,
     {
       { "128x96" },
+      { "g12896" },
       { NULL }
     }
   },
@@ -2169,6 +2196,14 @@ struct controller controller_list[] =
     }
   },
   {
+    "ssd1320", 	16, 	9, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "128x72" },
+      { NULL }
+    }
+  },
+  {
     "ssd1320", 	20, 	17, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
     "", /* is_generate_u8g2_class= */ 1,
     {
@@ -2266,8 +2301,8 @@ struct controller controller_list[] =
       { NULL }
     }
   },
-  {
-    "ssd1363", 	32, 	16, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_ssd13xx_fast_i2c", "i2c", COM_I2C,                 // not tested
+  {     
+    "ssd1363", 	32, 	16, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_011_ssd13xx_i2c", "i2c", COM_I2C,                 // not tested
     "", /* is_generate_u8g2_class= */ 1,
     {
       { "256x128" },
@@ -2494,7 +2529,7 @@ struct interface interface_list[] =
     "u8x8_gpio_and_delay_arduino",
     "uint8_t clock, uint8_t data, uint8_t cs, uint8_t dc, uint8_t reset = U8X8_PIN_NONE",
     "clock, data, cs, dc, reset",
-    "clock, data, cs, dc [, reset]",
+    "clk, data, cs, dc [, reset]",
     "u8x8_byte_4wire_sw_spi"
   },
   /* 1 */
@@ -2538,7 +2573,7 @@ struct interface interface_list[] =
     "u8x8_gpio_and_delay_arduino",
     "uint8_t clock, uint8_t data, uint8_t cs, uint8_t reset = U8X8_PIN_NONE",
     "clock, data, cs, reset",
-    "clock, data, cs [, reset]",
+    "clk, data, cs [, reset]",
     "u8x8_byte_3wire_sw_spi"
   },
   /* 5 */
@@ -2560,7 +2595,7 @@ struct interface interface_list[] =
     "u8x8_gpio_and_delay_arduino",
     "uint8_t clock, uint8_t data, uint8_t reset = U8X8_PIN_NONE",
     "clock,  data,  reset",
-    "clock,  data [,  reset]",
+    "clk,  data [,  reset]",
     "u8x8_byte_sw_i2c" /* u8x8_byte_sw_i2c */
   },
   /* 7 */
@@ -2571,7 +2606,7 @@ struct interface interface_list[] =
     "u8x8_gpio_and_delay_arduino",
     "uint8_t reset = U8X8_PIN_NONE, uint8_t clock = U8X8_PIN_NONE, uint8_t data = U8X8_PIN_NONE",
     "reset, clock, data",
-    "[reset [, clock, data]]",
+    "[reset [, clk, data]]",
     "uC specific"
   },  
   /* 8 */
@@ -2582,7 +2617,7 @@ struct interface interface_list[] =
     "u8x8_gpio_and_delay_arduino",
     "uint8_t clock, uint8_t data, uint8_t cs, uint8_t reset = U8X8_PIN_NONE",
     "clock, data, cs, reset",
-    "clock, data, cs [, reset]",
+    "clk, data, cs [, reset]",
     "u8x8_byte_4wire_sw_spi", /* "u8x8_byte_st7920_sw_spi" */
   },
   /* 9 */
@@ -2661,7 +2696,7 @@ struct interface interface_list[] =
 
 #define STR_MAX 1024
 char *str_list[STR_MAX];
-int str_cnt = 0;
+int str_cnt = 0 ;
 
 int str_exists(const char *s)
 {
@@ -3099,7 +3134,7 @@ void do_md_display(int controller_idx, int display_idx)
 #else
     fprintf(fp, "Controller \"%s\", ", controller_list[controller_idx].name);
     fprintf(fp, "Display \"%s\"  ", controller_list[controller_idx].display_list[display_idx].name);
-    fprintf(fp, "[Description]\n");
+    fprintf(fp, "\n");
 #endif
   }
   else
@@ -3174,6 +3209,8 @@ void do_md_display_interface_buffer(int controller_idx, int display_idx, int int
       if ( interface_list[interface_idx].interface_name[0] != '\0' )
 	fprintf(fp, "_%s", struppercase(interface_list[interface_idx].interface_name));
       fprintf(fp, "(rotation, %s)", interface_list[interface_idx].pins_md_plain);
+      /* removed to reduce the size of the md file */
+      /*
       if ( postfix[0] == 'f' )
       {
 	fprintf(fp, " [full framebuffer, size = %d bytes]\n", size);
@@ -3182,6 +3219,8 @@ void do_md_display_interface_buffer(int controller_idx, int display_idx, int int
       {
 	fprintf(fp, " [page buffer, size = %d bytes]\n", size);
       }
+      */
+      fprintf(fp, "\n");
     }
     else
     {
@@ -3191,6 +3230,8 @@ void do_md_display_interface_buffer(int controller_idx, int display_idx, int int
       fprintf(fp, "rotation, ");
       fprintf(fp, "%s, ", interface_list[interface_idx].generic_com_procedure);  
       fprintf(fp, "%s)", "uC specific");  
+      /* removed to reduce the size of the md file */
+      /*
       if ( postfix[0] == 'f' )
       {
 	fprintf(fp, " [full framebuffer, size = %d bytes]\n", size);
@@ -3199,6 +3240,8 @@ void do_md_display_interface_buffer(int controller_idx, int display_idx, int int
       {
 	fprintf(fp, " [page buffer, size = %d bytes]\n", size);
       }
+      */
+      fprintf(fp, "\n");
     }
   }
 #endif
