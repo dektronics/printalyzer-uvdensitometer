@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32l0xx_hal_timebase_TIM.c
+  * @file    stm32l0xx_hal_timebase_tim.c
   * @brief   HAL time base based on the hardware TIM.
   ******************************************************************************
   * @attention
@@ -34,13 +34,12 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
   RCC_ClkInitTypeDef    clkconfig;
   uint32_t              uwTimclock, uwAPB1Prescaler;
-
   uint32_t              uwPrescalerValue;
   uint32_t              pFLatency;
+
   HAL_StatusTypeDef     status;
   /*Configure the TIM6 IRQ priority */
   HAL_NVIC_SetPriority(TIM6_DAC_IRQn, TickPriority ,0);
-
   /* Enable the TIM6 global Interrupt */
   HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
@@ -69,12 +68,11 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   htim6.Instance = TIM6;
 
   /* Initialize TIMx peripheral as follow:
-
-  + Period = [(TIM6CLK/1000) - 1]. to have a (1/1000) s time base.
-  + Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
-  + ClockDivision = 0
-  + Counter direction = Up
-  */
+   * Period = [(TIM6CLK/1000) - 1]. to have a (1/1000) s time base.
+   * Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
+   * ClockDivision = 0
+   * Counter direction = Up
+   */
   htim6.Init.Period = (1000000U / 1000U) - 1U;
   htim6.Init.Prescaler = uwPrescalerValue;
   htim6.Init.ClockDivision = 0;
