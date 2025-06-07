@@ -646,33 +646,26 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
             return true;
         }
     } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "VTEMP") == 0) {
-        char buf[128];
-        size_t n;
+        char buf[64];
         settings_cal_temperature_t cal_temperature;
+        float temp_val[3] = {0};
 
         settings_get_cal_vis_temperature(&cal_temperature);
-        n = encode_f32_array_response(buf, cal_temperature.b0, 3);
-        buf[n++] = ',';
-        n += encode_f32_array_response(buf + n, cal_temperature.b1, 3);
-        buf[n++] = ',';
-        encode_f32_array_response(buf + n, cal_temperature.b2, 3);
+        temp_val[0] = cal_temperature.b0;
+        temp_val[1] = cal_temperature.b1;
+        temp_val[2] = cal_temperature.b2;
+        encode_f32_array_response(buf, temp_val, 3);
 
         cdc_send_command_response(cmd, buf);
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "VTEMP") == 0) {
-        float temp_val[9] = {0};
-        size_t n = decode_f32_array_args(cmd->args, temp_val, 9);
-        if (n == 9) {
+        float temp_val[3] = {0};
+        const size_t n = decode_f32_array_args(cmd->args, temp_val, 3);
+        if (n == 3) {
             settings_cal_temperature_t cal_temperature = {0};
-            cal_temperature.b0[0] = temp_val[0];
-            cal_temperature.b0[1] = temp_val[1];
-            cal_temperature.b0[2] = temp_val[2];
-            cal_temperature.b1[0] = temp_val[3];
-            cal_temperature.b1[1] = temp_val[4];
-            cal_temperature.b1[2] = temp_val[5];
-            cal_temperature.b2[0] = temp_val[6];
-            cal_temperature.b2[1] = temp_val[7];
-            cal_temperature.b2[2] = temp_val[8];
+            cal_temperature.b0 = temp_val[0];
+            cal_temperature.b1 = temp_val[1];
+            cal_temperature.b2 = temp_val[2];
 
             if (settings_set_cal_vis_temperature(&cal_temperature)) {
                 cdc_send_command_response(cmd, "OK");
@@ -682,33 +675,26 @@ bool cdc_process_command_calibration(const cdc_command_t *cmd)
             return true;
         }
     } else if (cmd->type == CMD_TYPE_GET && strcmp(cmd->action, "UTEMP") == 0) {
-        char buf[128];
-        size_t n;
+        char buf[64];
         settings_cal_temperature_t cal_temperature;
+        float temp_val[3] = {0};
 
         settings_get_cal_uv_temperature(&cal_temperature);
-        n = encode_f32_array_response(buf, cal_temperature.b0, 3);
-        buf[n++] = ',';
-        n += encode_f32_array_response(buf + n, cal_temperature.b1, 3);
-        buf[n++] = ',';
-        encode_f32_array_response(buf + n, cal_temperature.b2, 3);
+        temp_val[0] = cal_temperature.b0;
+        temp_val[1] = cal_temperature.b1;
+        temp_val[2] = cal_temperature.b2;
+        encode_f32_array_response(buf, temp_val, 3);
 
         cdc_send_command_response(cmd, buf);
         return true;
     } else if (cmd->type == CMD_TYPE_SET && strcmp(cmd->action, "UTEMP") == 0) {
-        float temp_val[9] = {0};
-        size_t n = decode_f32_array_args(cmd->args, temp_val, 9);
-        if (n == 9) {
+        float temp_val[3] = {0};
+        const size_t n = decode_f32_array_args(cmd->args, temp_val, 3);
+        if (n == 3) {
             settings_cal_temperature_t cal_temperature = {0};
-            cal_temperature.b0[0] = temp_val[0];
-            cal_temperature.b0[1] = temp_val[1];
-            cal_temperature.b0[2] = temp_val[2];
-            cal_temperature.b1[0] = temp_val[3];
-            cal_temperature.b1[1] = temp_val[4];
-            cal_temperature.b1[2] = temp_val[5];
-            cal_temperature.b2[0] = temp_val[6];
-            cal_temperature.b2[1] = temp_val[7];
-            cal_temperature.b2[2] = temp_val[8];
+            cal_temperature.b0 = temp_val[0];
+            cal_temperature.b1 = temp_val[1];
+            cal_temperature.b2 = temp_val[2];
 
             if (settings_set_cal_uv_temperature(&cal_temperature)) {
                 cdc_send_command_response(cmd, "OK");

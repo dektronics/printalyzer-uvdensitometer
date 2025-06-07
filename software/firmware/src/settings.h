@@ -27,9 +27,9 @@ typedef struct {
 } settings_cal_gain_t;
 
 typedef struct {
-    float b0[3];
-    float b1[3];
-    float b2[3];
+    float b0;
+    float b1;
+    float b2;
 } settings_cal_temperature_t;
 
 typedef struct {

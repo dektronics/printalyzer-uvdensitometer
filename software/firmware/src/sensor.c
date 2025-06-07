@@ -755,9 +755,6 @@ float sensor_apply_temperature_correction(sensor_light_t light_source, float tem
 {
     bool valid;
     settings_cal_temperature_t cal_temperature;
-    float b0;
-    float b1;
-    float b2;
     float temp_corr;
 
     switch (light_source) {
@@ -784,18 +781,10 @@ float sensor_apply_temperature_correction(sensor_light_t light_source, float tem
     }
 
     /*
-     * Calculate the correction coefficients from the calibration values
-     * and the basic reading.
-     */
-    b0 = cal_temperature.b0[0] + (cal_temperature.b0[1] * basic_reading) + (cal_temperature.b0[2] * powf(basic_reading, 2.0F));
-    b1 = cal_temperature.b1[0] + (cal_temperature.b1[1] * basic_reading) + (cal_temperature.b1[2] * powf(basic_reading, 2.0F));
-    b2 = cal_temperature.b2[0] + (cal_temperature.b2[1] * basic_reading) + (cal_temperature.b2[2] * powf(basic_reading, 2.0F));
-
-    /*
      * Calculate the temperature correction multiplier from the correction
      * coefficients and the temperature reading.
      */
-    temp_corr = b0 + (b1 * temp_c) + (b2 * powf(temp_c, 2.0F));
+    temp_corr = cal_temperature.b0 + (cal_temperature.b1 * temp_c) + (cal_temperature.b2 * powf(temp_c, 2.0F));
 
     /* Calculate the final temperature-corrected reading */
     float corr_reading = basic_reading * temp_corr;

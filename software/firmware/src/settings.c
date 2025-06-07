@@ -129,9 +129,9 @@ static HAL_StatusTypeDef settings_write_uint32(uint32_t address, uint32_t val);
 #define PAGE_CAL_TEMPERATURE_SIZE    (128)
 #define PAGE_CAL_TEMPERATURE_VERSION 1UL
 #define CONFIG_CAL_VIS_TEMP          (PAGE_CAL_TEMPERATURE + 4U)
-#define CONFIG_CAL_VIS_TEMP_SIZE     (40U)
-#define CONFIG_CAL_UV_TEMP           (PAGE_CAL_TEMPERATURE + 44U)
-#define CONFIG_CAL_UV_TEMP_SIZE      (40U)
+#define CONFIG_CAL_VIS_TEMP_SIZE     (16U)
+#define CONFIG_CAL_UV_TEMP           (PAGE_CAL_TEMPERATURE + 20U)
+#define CONFIG_CAL_UV_TEMP_SIZE      (16U)
 
 static settings_cal_gain_t setting_cal_gain = {0};
 static settings_cal_temperature_t setting_cal_vis_temperature = {0};
@@ -672,12 +672,9 @@ void settings_set_cal_temperature_defaults(settings_cal_temperature_t *cal_tempe
 {
     if (!cal_temperature) { return; }
     memset(cal_temperature, 0, sizeof(settings_cal_temperature_t));
-
-    for (uint8_t i = 0; i < 3; i++) {
-        cal_temperature->b0[i] = NAN;
-        cal_temperature->b1[i] = NAN;
-        cal_temperature->b2[i] = NAN;
-    }
+    cal_temperature->b0 = NAN;
+    cal_temperature->b1 = NAN;
+    cal_temperature->b2 = NAN;
 }
 
 bool settings_set_cal_vis_temperature(const settings_cal_temperature_t *cal_temperature)
@@ -686,18 +683,12 @@ bool settings_set_cal_vis_temperature(const settings_cal_temperature_t *cal_temp
     if (!cal_temperature) { return false; }
 
     uint8_t buf[CONFIG_CAL_VIS_TEMP_SIZE];
-    copy_from_f32(&buf[0], cal_temperature->b0[0]);
-    copy_from_f32(&buf[4], cal_temperature->b0[1]);
-    copy_from_f32(&buf[8], cal_temperature->b0[2]);
-    copy_from_f32(&buf[12], cal_temperature->b1[0]);
-    copy_from_f32(&buf[16], cal_temperature->b1[1]);
-    copy_from_f32(&buf[20], cal_temperature->b1[2]);
-    copy_from_f32(&buf[24], cal_temperature->b2[0]);
-    copy_from_f32(&buf[28], cal_temperature->b2[1]);
-    copy_from_f32(&buf[32], cal_temperature->b2[2]);
+    copy_from_f32(&buf[0], cal_temperature->b0);
+    copy_from_f32(&buf[4], cal_temperature->b1);
+    copy_from_f32(&buf[8], cal_temperature->b2);
 
-    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
-    copy_from_u32(&buf[36], crc);
+    const uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, (CONFIG_CAL_VIS_TEMP_SIZE - 4) / 4);
+    copy_from_u32(&buf[CONFIG_CAL_VIS_TEMP_SIZE - 4], crc);
 
     ret = settings_write_buffer(CONFIG_CAL_VIS_TEMP, buf, sizeof(buf));
 
@@ -717,22 +708,16 @@ bool settings_load_cal_vis_temperature()
         return false;
     }
 
-    uint32_t crc = copy_to_u32(&buf[36]);
-    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
+    const uint32_t crc = copy_to_u32(&buf[CONFIG_CAL_VIS_TEMP_SIZE - 4]);
+    const uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, (CONFIG_CAL_VIS_TEMP_SIZE - 4) / 4);
 
     if (crc != calculated_crc) {
         log_w("Invalid cal VIS temp CRC: %08X != %08X", crc, calculated_crc);
         return false;
     } else {
-        setting_cal_vis_temperature.b0[0] = copy_to_f32(&buf[0]);
-        setting_cal_vis_temperature.b0[1] = copy_to_f32(&buf[4]);
-        setting_cal_vis_temperature.b0[2] = copy_to_f32(&buf[8]);
-        setting_cal_vis_temperature.b1[0] = copy_to_f32(&buf[12]);
-        setting_cal_vis_temperature.b1[1] = copy_to_f32(&buf[16]);
-        setting_cal_vis_temperature.b1[2] = copy_to_f32(&buf[20]);
-        setting_cal_vis_temperature.b2[0] = copy_to_f32(&buf[24]);
-        setting_cal_vis_temperature.b2[1] = copy_to_f32(&buf[28]);
-        setting_cal_vis_temperature.b2[2] = copy_to_f32(&buf[32]);
+        setting_cal_vis_temperature.b0 = copy_to_f32(&buf[0]);
+        setting_cal_vis_temperature.b1 = copy_to_f32(&buf[4]);
+        setting_cal_vis_temperature.b2 = copy_to_f32(&buf[8]);
         return true;
     }
 }
@@ -758,16 +743,14 @@ bool settings_validate_cal_temperature(const settings_cal_temperature_t *cal_tem
     if (!cal_temperature) { return false; }
 
     /* Validate field numeric properties */
-    for (uint8_t i = 0; i < 3; i++) {
-        if (isnan(cal_temperature->b0[i]) || isinf(cal_temperature->b0[i])) {
-            return false;
-        }
-        if (isnan(cal_temperature->b1[i]) || isinf(cal_temperature->b1[i])) {
-            return false;
-        }
-        if (isnan(cal_temperature->b2[i]) || isinf(cal_temperature->b2[i])) {
-            return false;
-        }
+    if (isnan(cal_temperature->b0) || isinf(cal_temperature->b0)) {
+        return false;
+    }
+    if (isnan(cal_temperature->b1) || isinf(cal_temperature->b1)) {
+        return false;
+    }
+    if (isnan(cal_temperature->b2) || isinf(cal_temperature->b2)) {
+        return false;
     }
 
     return true;
@@ -779,18 +762,12 @@ bool settings_set_cal_uv_temperature(const settings_cal_temperature_t *cal_tempe
     if (!cal_temperature) { return false; }
 
     uint8_t buf[CONFIG_CAL_UV_TEMP_SIZE];
-    copy_from_f32(&buf[0], cal_temperature->b0[0]);
-    copy_from_f32(&buf[4], cal_temperature->b0[1]);
-    copy_from_f32(&buf[8], cal_temperature->b0[2]);
-    copy_from_f32(&buf[12], cal_temperature->b1[0]);
-    copy_from_f32(&buf[16], cal_temperature->b1[1]);
-    copy_from_f32(&buf[20], cal_temperature->b1[2]);
-    copy_from_f32(&buf[24], cal_temperature->b2[0]);
-    copy_from_f32(&buf[28], cal_temperature->b2[1]);
-    copy_from_f32(&buf[32], cal_temperature->b2[2]);
+    copy_from_f32(&buf[0], cal_temperature->b0);
+    copy_from_f32(&buf[4], cal_temperature->b1);
+    copy_from_f32(&buf[8], cal_temperature->b2);
 
-    uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
-    copy_from_u32(&buf[36], crc);
+    const uint32_t crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, (CONFIG_CAL_VIS_TEMP_SIZE - 4) / 4);
+    copy_from_u32(&buf[CONFIG_CAL_VIS_TEMP_SIZE - 4], crc);
 
     ret = settings_write_buffer(CONFIG_CAL_UV_TEMP, buf, sizeof(buf));
 
@@ -810,22 +787,16 @@ bool settings_load_cal_uv_temperature()
         return false;
     }
 
-    uint32_t crc = copy_to_u32(&buf[36]);
-    uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, 9);
+    const uint32_t crc = copy_to_u32(&buf[CONFIG_CAL_UV_TEMP_SIZE - 4]);
+    const uint32_t calculated_crc = HAL_CRC_Calculate(&hcrc, (uint32_t *)buf, (CONFIG_CAL_UV_TEMP_SIZE - 4) / 4);
 
     if (crc != calculated_crc) {
         log_w("Invalid cal UV temp CRC: %08X != %08X", crc, calculated_crc);
         return false;
     } else {
-        setting_cal_uv_temperature.b0[0] = copy_to_f32(&buf[0]);
-        setting_cal_uv_temperature.b0[1] = copy_to_f32(&buf[4]);
-        setting_cal_uv_temperature.b0[2] = copy_to_f32(&buf[8]);
-        setting_cal_uv_temperature.b1[0] = copy_to_f32(&buf[12]);
-        setting_cal_uv_temperature.b1[1] = copy_to_f32(&buf[16]);
-        setting_cal_uv_temperature.b1[2] = copy_to_f32(&buf[20]);
-        setting_cal_uv_temperature.b2[0] = copy_to_f32(&buf[24]);
-        setting_cal_uv_temperature.b2[1] = copy_to_f32(&buf[28]);
-        setting_cal_uv_temperature.b2[2] = copy_to_f32(&buf[32]);
+        setting_cal_uv_temperature.b0 = copy_to_f32(&buf[0]);
+        setting_cal_uv_temperature.b1 = copy_to_f32(&buf[4]);
+        setting_cal_uv_temperature.b2 = copy_to_f32(&buf[8]);
         return true;
     }
 }
