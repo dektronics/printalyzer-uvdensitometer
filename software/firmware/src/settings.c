@@ -912,7 +912,7 @@ bool settings_validate_cal_reflection(const settings_cal_reflection_t *cal_refle
     }
 
     /* Validate field values */
-    if (cal_reflection->lo_d < 0.0F || cal_reflection->hi_d <= cal_reflection->lo_d
+    if (cal_reflection->lo_d < -0.5F || cal_reflection->hi_d <= cal_reflection->lo_d
         || cal_reflection->lo_value < 0.0F || cal_reflection->hi_value >= cal_reflection->lo_value) {
         return false;
     }

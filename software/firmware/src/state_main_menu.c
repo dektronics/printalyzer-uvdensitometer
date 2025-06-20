@@ -76,9 +76,9 @@ static void main_menu_settings_diagnostics(state_main_menu_t *state, state_contr
 static void main_menu_about(state_main_menu_t *state, state_controller_t *controller);
 static void sensor_read_callback(void *user_data);
 
-#define DENSITY_BUF_SIZE 5
+#define DENSITY_BUF_SIZE 6
 
-static void format_density_value(char *buf, float value);
+static void format_density_value(char *buf, float value, bool allow_negative);
 
 state_t *state_main_menu()
 {
@@ -186,14 +186,19 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
     settings_get_cal_vis_reflection(&cal_reflection);
 
     do {
-        format_density_value(buf_lo, cal_reflection.lo_d);
-        format_density_value(buf_hi, cal_reflection.hi_d);
+        format_density_value(buf_lo, cal_reflection.lo_d, true);
+        format_density_value(buf_hi, cal_reflection.hi_d, false);
 
-        sprintf_(buf,
-            "CAL-LO  [%s]\n"
+        int offset = 0;
+        if (buf_lo[0] == '-') {
+            offset += sprintf_(buf, "CAL-LO [%s]\n", buf_lo);
+        } else {
+            offset += sprintf_(buf, "CAL-LO  [%s]\n", buf_lo);
+        }
+        sprintf_(buf + offset,
             "CAL-HI  [%s]\n"
             "** Measure **",
-            buf_lo, buf_hi);
+            buf_hi);
 
         option = display_selection_list(
             "VIS Reflection", option, buf);
@@ -379,7 +384,7 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
     }
 
     do {
-        format_density_value(buf_hi, cal_transmission.hi_d);
+        format_density_value(buf_hi, cal_transmission.hi_d, false);
 
         sprintf_(buf,
             "CAL-HI  [%s]\n"
@@ -1035,10 +1040,13 @@ void sensor_read_callback(void *user_data)
     display_draw_main_elements(elements);
 }
 
-void format_density_value(char *buf, float value)
+void format_density_value(char *buf, float value, bool allow_negative)
 {
-    if (is_valid_number(value) && value >= 0.0F) {
+    if (is_valid_number(value) && (value >= 0.0F || allow_negative)) {
         snprintf_(buf, DENSITY_BUF_SIZE, "%.2f", value);
+        if (strncmp(buf, "-0.00", 5) == 0) {
+            strcpy(buf, "0.00");
+        }
     } else {
         strncpy(buf, "-.--", DENSITY_BUF_SIZE);
     }

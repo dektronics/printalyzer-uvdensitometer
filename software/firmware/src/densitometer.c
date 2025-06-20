@@ -151,8 +151,12 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
         log_i("D=%.2f, VALUE=%f,%f(%.1fC)", meas_d, als_basic_raw, als_basic_temp, temp_c);
 
         /* Clamp the return value to be within an acceptable range */
-        if (meas_d <= 0.0F) { meas_d = 0.0F; }
-        else if (meas_d > densitometer->max_d) { meas_d = densitometer->max_d; }
+        if (meas_d <= 0.0F && cal_reflection.lo_d >= 0.0F) {
+            meas_d = 0.0F;
+        }
+        else if (meas_d > densitometer->max_d) {
+            meas_d = densitometer->max_d;
+        }
 
         densitometer->last_d = meas_d;
 
