@@ -137,16 +137,32 @@ densitometer_result_t reflection_measure(densitometer_t *densitometer, sensor_re
     const float als_basic_temp = sensor_apply_temperature_correction(densitometer->read_light, temp_c, als_basic_raw);
 
     if (use_target_cal) {
-        /* Convert all values into log units */
-        float meas_ll = log10f(als_basic_temp);
-        float cal_hi_ll = log10f(cal_reflection.hi_value);
-        float cal_lo_ll = log10f(cal_reflection.lo_value);
+        float meas_d;
 
-        /* Calculate the slope of the line */
-        float m = (cal_reflection.hi_d - cal_reflection.lo_d) / (cal_hi_ll - cal_lo_ll);
+        if (isnan(cal_reflection.hi_d) && isnan(cal_reflection.hi_value)) {
+            /* Single point calibration */
 
-        /* Calculate the measured density */
-        float meas_d = (m * (meas_ll - cal_lo_ll)) + cal_reflection.lo_d;
+            log_i("Using single point calibration");
+
+            /* Calculate the zero equivalent reading value */
+            const float zero_value = cal_reflection.lo_value * powf(10.0F, -1.0F * cal_reflection.lo_d);
+
+            /* Calculate the measured density */
+            meas_d = -1.0F * log10f(als_basic_temp / zero_value);
+        } else {
+            /* Two point calibration */
+
+            /* Convert all values into log units */
+            const float meas_ll = log10f(als_basic_temp);
+            const float cal_hi_ll = log10f(cal_reflection.hi_value);
+            const float cal_lo_ll = log10f(cal_reflection.lo_value);
+
+            /* Calculate the slope of the line */
+            const float m = (cal_reflection.hi_d - cal_reflection.lo_d) / (cal_hi_ll - cal_lo_ll);
+
+            /* Calculate the measured density */
+            meas_d = (m * (meas_ll - cal_lo_ll)) + cal_reflection.lo_d;
+        }
 
         log_i("D=%.2f, VALUE=%f,%f(%.1fC)", meas_d, als_basic_raw, als_basic_temp, temp_c);
 

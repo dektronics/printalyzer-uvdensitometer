@@ -897,13 +897,23 @@ bool settings_validate_cal_reflection(const settings_cal_reflection_t *cal_refle
 {
     if (!cal_reflection) { return false; }
 
-    /* Validate field numeric properties */
+    /* Validate standalone CAL-LO properties */
     if (isnan(cal_reflection->lo_d) || isinf(cal_reflection->lo_d)) {
         return false;
     }
     if (isnan(cal_reflection->lo_value) || isinf(cal_reflection->lo_value)) {
         return false;
     }
+    if (cal_reflection->lo_d < -0.5F || cal_reflection->lo_value < 0.0F) {
+        return false;
+    }
+
+    /* Shortcut out if CAL-HI is not set */
+    if (isnan(cal_reflection->hi_d) && isnan(cal_reflection->hi_value)) {
+        return true;
+    }
+
+    /* Validate standalone CAL-HI properties */
     if (isnan(cal_reflection->hi_d) || isinf(cal_reflection->hi_d)) {
         return false;
     }
@@ -911,9 +921,9 @@ bool settings_validate_cal_reflection(const settings_cal_reflection_t *cal_refle
         return false;
     }
 
-    /* Validate field values */
-    if (cal_reflection->lo_d < -0.5F || cal_reflection->hi_d <= cal_reflection->lo_d
-        || cal_reflection->lo_value < 0.0F || cal_reflection->hi_value >= cal_reflection->lo_value) {
+    /* Validate combined properties */
+    if (cal_reflection->hi_d <= cal_reflection->lo_d
+        || cal_reflection->hi_value >= cal_reflection->lo_value) {
         return false;
     }
 
