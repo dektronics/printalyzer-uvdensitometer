@@ -76,7 +76,7 @@ static void main_menu_settings_diagnostics(state_main_menu_t *state, state_contr
 static void main_menu_about(state_main_menu_t *state, state_controller_t *controller);
 static void sensor_read_callback(void *user_data);
 
-#define DENSITY_BUF_SIZE 6
+#define DENSITY_BUF_SIZE 8
 
 static void format_density_value(char *buf, float value, bool allow_negative);
 
@@ -190,8 +190,8 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
         format_density_value(buf_hi, cal_reflection.hi_d, false);
 
         int offset = 0;
-        if (buf_lo[0] == '-') {
-            offset += sprintf_(buf, "CAL-LO [%s]\n", buf_lo);
+        if (strlen(buf_lo) > 4) {
+            offset += sprintf_(buf, "CAL-LO %s\n", buf_lo);
         } else {
             offset += sprintf_(buf, "CAL-LO  [%s]\n", buf_lo);
         }
@@ -1043,9 +1043,13 @@ void sensor_read_callback(void *user_data)
 void format_density_value(char *buf, float value, bool allow_negative)
 {
     if (is_valid_number(value) && (value >= 0.0F || allow_negative)) {
-        snprintf_(buf, DENSITY_BUF_SIZE, "%.2f", value);
-        if (strncmp(buf, "-0.00", 5) == 0) {
-            strcpy(buf, "0.00");
+        if (value <= -0.0001F) {
+            snprintf_(buf, DENSITY_BUF_SIZE, "%.4f", value);
+        } else {
+            snprintf_(buf, DENSITY_BUF_SIZE, "%.2f", value);
+            if (strncmp(buf, "-0.00", 5) == 0) {
+                strcpy(buf, "0.00");
+            }
         }
     } else {
         strncpy(buf, "-.--", DENSITY_BUF_SIZE);
