@@ -162,7 +162,7 @@ osStatus_t sensor_gain_calibration(sensor_gain_calibration_callback_t callback, 
 
         /* Calculate gain values below the base gain */
         if (base_gain > 0) {
-            for (i = base_gain - 1; i < base_gain; --i) {
+            for (i = base_gain; i-- > 0;) {
                 cal_gain.values[i] = cal_gain.values[i + 1] / gain_ratios[i];
             }
         }
