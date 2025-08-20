@@ -1,4 +1,4 @@
-# Printalyzer Densitometer Enclosure
+# Printalyzer UV/VIS Densitometer Enclosure
 
 ## Introduction
 
@@ -46,7 +46,11 @@ These files are in the `models_3d` subdirectory.
 ### Internal Components
 
 * `diffuser-spacer` - Spacer that sits between the diffuser material and the UV/IR filter
-* `filter-ring` - Ring that sits between the UV/IR filter and the main circuit board
+* `filter-stack-holder` - Tray that sits on top of the lens assembly and holds the sensor diffuser
+* `filter-stack-lower-ring` - Lower ring that acts as a spacer, aperture, and helps to hold the sensor
+  diffuser in place.
+* `filter-stack-upper-ring` - Upper ring that sits between the filter stack and the main circuit
+  board to act as a light seal. Should be made from an opaque flexible material, such as rubber or foam.
 * `sensor-board-cover` - Internal cover for the backside of the circuit board above the sensor elements
 
 ### Assembly Jigs
@@ -81,8 +85,9 @@ These files are in the `models_2d` subdirectory.
 * `stage-plate-rings.dxf` - Components that make up the stage plate outer ring
   and transmission LED diffuser. Cut from a matte white acrylic material that
   is 3mm thick.
-* `filter-ring.dxf` - Alternative version of the filter ring 3D model from
-  above. Must be cut from a clean opaque material that is 3mm thick.
+* `filter-stack-upper-ring.dxf` - Alternative version of the filter stack upper ring model
+  from above, to be used if laser cutting from a stock material. Must use a clean, opaque,
+  and flexible material that is 3mm thick.
 * `sensor-board-cover.dxf` - Alternative version of the sensor board cover
   from above. Must be cut from a material that is opaque to visible and
   infrared light and that is approximately 1mm thick. If thicker, then the
@@ -107,7 +112,7 @@ These files are in the `overlay` subdirectory.
 
 ## Product Labels
 
-* TBD
+* 2x1" label, Zebra Z-Xtreme 4000T High-Tack Silver, SKU: 10023174
 
 ## Additional Components
 
@@ -124,22 +129,31 @@ a complete device.
   * **ER-OLED013A1-1W**
   * https://www.buydisplay.com/white-1-3-inch-oled-i2c-arduino-ssd1306-display-module-connector-fpc
 * Cable to connect Transmission LED Board to Main Board
-  * **JST JUMPER 02SR-3S -02SR-3S 4"**
-  * Manufacturer PN: A02SR02SR30K102A
-  * Digi-Key PN: 455-3619-ND
+  * **JST JUMPER 04SR-3S - 04SR-3S 4"**
+  * Manufacturer PN: A04SR04SR30K102A
 
 ### Non-Electronic Components
 
 These components are not necessarily sourced from electronics vendors, but
 are still necessary for the assembly of the device.
 
-* Diffuser material, cut to slightly smaller than 15x15mm
-  * **LGT188-T** (0.21mm thick, matte & glossy, 90.60% opacity)
+* Sensor head lens
+  * Aspherical focusing acrylic plano-convex lens, 5mm diameter
   * Sourced from AliExpress
-  * https://www.aliexpress.com/item/4000604712643.html
-* UV/IR Filter, 14mm diameter
-  * Sourced from AliExpress
-  * https://www.aliexpress.com/item/4001222435297.html
+  * https://www.aliexpress.us/item/3256802937733209.html
+* Sensor head aperture
+  * M2 Hard Fiber Washer, 2.3mm inside diameter, 5mm outside diameter
+  * McMaster-Carr PN: 95225A210
+* Sensor head diffuser
+  * UV Fused Silica diffuser, 10mm diameter, 1mm thick
+  * Sourced from UQG Optics, part number **DUV-1010**
+* Transmission light diffuser
+  * White flashed opal, 6mm diameter, 2.5mm thick
+  * Sourced from UQG Optics as a custom order
+* Transmission light diffuser gasket
+  * Square-Profile Oil-Resistant Buna-N O-Ring
+  * 1.5mm wide, 6mm inside diameter
+  * McMaster-Carr PN: 1171N142
 
 ## Assembly Hardware
 
@@ -157,18 +171,24 @@ are still necessary for the assembly of the device.
   * McMaster-Carr PN: 93070A076
 * Torsion Spring, 180 deg Right-Hand wound
   * McMaster-Carr PN: 9271K97
+  * Gardner Spring PN: GT2814018-MR
 * Torsion Spring, 180 deg Left-Hand wound
   * McMaster-Carr PN: 9271K98
+  * Gardner Spring PN: GT2814018-ML
 * Flanged sleeve bearings for 3mm shaft, 5mm long (x2)
   * McMaster-Carr PN: 2705T112
+  * Igus PN: JFM-0304-05
 * Rubber bumbers (x4)
   * **3M BUMPER CYLIN 0.315" DIA BLACK**
   * Manufacturer PN: SJ5076
   * Digi-Key PN: 3M156065-ND
 * Adhesive wheel weights, 1/4 oz (x6)
   * Available from a variety of vendors
-* Silicone adhesive
-  * **Chipquik NCS10G**
+* All-purpose adhesive
+  * E6600 QuickHOLD
+* UV-Curing adhesives
+  * Norland Products NOA 68
+  * Norland Products NOA 72
 * Foam mounting tape (3/4"x 15ft)
   * **3M VHB 3/4-5-4991**
   * McMaster-Carr PN: 8127A88
