@@ -45,7 +45,6 @@ These files are in the `models_3d` subdirectory.
 
 ### Internal Components
 
-* `diffuser-spacer` - Spacer that sits between the diffuser material and the UV/IR filter
 * `filter-stack-holder` - Tray that sits on top of the lens assembly and holds the sensor diffuser
 * `filter-stack-lower-ring` - Lower ring that acts as a spacer, aperture, and helps to hold the sensor
   diffuser in place.
