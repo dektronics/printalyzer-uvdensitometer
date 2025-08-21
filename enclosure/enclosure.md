@@ -81,12 +81,11 @@ They are provided in both single-part and multi-part grid versions.
 
 These files are in the `models_2d` subdirectory.
 
-* `stage-plate-rings.dxf` - Components that make up the stage plate outer ring
-  and transmission LED diffuser. Cut from a matte white acrylic material that
-  is 3mm thick.
+* `stage-plate-ring.dxf` - The stage plate outer ring. Cut from a white acrylic
+  material that is 1.5mm thick.
 * `filter-stack-upper-ring.dxf` - Alternative version of the filter stack upper ring model
   from above, to be used if laser cutting from a stock material. Must use a clean, opaque,
-  and flexible material that is 3mm thick.
+  and flexible material that is 1.5mm thick.
 * `sensor-board-cover.dxf` - Alternative version of the sensor board cover
   from above. Must be cut from a material that is opaque to visible and
   infrared light and that is approximately 1mm thick. If thicker, then the
