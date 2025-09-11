@@ -12,6 +12,7 @@ find_package(Python REQUIRED)
 
 # Build configuration options
 option(USE_SEGGER_RTT "Enable logging via SEGGER RTT" OFF)
+option(ENABLE_DIAGNOSTICS "Enable on-device diagnostic menu options" OFF)
 
 # Specify cross-compilers and tools
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
@@ -126,6 +127,12 @@ if(USE_SEGGER_RTT)
         BUFFER_SIZE_UP=512
     )
     target_link_libraries(${EXECUTABLE} PRIVATE RTT)
+endif()
+
+if(ENABLE_DIAGNOSTICS)
+    target_compile_definitions(${EXECUTABLE} PRIVATE
+        ENABLE_DIAGNOSTICS
+    )
 endif()
 
 # Subdirectories to include

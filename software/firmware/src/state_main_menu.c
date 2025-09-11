@@ -34,7 +34,9 @@ typedef enum {
     MAIN_MENU_SETTINGS_IDLE_LIGHT,
     MAIN_MENU_SETTINGS_DISPLAY_FORMAT,
     MAIN_MENU_SETTINGS_USB_KEY,
+#ifdef ENABLE_DIAGNOSTICS
     MAIN_MENU_SETTINGS_DIAGNOSTICS,
+#endif
     MAIN_MENU_ABOUT
 } main_menu_state_t;
 
@@ -74,7 +76,9 @@ static void main_menu_settings(state_main_menu_t *state, state_controller_t *con
 static void main_menu_settings_idle_light(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_display_format(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_usb_key(state_main_menu_t *state, state_controller_t *controller);
+#ifdef ENABLE_DIAGNOSTICS
 static void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t *controller);
+#endif
 static void main_menu_about(state_main_menu_t *state, state_controller_t *controller);
 static void sensor_read_callback(void *user_data);
 
@@ -126,8 +130,10 @@ void state_main_menu_process(state_t *state_base, state_controller_t *controller
         main_menu_settings_display_format(state, controller);
     } else if (state->menu_state == MAIN_MENU_SETTINGS_USB_KEY) {
         main_menu_settings_usb_key(state, controller);
+#ifdef ENABLE_DIAGNOSTICS
     } else if (state->menu_state == MAIN_MENU_SETTINGS_DIAGNOSTICS) {
         main_menu_settings_diagnostics(state, controller);
+#endif
     } else if (state->menu_state == MAIN_MENU_ABOUT) {
         main_menu_about(state, controller);
     }
@@ -616,8 +622,11 @@ void main_menu_settings(state_main_menu_t *state, state_controller_t *controller
         "Settings", state->settings_option,
         "Target Light\n"
         "Display Format\n"
-        "USB Key Output\n"
-        "Diagnostics");
+        "USB Key Output"
+#ifdef ENABLE_DIAGNOSTICS
+        "\nDiagnostics"
+#endif
+    );
 
     if (state->settings_option == 1) {
         state->menu_state = MAIN_MENU_SETTINGS_IDLE_LIGHT;
@@ -625,8 +634,10 @@ void main_menu_settings(state_main_menu_t *state, state_controller_t *controller
         state->menu_state = MAIN_MENU_SETTINGS_DISPLAY_FORMAT;
     } else if (state->settings_option == 3) {
         state->menu_state = MAIN_MENU_SETTINGS_USB_KEY;
+#ifdef ENABLE_DIAGNOSTICS
     } else if (state->settings_option == 4) {
         state->menu_state = MAIN_MENU_SETTINGS_DIAGNOSTICS;
+#endif
     } else if (state->settings_option == UINT8_MAX) {
         state_controller_set_next_state(controller, STATE_HOME);
     } else {
@@ -869,6 +880,7 @@ void main_menu_settings_usb_key(state_main_menu_t *state, state_controller_t *co
     }
 }
 
+#ifdef ENABLE_DIAGNOSTICS
 void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t *controller)
 {
     osStatus_t ret = osOK;
@@ -1056,6 +1068,7 @@ void main_menu_settings_diagnostics(state_main_menu_t *state, state_controller_t
 
     state->menu_state = MAIN_MENU_SETTINGS;
 }
+#endif
 
 void main_menu_about(state_main_menu_t *state, state_controller_t *controller)
 {
