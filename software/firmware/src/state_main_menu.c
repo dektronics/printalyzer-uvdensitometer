@@ -346,29 +346,29 @@ void main_menu_calibration_reflection(state_main_menu_t *state, state_controller
                 break;
             } else if (meas_option == 0) {
                 display_message(
-                    "Reflection", NULL,
+                    "VIS Reflection", NULL,
                     "calibration\n"
                     "canceled", " OK ");
                 break;
             } else if (!cal_saved) {
                 display_message(
-                    "Reflection", NULL,
+                    "VIS Reflection", NULL,
                     "Unable\n"
                     "to save", " OK ");
             } else if (meas_result == DENSITOMETER_OK) {
                 display_message(
-                    "Reflection", NULL,
+                    "VIS Reflection", NULL,
                     "calibration\n"
                     "complete", " OK ");
                 break;
             } else if (meas_result == DENSITOMETER_CAL_ERROR) {
                 display_message(
-                    "Reflection", NULL,
+                    "VIS Reflection", NULL,
                     "calibration\n"
                     "values invalid", " OK ");
             } else if (meas_result == DENSITOMETER_SENSOR_ERROR) {
                 display_message(
-                    "Reflection", NULL,
+                    "VIS Reflection", NULL,
                     "calibration\n"
                     "failed", " OK ");
             }
@@ -513,29 +513,29 @@ void main_menu_calibration_transmission(state_main_menu_t *state, state_controll
                 break;
             } else if (meas_option == 0) {
                 display_message(
-                    "Transmission", NULL,
+                    vis_uv ? "VIS Trans." : "UV Trans.", NULL,
                     "calibration\n"
                     "canceled", " OK ");
                 break;
             } else if (!cal_saved) {
                 display_message(
-                    "Transmission", NULL,
+                    vis_uv ? "VIS Trans." : "UV Trans.", NULL,
                     "Unable\n"
                     "to save", " OK ");
             } else if (meas_result == DENSITOMETER_OK) {
                 display_message(
-                    "Transmission", NULL,
+                    vis_uv ? "VIS Trans." : "UV Trans.", NULL,
                     "calibration\n"
                     "complete", " OK ");
                 break;
             } else if (meas_result == DENSITOMETER_CAL_ERROR) {
                 display_message(
-                    "Transmission", NULL,
+                    vis_uv ? "VIS Trans." : "UV Trans.", NULL,
                     "calibration\n"
                     "values invalid", " OK ");
             } else if (meas_result == DENSITOMETER_SENSOR_ERROR) {
                 display_message(
-                    "Transmission", NULL,
+                    vis_uv ? "VIS Trans." : "UV Trans.", NULL,
                     "calibration\n"
                     "failed", " OK ");
             }
