@@ -203,7 +203,6 @@ add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
 
 # Post-build commands to embed the checksum
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
-    DEPENDS ${EXECUTABLE}
     COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE}.elf ${EXECUTABLE}.bin
     COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/checksum.pl ${EXECUTABLE}.bin ${EXECUTABLE}-desc.dat
     COMMAND ${CMAKE_OBJCOPY} --update-section .app_descriptor=${EXECUTABLE}-desc.dat ${EXECUTABLE}.elf ${EXECUTABLE}-out.elf
@@ -212,11 +211,9 @@ add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
 )
 
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
-    DEPENDS ${EXECUTABLE}-out.bin
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/dfuse-pack.py -b 0x08008000:${EXECUTABLE}-out.bin -D 0x0483:0xdf11 -a 0 ${EXECUTABLE}.dfu
 )
 
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
-    DEPENDS ${EXECUTABLE}-out.bin
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/uf2conv.py -f 0x202E3A91 -b 0x08008000 -c -o ${EXECUTABLE}.uf2 ${EXECUTABLE}-out.bin
 )
