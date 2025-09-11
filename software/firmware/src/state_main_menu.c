@@ -29,6 +29,7 @@ typedef enum {
     MAIN_MENU_CALIBRATION_VIS_TRANSMISSION,
     MAIN_MENU_CALIBRATION_UV_TRANSMISSION,
     MAIN_MENU_CALIBRATION_SENSOR_GAIN,
+    MAIN_MENU_CALIBRATION_TEMPERATURE,
     MAIN_MENU_SETTINGS,
     MAIN_MENU_SETTINGS_IDLE_LIGHT,
     MAIN_MENU_SETTINGS_DISPLAY_FORMAT,
@@ -68,6 +69,7 @@ static void main_menu_calibration(state_main_menu_t *state, state_controller_t *
 static void main_menu_calibration_reflection(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_calibration_transmission(state_main_menu_t *state, state_controller_t *controller, bool vis_uv);
 static void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controller_t *controller);
+static void main_menu_calibration_temperature(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_idle_light(state_main_menu_t *state, state_controller_t *controller);
 static void main_menu_settings_display_format(state_main_menu_t *state, state_controller_t *controller);
@@ -114,6 +116,8 @@ void state_main_menu_process(state_t *state_base, state_controller_t *controller
         main_menu_calibration_transmission(state, controller, false);
     } else if (state->menu_state == MAIN_MENU_CALIBRATION_SENSOR_GAIN) {
         main_menu_calibration_sensor_gain(state, controller);
+    } else if (state->menu_state == MAIN_MENU_CALIBRATION_TEMPERATURE) {
+        main_menu_calibration_temperature(state, controller);
     } else if (state->menu_state == MAIN_MENU_SETTINGS) {
         main_menu_settings(state, controller);
     } else if (state->menu_state == MAIN_MENU_SETTINGS_IDLE_LIGHT) {
@@ -156,7 +160,8 @@ void main_menu_calibration(state_main_menu_t *state, state_controller_t *control
         "VIS Reflection\n"
         "VIS Trans.\n"
         "UV Trans.\n"
-        "Sensor Gain");
+        "Sensor Gain\n"
+        "Temperature");
 
     if (state->cal_option == 1) {
         state->menu_state = MAIN_MENU_CALIBRATION_VIS_REFLECTION;
@@ -166,6 +171,8 @@ void main_menu_calibration(state_main_menu_t *state, state_controller_t *control
         state->menu_state = MAIN_MENU_CALIBRATION_UV_TRANSMISSION;
     } else if (state->cal_option == 4) {
         state->menu_state = MAIN_MENU_CALIBRATION_SENSOR_GAIN;
+    } else if (state->cal_option == 5) {
+        state->menu_state = MAIN_MENU_CALIBRATION_TEMPERATURE;
     } else if (state->cal_option == UINT8_MAX) {
         state_controller_set_next_state(controller, STATE_HOME);
     } else {
@@ -557,6 +564,42 @@ void main_menu_calibration_sensor_gain(state_main_menu_t *state, state_controlle
 
     state->cal_sub_option = display_selection_list(
         "Sensor Gain", state->cal_sub_option,
+        buf);
+
+    if (state->cal_sub_option == UINT8_MAX) {
+        state_controller_set_next_state(controller, STATE_HOME);
+    } else if (state->cal_sub_option == 0) {
+        state->menu_state = MAIN_MENU_CALIBRATION;
+        state->cal_sub_option = 1;
+    }
+}
+
+void main_menu_calibration_temperature(state_main_menu_t *state, state_controller_t *controller)
+{
+    char buf[192];
+    settings_cal_temperature_t vis_temp = {0};
+    settings_cal_temperature_t uv_temp = {0};
+
+    settings_get_cal_vis_temperature(&vis_temp);
+    settings_get_cal_uv_temperature(&uv_temp);
+
+    sprintf_(buf,
+        "V_B0=%4.3e\n"
+        "V_B1=%4.3e\n"
+        "V_B2=%4.3e\n"
+        "U_B0=%4.3e\n"
+        "U_B1=%4.3e\n"
+        "U_B2=%4.3e",
+        vis_temp.b0, vis_temp.b1, vis_temp.b2,
+        uv_temp.b0, uv_temp.b1, uv_temp.b2);
+
+    const char sep = settings_get_decimal_separator();
+    if (sep != '.') {
+        replace_all_char(buf, '.', sep);
+    }
+
+    state->cal_sub_option = display_selection_list(
+        "Temperature", state->cal_sub_option,
         buf);
 
     if (state->cal_sub_option == UINT8_MAX) {
