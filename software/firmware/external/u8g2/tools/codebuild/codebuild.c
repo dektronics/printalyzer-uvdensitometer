@@ -1752,6 +1752,35 @@ struct controller controller_list[] =
     },
   },
   
+  {
+    "st7305", 		16, 	32, 	"u8g2_ll_hvline_horizontal_right_lsb", "u8x8_cad_011", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "122X250" },
+      { NULL }
+    },
+  },
+
+  {
+    /* the st7305 requires 12pixel blocks --> 204x200, but u8x8 requires tiles, so we have 208x200 (26x25) */ 
+    "st7305", 26, 25, "u8g2_ll_hvline_horizontal_right_lsb", "u8x8_cad_011", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "200X200" },
+      { NULL }
+    },
+  },
+
+#ifdef NOTYETIMPLEMENTED  
+  {
+    "st7305", 		24, 	48, 	"u8g2_ll_hvline_horizontal_right_lsb", "u8x8_cad_011", "", COM_4WSPI|COM_3WSPI|COM_6800|COM_8080,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "186X384" },
+      { NULL }
+    },
+  },
+#endif
   
   {
     "st7586s", 		48, 	17, 	"u8g2_ll_hvline_horizontal_right_lsb", "u8x8_cad_011", "", COM_4WSPI,
@@ -2511,6 +2540,23 @@ struct controller controller_list[] =
     "", /* is_generate_u8g2_class= */ 0,
     {
       { "384x240" },
+      { NULL }
+    }
+  },
+
+  {
+    "ssd1315", 	16, 	8, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_001", "", COM_4WSPI|COM_3WSPI,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "128x64_noname" },
+      { NULL }
+    }
+  },
+  {
+    "ssd1315", 	16, 	8, 	"u8g2_ll_hvline_vertical_top_lsb", "u8x8_cad_ssd13xx_fast_i2c", "i2c", COM_I2C,
+    "", /* is_generate_u8g2_class= */ 1,
+    {
+      { "128x64_noname" },
       { NULL }
     }
   }
